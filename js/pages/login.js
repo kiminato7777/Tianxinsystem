@@ -57,7 +57,10 @@ if (loginForm) {
         return firebase.database().ref('users/' + uid).once('value').then(snapshot => {
           // If NOT admin AND NOT exists -> Block
           const adminEmail = window.ADMIN_EMAIL || 'admin@school.com';
-          if (email !== adminEmail && !snapshot.exists()) {
+          const superAdminEmails = window.SUPER_ADMIN_EMAILS || [adminEmail];
+          const isSuperAdmin = superAdminEmails.includes(email);
+
+          if (!isSuperAdmin && !snapshot.exists()) {
             // User was deleted from DB -> Block Access
             firebase.auth().signOut().then(() => {
               showBlockedModal(); // SHOW NEW BEAUTIFUL MODAL
@@ -67,13 +70,23 @@ if (loginForm) {
               }
             });
           } else {
-            // User exists -> Update Last Login, Email & Redirect
-            return firebase.database().ref('users/' + uid).update({
-              email: email,
-              lastLogin: new Date().toISOString()
-            }).then(() => {
-              window.location.href = "/index.html";
-            });
+            // User exists OR is Super Admin -> Update Last Login, Email & Redirect
+            // For Super Admins, we only update IF they exist in DB, otherwise just redirect
+            if (snapshot.exists() || isSuperAdmin) {
+                 const updates = {
+                   email: email,
+                   lastLogin: new Date().toISOString()
+                 };
+                 
+                 // Only update if it exists or if we want to create it (here we just update if possible)
+                 firebase.database().ref('users/' + uid).update(updates).catch(() => {
+                     console.log("Super admin update skipped (expected if no DB entry)");
+                 }).finally(() => {
+                     window.location.href = "/index.html";
+                 });
+            } else {
+                 window.location.href = "/index.html";
+            }
           }
         });
       })

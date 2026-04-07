@@ -27,7 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
-            if (isLoginPage) window.location.href = "/index.html";
+            if (isLoginPage) {
+                console.log("Logged in user found on login page. Redirecting to dashboard...");
+                window.location.href = "/index.html";
+                return;
+            }
 
             // UI Elements
             const nameEl = document.getElementById('user-display-name');
@@ -100,8 +104,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     const fallback = modules.find(m => p[m.key]);
                     if (fallback) window.location.href = fallback.href;
                     else {
-                        alert("គណនីរបស់អ្នកមិនមានសិទ្ធិប្រើប្រាស់ទំព័រនេះទេ។ សូមទាក់ទង Admin។");
-                        firebase.auth().signOut();
+                        // Try to find ANY permission before forcing logout
+                        const anyPerm = Object.keys(p).find(k => p[k] === true);
+                        if (!anyPerm) {
+                             console.warn("No permissions found. Access denied.");
+                             alert("គណនីរបស់អ្នកមិនមានសិទ្ធិប្រើប្រាស់ប្រព័ន្ធទេ។ សូមទាក់ទង Admin។");
+                             firebase.auth().signOut();
+                        } else {
+                             window.location.href = "/index.html";
+                        }
                     }
                 }
             };
@@ -130,8 +141,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Fetch from local state if available to avoid DB hit
                     const cached = localStorage.getItem('userPermissionsCache');
                     if (cached) {
-                        const { permissions, role } = JSON.parse(cached);
-                        applyPermissions(permissions, role);
+                        try {
+                            const { permissions, role } = JSON.parse(cached);
+                            applyPermissions(permissions, role);
+                        } catch(e) {}
                     }
                 }
             };
@@ -163,7 +176,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                         // Give basic dashboard access as fallback
                         applyPermissions({ dashboard: true, registration: true, data: true }, 'staff');
-                        firebase.database().ref('users/' + user.uid).off();
                         return;
                     }
 
@@ -230,8 +242,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
         } else {
-            console.warn("User not authenticated.");
-            if (!isLoginPage) window.location.href = "/login.html";
+            console.log("Auth state initialized: No user found.");
+            if (!isLoginPage) {
+                console.log("Redirecting to login page...");
+                window.location.href = "/login.html";
+            }
         }
     });
 });

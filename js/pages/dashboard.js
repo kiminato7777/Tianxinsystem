@@ -2127,21 +2127,19 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelector('[data-dashboard="true"]');
 
     if (shouldInitialize) {
-        console.log('⏳ Waiting for Firebase & Authentication...');
+        console.log('⏳ Waiting for Firebase Authentication...');
         
-        // Use a single listener for Auth state
-        const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+        // Rely on Firebase Auth state to trigger initialization
+        firebase.auth().onAuthStateChanged((user) => {
             if (user) {
-                console.log('🔥 Auth confirmed (' + user.email + '), starting dashboard...');
-                
-                // Cleanup listener if needed (usually keep it for sign-out detection, but here we just want to start)
                 if (!window.dashboardInitialized) {
+                    console.log('✅ Auth confirmed (' + user.email + '). Initializing dashboard...');
                     try {
                         initializeDashboard();
                         updateLastUpdatedTime();
                         window.dashboardInitialized = true;
                         
-                        // Start the time update interval only once
+                        // Start the time update interval if not already started
                         if (!window.timeUpdateInterval) {
                             window.timeUpdateInterval = setInterval(updateLastUpdatedTime, 1000);
                         }
@@ -2151,9 +2149,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
             } else {
-                console.warn('⚠️ User not authenticated. Redirecting to login...');
-                // The global auth-check.js will handle the redirect, 
-                // but we stay in a "waiting" state here.
+                // Not authenticated. Redirect is handled by auth-check.js
+                // We just log it here for debugging purposes without warning
+                console.log('Dashboard: No authenticated user found.');
             }
         });
     }
