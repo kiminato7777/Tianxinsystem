@@ -2127,38 +2127,35 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelector('[data-dashboard="true"]');
 
     if (shouldInitialize) {
-        // Wait for Firebase AND Auth session
-        const oauthWaitInterval = setInterval(() => {
-            if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0) {
-                // Once Firebase is loaded, wait for the actual user state
-                firebase.auth().onAuthStateChanged((user) => {
-                    if (user && !window.dashboardInitialized) {
-                        clearInterval(oauthWaitInterval);
-                        console.log('🔥 Auth confirmed (' + user.email + '), starting dashboard...');
-
-                        try {
-                            initializeDashboard();
-                            updateLastUpdatedTime();
-                            window.dashboardInitialized = true;
-                            setInterval(updateLastUpdatedTime, 1000);
-                        } catch (error) {
-                            console.error('Failed to initialize dashboard:', error);
-                            showMessage(`កំហុសក្នុងការចាប់ផ្តើមផ្ទាំងគ្រប់គ្រង: ${error.message}`, 'danger');
+        console.log('⏳ Waiting for Firebase & Authentication...');
+        
+        // Use a single listener for Auth state
+        const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                console.log('🔥 Auth confirmed (' + user.email + '), starting dashboard...');
+                
+                // Cleanup listener if needed (usually keep it for sign-out detection, but here we just want to start)
+                if (!window.dashboardInitialized) {
+                    try {
+                        initializeDashboard();
+                        updateLastUpdatedTime();
+                        window.dashboardInitialized = true;
+                        
+                        // Start the time update interval only once
+                        if (!window.timeUpdateInterval) {
+                            window.timeUpdateInterval = setInterval(updateLastUpdatedTime, 1000);
                         }
-                    } else if (!user) {
-                        console.log('⏳ Waiting for authentication...');
+                    } catch (error) {
+                        console.error('Failed to initialize dashboard:', error);
+                        showMessage(`កំហុសក្នុងការចាប់ផ្តើមផ្ទាំងគ្រប់គ្រង: ${error.message}`, 'danger');
                     }
-                });
+                }
+            } else {
+                console.warn('⚠️ User not authenticated. Redirecting to login...');
+                // The global auth-check.js will handle the redirect, 
+                // but we stay in a "waiting" state here.
             }
-        }, 100);
-
-        // Fail-safe: stop checking after 10 seconds if SDK doesn't load
-        setTimeout(() => {
-            clearInterval(oauthWaitInterval);
-            if (typeof firebase === 'undefined') {
-                showMessage('Firebase SDK មិនត្រូវបានផ្ទុក។ សូមពិនិត្យការភ្ជាប់អ៊ីនធឺណិត។', 'danger');
-            }
-        }, 10000);
+        });
     }
 });
 
