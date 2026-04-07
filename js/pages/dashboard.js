@@ -2127,27 +2127,34 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelector('[data-dashboard="true"]');
 
     if (shouldInitialize) {
-        const checkFirebaseInterval = setInterval(() => {
+        // Wait for Firebase AND Auth session
+        const oauthWaitInterval = setInterval(() => {
             if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0) {
-                clearInterval(checkFirebaseInterval);
-                console.log('🔥 Firebase is ready, starting dashboard...');
+                // Once Firebase is loaded, wait for the actual user state
+                firebase.auth().onAuthStateChanged((user) => {
+                    if (user && !window.dashboardInitialized) {
+                        clearInterval(oauthWaitInterval);
+                        console.log('🔥 Auth confirmed (' + user.email + '), starting dashboard...');
 
-                setTimeout(() => {
-                    try {
-                        initializeDashboard();
-                        // Update time initially and every second
-                        updateLastUpdatedTime();
-                        setInterval(updateLastUpdatedTime, 1000);
-                    } catch (error) {
-                        console.error('Failed to initialize dashboard:', error);
-                        showMessage(`កំហុសក្នុងការចាប់ផ្តើមផ្ទាំងគ្រប់គ្រង: ${error.message}`, 'danger');
+                        try {
+                            initializeDashboard();
+                            updateLastUpdatedTime();
+                            window.dashboardInitialized = true;
+                            setInterval(updateLastUpdatedTime, 1000);
+                        } catch (error) {
+                            console.error('Failed to initialize dashboard:', error);
+                            showMessage(`កំហុសក្នុងការចាប់ផ្តើមផ្ទាំងគ្រប់គ្រង: ${error.message}`, 'danger');
+                        }
+                    } else if (!user) {
+                        console.log('⏳ Waiting for authentication...');
                     }
-                }, 500);
+                });
             }
         }, 100);
 
+        // Fail-safe: stop checking after 10 seconds if SDK doesn't load
         setTimeout(() => {
-            clearInterval(checkFirebaseInterval);
+            clearInterval(oauthWaitInterval);
             if (typeof firebase === 'undefined') {
                 showMessage('Firebase SDK មិនត្រូវបានផ្ទុក។ សូមពិនិត្យការភ្ជាប់អ៊ីនធឺណិត។', 'danger');
             }
