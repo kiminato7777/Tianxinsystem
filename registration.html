@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ទម្រង់ចុះឈ្មោះសិស្ស</title>
+    <link rel="icon" type="image/jpeg" href="/img/1.jpg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preload" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"
+        as="style">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="/css/loader.css">
+    <script src="/js/core/loader-init.js"></script>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/registration.css">
+
+
+    <style>
+    </style>
+
+<body>
+
+    <!-- Snow Animation Container -->
+    <div id="snow-container"></div>
+
+
+    <div id="sidebar">
+        <!-- Dashboard Sidebar injected by sidebar.js -->
+    </div>
+
+    <div id="main-content">
+        <div id="alertContainer" class="position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 1050;">
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="/index.html" class="btn-back-home">
+                <i class="fi fi-rr-home"></i> ត្រឡប់ទៅដើម
+            </a>
+            <h1 class="m-0 text-center flex-grow-1" style="color: #c71585;">
+                <i class="fi fi-rr-user-add"></i> ទម្រង់ចុះឈ្មោះសិស្ស - សាលាអន្តរជាតិ ធានស៊ីន
+            </h1>
+            <!-- System Management Dropdown -->
+            <div class="dropdown d-inline-block">
+                <button class="btn btn-action btn-dark dropdown-toggle show" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="true">
+                    <i class="fi fi-rr-settings"></i> គ្រប់គ្រងប្រព័ន្ធ
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2"
+                    style="min-width: 200px; border-radius: 12px;">
+                    <li><a class="dropdown-item rounded-2 py-2 mb-1" href="/staff-management.html">
+                            <i class="fi fi-rr-chalkboard-user me-2 text-primary"></i>ព័ត៌មានគ្រូ និងការសិក្សា</a></li>
+                    <li><a class="dropdown-item rounded-2 py-2 mb-1" href="#" onclick="openStudyTimeModal()">
+                            <i class="fi fi-rr-clock me-2 text-primary"></i>ម៉ោងសិក្សា</a></li>
+                    <li><a class="dropdown-item rounded-2 py-2 mb-1" href="#" onclick="openLevelModal()">
+                            <i class="fi fi-rr-layers me-2 text-success"></i>កម្រិតសិក្សា</a></li>
+                    <li><a class="dropdown-item rounded-2 py-2 mb-1" href="#" onclick="openStudyTypeModal()">
+                            <i class="fi fi-rr-apps me-2 text-danger"></i>ប្រភេទការសិក្សា</a></li>
+                    <li><a class="dropdown-item rounded-2 py-2 mb-1" href="#" onclick="openRoomModal()">
+                            <i class="fi fi-rr-door-open me-2 text-warning"></i>បន្ទប់រៀន</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item rounded-2 py-2 text-info fw-bold" href="#"
+                            onclick="syncAllFromStudents()">
+                            <i class="fi fi-rr-refresh me-2"></i>ទាញយកទិន្នន័យសរុបពីសិស្ស</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card shadow-lg mx-auto">
+            <div class="card-header card-header-pink d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fi fi-rr-user-add"></i> <span id="formTitle">ទម្រង់បែបបទចុះឈ្មោះសិស្សថ្មី</span>
+                </div>
+                <div>
+                    <span id="editModeIndicator" style="display: none;" class="badge bg-warning text-dark">
+                        <i class="fi fi-rr-edit"></i> របៀបកែសម្រួល
+                    </span>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <form id="studentRegistrationForm">
+                    <input type="hidden" id="reg_studentKey" name="studentKey">
+                    <input type="hidden" id="reg_studentId" name="studentId">
+                    <input type="hidden" id="reg_isOldStudent" name="isOldStudent" value="false">
+
+                    <!-- ផ្នែកទី១: ព័ត៌មានអំពីសិស្ស -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="section-title mb-0 border-0"
+                            style="padding-bottom: 0px; margin-bottom: 0px; border-bottom: 2px solid #ff69b4;"><i
+                                class="fi fi-rr-user"></i> ព័ត៌មានអំពីសិស្ស</h4>
+                        <div class="d-flex align-items-center bg-white p-2 rounded shadow-sm border"
+                            style="border-color: #ffc2d1 !important;">
+                            <label for="reg_displayId" class="form-label mb-0 me-2 text-dark fw-bold"
+                                style="white-space: nowrap;">អត្តលេខ:</label>
+                            <div class="d-flex flex-column align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <input type="text" class="form-control text-center fw-bold fs-5 p-1"
+                                        id="reg_displayId" value=""
+                                        style="width: 120px; color: #c71585; border: 1px solid #ffc2d1; background: #fff;">
+                                    <button type="button" class="btn btn-sm btn-outline-primary ms-2 p-1"
+                                        onclick="refreshRegistrationId()" title="បង្កើតអត្តលេខថ្មីស្វ័យប្រវត្តិ">
+                                        <i class="fi fi-rr-refresh"></i>
+                                    </button>
+                                </div>
+                                <div id="reg_idFeedback" class="mt-1" style="min-height: 15px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <!-- Khmer Name -->
+                        <div class="col-md-12">
+                            <label for="reg_khmerName" class="form-label"><i
+                                    class="fi fi-rr-user me-1"></i>ឈ្មោះជាភាសាខ្មែរ</label>
+                            <input type="text" class="form-control" id="reg_khmerName" required
+                                placeholder="បញ្ចូលឈ្មោះពេញជាភាសាខ្មែរ">
+                        </div>
+
+                        <!-- Chinese Name -->
+                        <div class="col-md-6">
+                            <label for="reg_chineseName" class="form-label"><i
+                                    class="fi fi-rr-language me-1"></i>ឈ្មោះជាភាសាចិន (中文)</label>
+                            <input type="text" class="form-control" id="reg_chineseName" placeholder="输入中文全名">
+                        </div>
+
+                        <!-- English Name -->
+                        <div class="col-md-6">
+                            <label for="reg_englishName" class="form-label"><i
+                                    class="fi fi-rr-text-font me-1"></i>ឈ្មោះជាភាសាអង់គ្លេស (English)</label>
+                            <input type="text" class="form-control" id="reg_englishName"
+                                placeholder="Enter Full Name in English">
+                        </div>
+
+                        <!-- Row 4: Gender, DOB, Nationality -->
+                        <div class="col-md-4">
+                            <label for="reg_gender" class="form-label"><i class="fi fi-rr-intersex me-1"></i>ភេទ</label>
+                            <select class="form-select" id="reg_gender" required>
+                                <option value="">ជ្រើសរើស...</option>
+                                <option value="ប្រុស">ប្រុស</option>
+                                <option value="ស្រី">ស្រី</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="reg_dob" class="form-label"><i
+                                    class="fi fi-rr-calendar-day me-1"></i>ថ្ងៃខែឆ្នាំកំណើត</label>
+                            <div class="date-input-icon">
+                                <input type="text" class="form-control" id="reg_dob" placeholder="DD/MM/YYYY">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="reg_nationality" class="form-label"><i
+                                    class="fi fi-rr-flag me-1"></i>សញ្ជាតិ</label>
+                            <input type="text" class="form-control" id="reg_nationality" value="ខ្មែរ">
+                        </div>
+
+                        <!-- Row 5: Phone and Stay With -->
+                        <div class="col-md-6">
+                            <label for="reg_personalPhone" class="form-label"><i
+                                    class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទផ្ទាល់ខ្លួន</label>
+                            <input type="text" class="form-control" id="reg_personalPhone" placeholder="012 345 678">
+                        </div>
+                    </div>
+
+                    <!-- ផ្នែកទី២: ព័ត៌មានរូបភាព និងភាសាចិន -->
+                    <h5 class="section-title"><i class="fi fi-rr-picture"></i> ព័ត៌មានបន្ថែម</h5>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label for="reg_studentImage" class="form-label"><i
+                                    class="fi fi-rr-picture me-1"></i>រូបភាពសិស្ស</label>
+                            <input type="file" class="form-control" id="reg_studentImage" accept="image/*">
+                            <small class="form-text text-muted">ទំហំរូបភាពមិនត្រូវលើសពី 5MB</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><i class="fi fi-rr-eye me-1"></i>រូបភាព Preview</label>
+                            <div id="imagePreview" class="border p-1 rounded"
+                                style="height: 150px; background: #f8f9fa;">
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                    <i class="fi fi-rr-camera fa-3x text-secondary"></i>
+                                    <small class="mt-2 text-muted">រូបភាពសិស្ស</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ផ្នែកទី៣: អាសយដ្ឋានរបស់សិស្ស -->
+                    <h5 class="section-title"><i class="fi fi-rr-home"></i> អាសយដ្ឋានរបស់សិស្ស</h5>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <label for="reg_village" class="form-label"><i class="fi fi-rr-marker me-1"></i>ភូមិ</label>
+                            <input type="text" class="form-control" id="reg_village" placeholder="បញ្ចូលភូមិ">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="reg_commune" class="form-label"><i
+                                    class="fi fi-rr-map me-1"></i>ឃុំ/សង្កាត់</label>
+                            <input type="text" class="form-control" id="reg_commune" placeholder="បញ្ចូលឃុំ/សង្កាត់">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="reg_district" class="form-label"><i
+                                    class="fi fi-rr-city me-1"></i>ក្រុង/ស្រុក</label>
+                            <input type="text" class="form-control" id="reg_district" placeholder="បញ្ចូលក្រុង/ស្រុក">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="reg_province" class="form-label"><i
+                                    class="fi fi-rr-marker me-1"></i>ខេត្ត/ក្រុង</label>
+                            <select class="form-select" id="reg_province">
+                                <option value="">ជ្រើសរើសខេត្ត/ក្រុង...</option>
+                                <option value="រាជធានីភ្នំពេញ">រាជធានីភ្នំពេញ</option>
+                                <option value="កណ្តាល">កណ្តាល</option>
+                                <option value="កំពង់ចាម">កំពង់ចាម</option>
+                                <option value="ត្បូងឃ្មុំ">ត្បូងឃ្មុំ</option>
+                                <option value="សៀមរាប">សៀមរាប</option>
+                                <option value="បាត់ដំបង">បាត់ដំបង</option>
+                                <option value="បន្ទាយមានជ័យ">បន្ទាយមានជ័យ</option>
+                                <option value="ព្រះសីហនុ">ព្រះសីហនុ</option>
+                                <option value="កំពត">កំពត</option>
+                                <option value="តាកែវ">តាកែវ</option>
+                                <option value="ព្រៃវែង">ព្រៃវែង</option>
+                                <option value="ស្វាយរៀង">ស្វាយរៀង</option>
+                                <option value="ពោធិ៍សាត់">ពោធិ៍សាត់</option>
+                                <option value="កំពង់ស្ពឺ">កំពង់ស្ពឺ</option>
+                                <option value="កំពង់ធំ">កំពង់ធំ</option>
+                                <option value="កំពង់ឆ្នាំង">កំពង់ឆ្នាំង</option>
+                                <option value="មណ្ឌលគិរី">មណ្ឌលគិរី</option>
+                                <option value="រតនគិរី">រតនគិរី</option>
+                                <option value="ស្ទឹងត្រែង">ស្ទឹងត្រែង</option>
+                                <option value="ព្រះវិហារ">ព្រះវិហារ</option>
+                                <option value="ក្រចេះ">ក្រចេះ</option>
+                                <option value="ឧត្តរមានជ័យ">ឧត្តរមានជ័យ</option>
+                                <option value="កែប">កែប</option>
+                                <option value="ប៉ៃលិន">ប៉ៃលិន</option>
+                                <option value="កោះកុង">កោះកុង</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- ផ្នែកទី៥: ព័ត៌មានលម្អិតអំពីការសិក្សា -->
+                    <h4 class="section-title"><i class="fi fi-rr-book-alt"></i> ព័ត៌មានលម្អិតអំពីការសិក្សា</h4>
+
+                    <!-- ផ្នែកថ្មី: ជ្រើសរើសប្រភេទការសិក្សា -->
+                    <div class="course-options mb-4">
+                        <label class="form-label fw-bold"><i
+                                class="fi fi-rr-book me-1"></i>សូមជ្រើសរើសប្រភេទការសិក្សា</label><br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input course-type" type="radio" name="reg_course_type"
+                                id="reg_cOneLanguage" data-course="one-language">
+                            <label class="form-check-label" for="reg_cOneLanguage">ថ្នាក់ភាសា (១ភាសា)</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input course-type" type="radio" name="reg_course_type"
+                                id="reg_cTwoLanguages" data-course="two-languages">
+                            <label class="form-check-label" for="reg_cTwoLanguages">ថ្នាក់ភាសា (២ភាសា)</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input course-type" type="radio" name="reg_course_type"
+                                id="reg_cThreeLanguages" data-course="three-languages">
+                            <label class="form-check-label" for="reg_cThreeLanguages">ថ្នាក់ចំណះដឹងទូទៅ</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input course-type" type="radio" name="reg_course_type"
+                                id="reg_cFullTime" data-course="chinese-fulltime">
+                            <label class="form-check-label" for="reg_cFullTime">ថ្នាក់ភាសាចិនពេញម៉ោង</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input course-type" type="radio" name="reg_course_type"
+                                id="reg_cPartTime" data-course="chinese-parttime">
+                            <label class="form-check-label" for="reg_cPartTime">ថ្នាក់ភាសាចិនក្រៅម៉ោង</label>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label for="reg_languagesLearnt" class="form-label"><i
+                                    class="fi fi-rr-language me-1"></i>ភាសាដែលរៀន (អាចបញ្ចូលបានដើម្បីដឹងថាសិស្ស
+                                រៀនភាសាណាខ្លះ)</label>
+                            <input type="text" class="form-control" id="reg_languagesLearnt"
+                                placeholder="ឧ. ខ្មែរ, អង់គ្លេស, ចិន">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="reg_subject" class="form-label"><i
+                                    class="fi fi-rr-book-alt me-1"></i>មុខវិជ្ជា</label>
+                            <input type="text" class="form-control" id="reg_subject" placeholder="បញ្ចូលមុខវិជ្ជា">
+                        </div>
+
+                        <!-- ផ្នែកទី៦: ព័ត៌មានគ្រូ និងថ្នាក់រៀន -->
+                        <div id="teacherInfoSection" class="mb-4">
+                            <h5 class="section-title"><i class="fi fi-rr-chalkboard-user"></i> ព័ត៌មានគ្រូ និងការសិក្សា
+                            </h5>
+                            <div class="row g-4 mb-3">
+                                <!-- គ្រូបន្ទុកថ្នាក់ -->
+                                <div class="col-md-4">
+                                    <label for="reg_teacherName" class="form-label"><i
+                                            class="fi fi-rr-user-trust me-1"></i>គ្រូបន្ទុកថ្នាក់</label>
+                                    <select class="form-select" id="reg_teacherName">
+                                        <option value="">ជ្រើសរើសគ្រូ...</option>
+                                    </select>
+                                </div>
+
+                                <!-- លេខទូរស័ព្ទគ្រូ -->
+                                <div class="col-md-4">
+                                    <label for="reg_teacherPhone" class="form-label"><i
+                                            class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទគ្រូ</label>
+                                    <input type="text" class="form-control" id="reg_teacherPhone"
+                                        placeholder="លេខទូរស័ព្ទគ្រូ" readonly>
+                                </div>
+
+                                <!-- បន្ទប់រៀន -->
+                                <div class="col-md-4">
+                                    <label for="reg_classroom" class="form-label"><i
+                                            class="fi fi-rr-school me-1"></i>បន្ទប់រៀន</label>
+                                    <select class="form-select mb-2" id="reg_classroom_select">
+                                        <option value="">ជ្រើសរើសបន្ទប់...</option>
+                                    </select>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text bg-light border-end-0"><i
+                                                class="fi fi-rr-keyboard"></i></span>
+                                        <input type="text" class="form-control border-start-0" id="reg_classroom"
+                                            placeholder="ឬបញ្ចូលបន្ទប់ដោយខ្លួនឯង">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-4">
+                                <!-- វគ្គសិក្សា -->
+                                <div class="col-md-3">
+                                    <label for="reg_studyProgram" class="form-label"><i
+                                            class="fi fi-rr-book-open-reader me-1"></i>វគ្គសិក្សា</label>
+                                    <input type="text" class="form-control" id="reg_studyProgram"
+                                        placeholder="ឧ. ភាសាចិន">
+                                </div>
+
+                                <!-- ម៉ោងសិក្សា -->
+                                <div class="col-md-3">
+                                    <label for="reg_studyTime" class="form-label"><i
+                                            class="fi fi-rr-clock me-1"></i>ម៉ោងសិក្សា</label>
+                                    <select class="form-select reg_master_study_time mb-2" id="reg_studyTime_select">
+                                        <option value="">ជ្រើសរើសម៉ោងសិក្សា...</option>
+                                    </select>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text bg-light border-end-0"><i
+                                                class="fi fi-rr-keyboard"></i></span>
+                                        <input type="text" class="form-control border-start-0" id="reg_studyTime"
+                                            placeholder="ឬបញ្ចូលម៉ោងដោយខ្លួនឯង">
+                                    </div>
+                                </div>
+
+                                <!-- កម្រិតសិក្សា -->
+                                <div class="col-md-3">
+                                    <label for="reg_studyLevel" class="form-label"><i
+                                            class="fi fi-rr-layers me-1"></i>កម្រិតសិក្សា</label>
+                                    <select class="form-select" id="reg_studyLevel">
+                                        <option value="">ជ្រើសរើសកម្រិត...</option>
+                                    </select>
+                                </div>
+
+                                <!-- ប្រភេទវគ្គសិក្សា -->
+                                <div class="col-md-3">
+                                    <label for="reg_courseType" class="form-label"><i
+                                            class="fi fi-rr-apps me-1"></i>ប្រភេទការសិក្សា</label>
+                                    <select class="form-select" id="reg_courseType">
+                                        <option value="">ជ្រើសរើសប្រភេទ...</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ផ្នែកបញ្ចូលព័ត៌មានបន្ថែមសម្រាប់ ៣ភាសា -->
+                        <div id="threeLanguagesDetails" class="course-details mb-4">
+                            <h5 class="section-title"><i class="fi fi-rr-globe"></i>
+                                ព័ត៌មានលម្អិតសម្រាប់ថ្នាក់ចំណះដឹងទូទៅ
+                            </h5>
+
+                        </div>
+                    </div>
+
+
+                    <!-- ផ្នែកថ្មី: តារាងតម្លៃថ្នាក់ភាសាចិនពេញម៉ោង -->
+                    <div id="chineseFulltimeDetails" class="course-details mb-4">
+                        <h5 class="section-title"><i class="fi fi-rr-graduation-cap"></i> តម្លៃថ្នាក់ភាសាចិនពេញម៉ោង</h5>
+                        <table class="course-details-table">
+                            <thead>
+                                <tr>
+                                    <th>កម្រិត</th>
+                                    <th>តម្លៃ៦ខែ</th>
+                                    <th>តម្លៃ១ឆ្នាំ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>មូលដ្ឋានគ្រឹះ</td>
+                                    <td class="course-price">$250</td>
+                                    <td class="course-price">$500</td>
+                                </tr>
+                                <tr>
+                                    <td>កម្រិត១ (ឆ្នាំទី១)</td>
+                                    <td class="course-price">$260</td>
+                                    <td class="course-price">$520</td>
+                                </tr>
+                                <tr>
+                                    <td>កម្រិត២ (ឆ្នាំទី២)</td>
+                                    <td class="course-price">$270</td>
+                                    <td class="course-price">$540</td>
+                                </tr>
+                                <tr>
+                                    <td>កម្រិត៣ (ឆ្នាំទី៣)</td>
+                                    <td class="course-price">$280</td>
+                                    <td class="course-price">$560</td>
+                                </tr>
+                                <tr>
+                                    <td>កម្រិត៤ (ឆ្នាំទី៤)</td>
+                                    <td class="course-price">$290</td>
+                                    <td class="course-price">$580</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- ផ្នែកម៉ោងសិក្សាសម្រាប់ពេញម៉ោង -->
+                        <!-- Study hours section for full-time -->
+                        <div class="study-hours-section mt-3">
+                            <label class="form-label fw-bold d-block mb-2"><i
+                                    class="fi fi-rr-clock me-1"></i>ជ្រើសរើសម៉ោងសិក្សា
+                                (Full-time)</label>
+                            <select class="form-select reg_master_study_time mb-2" name="reg_fulltime_studyTime"
+                                id="reg_fulltime_studyTime_select">
+                                <option value="">ជ្រើសរើសម៉ោងសិក្សា...</option>
+                            </select>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-light border-end-0"><i
+                                        class="fi fi-rr-keyboard"></i></span>
+                                <input type="text" id="reg_fulltime_studyTime_manual"
+                                    class="form-control border-start-0" placeholder="ឬបញ្ចូលម៉ោងដោយខ្លួនឯង">
+                            </div>
+                        </div>
+
+                        <!-- Manual input for full-time study duration -->
+                        <div class="manual-input-toggle mt-3">
+                            <label class="form-label fw-bold"><i
+                                    class="fi fi-rr-hourglass me-1"></i>រយៈពេលសិក្សាសម្រាប់ពេញម៉ោង:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="reg_fulltime_manualDuration">
+                                <label class="form-check-label" for="reg_fulltime_manualDuration">
+                                    បញ្ចូលរយៈពេលដោយខ្លួនឯង
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="fulltime_manualDurationFields" class="manual-input-fields">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="reg_studyDuration_manual" class="form-label"><i
+                                            class="fi fi-rr-calendar me-1"></i>រយៈពេលសិក្សា (ខែ)</label>
+                                    <input type="number" class="form-control" id="reg_studyDuration_manual"
+                                        placeholder="បញ្ចូលរយៈពេល" min="1" max="72">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="reg_paymentMonths_manual" class="form-label"><i
+                                            class="fi fi-rr-calendar-check me-1"></i>រយៈពេលបង់ (ខែ)</label>
+                                    <input type="number" class="form-control" id="reg_paymentMonths_manual"
+                                        placeholder="បញ្ចូលរយៈពេលបង់" min="1" max="72">
+                                    <small class="text-muted">អាចខុសពីរយៈពេលសិក្សា</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ផ្នែកថ្មី: តារាងតម្លៃថ្នាក់ភាសាចិនក្រៅម៉ោង -->
+                    <div id="chineseParttimeDetails" class="course-details mb-4">
+                        <h5 class="section-title"><i class="fi fi-rr-clock"></i> តម្លៃថ្នាក់ភាសាចិនក្រៅម៉ោង</h5>
+                        <table class="course-details-table">
+                            <thead>
+                                <tr>
+                                    <th>រយៈពេល</th>
+                                    <th>តម្លៃសិស្សថ្មី</th>
+                                    <th>តម្លៃសិស្សចាស់</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>៣ខែ</td>
+                                    <td class="course-price">$45</td>
+                                    <td class="course-price">$60</td>
+                                </tr>
+                                <tr>
+                                    <td>១ខែ</td>
+                                    <td class="course-price">$15</td>
+                                    <td class="course-price">$15</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Old student checkbox for part-time -->
+                        <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" id="reg_isOldStudentCheck">
+                            <label class="form-check-label" for="reg_isOldStudentCheck">
+                                <i class="fi fi-rr-user-time text-warning"></i> សិស្សចាស់ (សិស្សដែលបានរៀនពីមុន)
+                            </label>
+                            <small class="text-muted d-block">បើជ្រើសរើស តម្លៃ៣ខែនឹងត្រូវកើនពី $45 ទៅ $60</small>
+                        </div>
+
+                        <!-- Study duration options with checkboxes -->
+                        <div class="study-duration-options mt-3">
+                            <label class="form-label fw-bold d-block mb-2"><i
+                                    class="fi fi-rr-hourglass me-1"></i>ជ្រើសរើសរយៈពេលសិក្សា:</label>
+                            <div class="study-duration-option" data-duration="3">
+                                <input type="checkbox" class="form-check-input duration-checkbox"
+                                    id="reg_parttime_3months">
+                                <label class="form-check-label" for="reg_parttime_3months">៣ខែ</label>
+                                <span class="duration-price">$45</span>
+                                <span class="old-price">$60</span>
+                            </div>
+                            <div class="study-duration-option" data-duration="1">
+                                <input type="checkbox" class="form-check-input duration-checkbox"
+                                    id="reg_parttime_1month">
+                                <label class="form-check-label" for="reg_parttime_1month">១ខែ</label>
+                                <span class="duration-price">$15</span>
+                            </div>
+                        </div>
+
+                        <!-- Manual input for part-time study duration -->
+                        <div class="manual-input-toggle mt-3">
+                            <label class="form-label fw-bold"><i
+                                    class="fi fi-rr-keyboard me-1"></i>ឬបញ្ចូលរយៈពេលដោយខ្លួនឯង:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="reg_parttime_manualDuration">
+                                <label class="form-check-label" for="reg_parttime_manualDuration">
+                                    បញ្ចូលរយៈពេលដោយខ្លួនឯង
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="parttime_manualDurationFields" class="manual-input-fields">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="reg_parttime_studyDuration_manual" class="form-label"><i
+                                            class="fi fi-rr-calendar me-1"></i>រយៈពេលសិក្សា (ខែ)</label>
+                                    <input type="number" class="form-control" id="reg_parttime_studyDuration_manual"
+                                        placeholder="បញ្ចូលរយៈពេល" min="1" max="72">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="reg_parttime_paymentMonths_manual" class="form-label"><i
+                                            class="fi fi-rr-calendar-check me-1"></i>រយៈពេលបង់ (ខែ)</label>
+                                    <input type="number" class="form-control" id="reg_parttime_paymentMonths_manual"
+                                        placeholder="បញ្ចូលរយៈពេលបង់" min="1" max="72">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ផ្នែកម៉ោងសិក្សាសម្រាប់ក្រៅម៉ោង -->
+                        <div class="study-hours-section mt-3">
+                            <label class="form-label fw-bold d-block mb-2"><i
+                                    class="fi fi-rr-clock me-1"></i>ជ្រើសរើសម៉ោងសិក្សា
+                                (Part-time)</label>
+                            <select class="form-select reg_master_study_time mb-2" name="reg_parttime_studyTime"
+                                id="reg_parttime_studyTime_select">
+                                <option value="">ជ្រើសរើសម៉ោងសិក្សា...</option>
+                            </select>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-light border-end-0"><i
+                                        class="fi fi-rr-keyboard"></i></span>
+                                <input type="text" id="reg_parttime_studyTime_manual"
+                                    class="form-control border-start-0" placeholder="ឬបញ្ចូលម៉ោងដោយខ្លួនឯង">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold"><i
+                                    class="fi fi-rr-layers me-1"></i>កម្រិតថ្នាក់សុំចូលរៀន</label><br>
+                            <div id="levelRadiosContainer">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="reg_studyLevel"
+                                        id="reg_levelBasic" value="មូលដ្ឋានគ្រឹះ" checked>
+                                    <label class="form-check-label" for="reg_levelBasic">មូលដ្ឋានគ្រឹះ</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="reg_studyLevel" id="reg_level1"
+                                        value="កម្រិត១">
+                                    <label class="form-check-label" for="reg_level1">កម្រិត១</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="reg_studyLevel" id="reg_level2"
+                                        value="កម្រិត២">
+                                    <label class="form-check-label" for="reg_level2">កម្រិត២</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="reg_studyLevel" id="reg_level3"
+                                        value="កម្រិត៣">
+                                    <label class="form-check-label" for="reg_level3">កម្រិត៣</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="reg_studyLevel" id="reg_level4"
+                                        value="កម្រិត៤">
+                                    <label class="form-check-label" for="reg_level4">កម្រិត៤</label>
+                                </div>
+                            </div>
+                            <div id="levelManualContainer" style="display: none;">
+                                <input type="text" class="form-control" id="reg_levelManual"
+                                    placeholder="បញ្ចូលកម្រិតថ្នាក់ (ឧ. ថ្នាក់ទី១)">
+                            </div>
+                        </div>
+                        <div class="col-md-6" id="threeLangDurationCol">
+                            <label for="reg_studyDuration" class="form-label"><i
+                                    class="fi fi-rr-time-past me-1"></i>រយៈពេលសិក្សា (សម្រាប់ពេញម៉ោង)</label>
+                            <select class="form-select" id="reg_studyDuration">
+                                <option value="6">៦ខែ</option>
+                                <option value="12">១ឆ្នាំ</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Duration and Payment Information Display -->
+                    <div class="duration-display-box">
+                        <h5 class="section-title"><i class="fi fi-rr-calendar"></i> ព័ត៌មានរយៈពេលសិក្សា
+                            និងការបង់ប្រាក់</h5>
+                        <div class="duration-info-item">
+                            <span>រយៈពេលសិក្សា:</span>
+                            <span id="durationDisplay" class="duration-info-value">មិនទាន់បានជ្រើសរើស</span>
+                        </div>
+                        <div class="duration-info-item">
+                            <span>រយៈពេលបង់:</span>
+                            <span id="paymentDurationDisplay" class="duration-info-value">មិនទាន់បានជ្រើសរើស</span>
+                        </div>
+                        <div class="duration-info-item">
+                            <span>តម្លៃសិក្សា:</span>
+                            <span id="tuitionFeeDisplay" class="duration-info-value">$0.00</span>
+                        </div>
+                        <div class="duration-info-item">
+                            <span>កាលបរិច្ឆេទបង់ប្រាក់:</span>
+                            <span id="paymentDueDateDisplay" class="duration-info-value">មិនទាន់បានគណនា</span>
+                        </div>
+                    </div>
+
+
+
+                    <!-- ផ្នែកទី៧: ព័ត៌មានហិរញ្ញវត្ថុ -->
+                    <h4 class="section-title"><i class="fi fi-rr-dollar"></i> ព័ត៌មានហិរញ្ញវត្ថុ</h4>
+
+                    <!-- Manual fee input toggle -->
+                    <div class="manual-fee-input-section">
+                        <div class="manual-input-toggle">
+                            <label class="form-label fw-bold"><i
+                                    class="fi fi-rr-settings me-1"></i>ការកំណត់តម្លៃ:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="reg_enableManualFee">
+                                <label class="form-check-label" for="reg_enableManualFee">
+                                    បញ្ចូលតម្លៃដោយខ្លួនឯង
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="manualFeeFields" class="manual-input-fields">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-4">
+                                    <label for="reg_tuitionFee_manual" class="form-label"><i
+                                            class="fi fi-rr-money-bill-wave me-1"></i>ថ្លៃសិក្សា ($)</label>
+                                    <input type="number" step="0.01" class="form-control" id="reg_tuitionFee_manual"
+                                        value="0.00" min="0">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="reg_discount_manual" class="form-label"><i
+                                            class="fi fi-rr-label me-1"></i>បញ្ចុះតម្លៃ ($)</label>
+                                    <input type="number" step="0.01" class="form-control" id="reg_discount_manual"
+                                        value="0.00" min="0">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="reg_discountPercent_manual" class="form-label"><i
+                                            class="fi fi-rr-percentage me-1"></i>បញ្ចុះតម្លៃ (%)</label>
+                                    <input type="number" step="0.01" class="form-control"
+                                        id="reg_discountPercent_manual" value="0" min="0" max="100">
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-4">
+                                    <label for="reg_initialPayment_manual" class="form-label"><i
+                                            class="fi fi-rr-hand-holding-usd me-1"></i>បង់ដំបូង ($)</label>
+                                    <input type="number" step="0.01" class="form-control" id="reg_initialPayment_manual"
+                                        value="0.00" min="0">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="reg_materialFee_manual" class="form-label"><i
+                                            class="fi fi-rr-book me-1"></i>ថ្លៃសម្ភារៈ ($)</label>
+                                    <input type="number" step="0.01" class="form-control" id="reg_materialFee_manual"
+                                        value="0.00" min="0">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="reg_adminFee_manual" class="form-label"><i
+                                            class="fi fi-rr-user me-1"></i>ថ្លៃរដ្ឋបាល ($)</label>
+                                    <input type="number" step="0.01" class="form-control" id="reg_adminFee_manual"
+                                        value="0.00" min="0">
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="reg_studyDuration_manual" class="form-label"><i
+                                            class="fi fi-rr-time-forward me-1"></i>រយៈពេលសិក្សា (ខែ)</label>
+                                    <input type="number" class="form-control" id="reg_studyDuration_manual" value="0"
+                                        min="0" placeholder="ចំនួនខែសិក្សា">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="reg_adminServicesFee_manual" class="form-label"><i
+                                            class="fi fi-rr-settings-sliders me-1"></i>ថ្លៃសេវារដ្ឋបាល ($)</label>
+                                    <input type="number" step="0.01" class="form-control"
+                                        id="reg_adminServicesFee_manual" value="0.00" min="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ផ្នែកថ្លៃសិក្សាប្រចាំខែ -->
+                    <h5 class="section-title"><i class="fi fi-rr-graduation-cap"></i> ថ្លៃសិក្សា</h5>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label for="reg_tuitionFee" class="form-label"><i
+                                    class="fi fi-rr-money-check me-1"></i>ថ្លៃសិក្សា
+                                ($)</label>
+                            <input type="number" step="0.01" class="form-control" id="reg_tuitionFee" required
+                                value="0.00" min="0" readonly>
+                            <small class="form-text text-muted">តម្លៃនឹងត្រូវគណនាដោយស្វ័យប្រវត្តិតាមរយៈពេលសិក្សា</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="reg_paymentMonths" class="form-label"><i
+                                    class="fi fi-rr-calendar me-1"></i>ចំនួនខែត្រូវបង់</label>
+                            <!-- Dropdown for standard selection -->
+                            <select class="form-select" id="reg_paymentMonthsSelect" style="display: block;">
+                                <option value="1">1 ខែ</option>
+                                <option value="2">2 ខែ</option>
+                                <option value="3">3 ខែ</option>
+                                <option value="4">4 ខែ</option>
+                                <option value="5">5 ខែ</option>
+                                <option value="6">6 ខែ</option>
+                                <option value="7">7 ខែ</option>
+                                <option value="8">8 ខែ</option>
+                                <option value="9">9 ខែ</option>
+                                <option value="10">10 ខែ</option>
+                                <option value="11">11 ខែ</option>
+                                <option value="12">12 ខែ</option>
+                                <option value="24">24 ខែ</option>
+                                <option value="36">36 ខែ</option>
+                                <option value="48">48 ខែ (បង់ផ្តាច់)</option>
+                            </select>
+                            <!-- Manual input for custom months, initially hidden or used when manual fee text is checked -->
+                            <input type="number" class="form-control" id="reg_paymentMonthsManualInput"
+                                placeholder="ចំនួនខែ" style="display: none;" min="1" max="432">
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <label for="reg_discount" class="form-label"><i class="fi fi-rr-label me-1"></i>បញ្ចុះតម្លៃ
+                                ($)</label>
+                            <input type="number" step="0.01" class="form-control" id="reg_discount" value="0.00">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="reg_discountPercent" class="form-label"><i
+                                    class="fi fi-rr-percentage me-1"></i>បញ្ចុះតម្លៃ (%)</label>
+                            <input type="number" step="0.01" class="form-control" id="reg_discountPercent" value="0"
+                                min="0" max="100">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="reg_initialPayment" class="form-label"><i
+                                    class="fi fi-rr-hand-holding-usd me-1"></i>បង់ដំបូង ($)</label>
+                            <input type="number" step="0.01" class="form-control" id="reg_initialPayment" value="0.00">
+                        </div>
+                    </div>
+                    <!-- Standard Premium Fee Summary Dashboard -->
+                    <div class="registration-dashboard-summary mb-4">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="dashboard-stat-card primary">
+                                    <div class="stat-label">សរុបតម្លៃសេវា (TOTAL)</div>
+                                    <div class="stat-value" id="summaryTotalFees">$0.00</div>
+                                    <div class="stat-icon"><i class="fi fi-rr-calculator"></i></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="dashboard-stat-card success">
+                                    <div class="stat-label">បានបង់សរុប (PAID)</div>
+                                    <div class="stat-value" id="summaryPaid">$0.00</div>
+                                    <div class="stat-icon"><i class="fi fi-rr-hand-holding-usd"></i></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="dashboard-stat-card danger">
+                                    <div class="stat-label">ជំណាក់នៅសល់ (DEBT)</div>
+                                    <div class="stat-value" id="summaryBalance">$0.00</div>
+                                    <div class="stat-icon"><i class="fi fi-rr-money-bill-wave"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden old elements to maintain JS compatibility if IDs are strictly needed there -->
+                    <div style="display: none;">
+                        <span id="summaryTuitionFee"></span>
+                        <span id="summaryDiscountCash"></span>
+                        <span id="summaryDiscountPercent"></span>
+                        <span id="summaryNetTuition"></span>
+                    </div>
+
+                    <!-- ផ្នែកកាលបរិច្ឆេទបង់ប្រាក់ -->
+                    <h4 class="section-title"><i class="fi fi-rr-calendar"></i> កាលបរិច្ឆេទបង់ប្រាក់</h4>
+                    <div class="payment-months-section">
+                        <div class="row g-3">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label fw-bold d-block mb-2">កាលបរិច្ឆេទបង់ប្រាក់</label>
+                                <small
+                                    class="text-muted d-block mb-3">កាលបរិច្ឆេទនឹងត្រូវគណនាដោយស្វ័យប្រវត្តិតាមរយៈពេលសិក្សាដែលបានជ្រើសរើស</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="reg_startDate" class="form-label"><i
+                                        class="fi fi-rr-calendar-day me-1"></i>ថ្ងៃចូលរៀនដំបូង</label>
+                                <div class="date-input-icon">
+                                    <input type="text" class="form-control" id="reg_startDate" placeholder="DD/MM/YYYY">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="reg_paymentDueDate" class="form-label"><i
+                                        class="fi fi-rr-money-bill-wave-wave me-1"></i>កាលបរិច្ឆេទកំណត់បង់</label>
+                                <div class="date-input-icon">
+                                    <input type="text" class="form-control" id="reg_paymentDueDate"
+                                        placeholder="DD/MM/YYYY">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="alert alert-info mt-3">
+                                    <i class="fi fi-rr-info"></i>
+                                    <small>កាលបរិច្ឆេទកំណត់បង់នឹងត្រូវបានគណនាដោយស្វ័យប្រវត្តិពីថ្ងៃចូលរៀនដំបូង +
+                                        រយៈពេលសិក្សា។</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ផ្នែកទី៨: ព័ត៌មានមាតាបិតា/អ្នកអាណាព្យាបាល -->
+                    <h4 class="section-title"><i class="fi fi-rr-users"></i> ព័ត៌មានមាតាបិតា/អ្នកអាណាព្យាបាល</h4>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <label for="reg_guardianName" class="form-label"><i
+                                    class="fi fi-rr-shield-check me-1"></i>ឈ្មោះមាតាបិតា/អ្នកអាណាព្យាបាល</label>
+                            <input type="text" class="form-control" id="reg_guardianName" placeholder="បញ្ចូលឈ្មោះ">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="reg_guardianRelation" class="form-label"><i
+                                    class="fi fi-rr-heart me-1"></i>ទំនាក់ទំនងជាមួយសិស្ស</label>
+                            <select class="form-select" id="reg_guardianRelation">
+                                <option value="">ជ្រើសរើស...</option>
+                                <option value="ឪពុក">ឪពុក</option>
+                                <option value="ម្តាយ">ម្តាយ</option>
+                                <option value="បងប្រុស">បងប្រុស</option>
+                                <option value="បងស្រី">បងស្រី</option>
+                                <option value="ជីដូន">ជីដូន</option>
+                                <option value="ជីតា">ជីតា</option>
+                                <option value="អាណាព្យាបាល">អាណាព្យាបាល</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="reg_guardianPhone" class="form-label"><i
+                                    class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទ</label>
+                            <input type="text" class="form-control" id="reg_guardianPhone" placeholder="012 345 678">
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="reg_guardianAddress" class="form-label mb-0"><i
+                                        class="fi fi-rr-map me-1"></i>អាសយដ្ឋានស្នាក់នៅបច្ចុប្បន្ន</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="reg_guardianSameAddress">
+                                    <label class="form-check-label small text-muted" for="reg_guardianSameAddress">
+                                        ដូចអាសយដ្ឋានសិស្ស
+                                    </label>
+                                </div>
+                            </div>
+                            <textarea class="form-control" id="reg_guardianAddress" rows="2"
+                                placeholder="បញ្ចូលអាសយដ្ឋានពេញ"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- ផ្នែកទី៩: ព័ត៌មានអំពីឪពុក -->
+                    <h4 class="section-title"><i class="fi fi-rr-user"></i> ព័ត៌មានអំពីឪពុក</h4>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <label for="reg_fatherName" class="form-label"><i
+                                    class="fi fi-rr-user me-1"></i>ឪពុកឈ្មោះ</label>
+                            <input type="text" class="form-control" id="reg_fatherName" placeholder="បញ្ចូលឈ្មោះឪពុក">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="reg_fatherAge" class="form-label"><i
+                                    class="fi fi-rr-cake-birthday me-1"></i>អាយុ
+                                (ឆ្នាំ)</label>
+                            <input type="number" class="form-control" id="reg_fatherAge" placeholder="ឧ. ៤៥">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="reg_fatherJob" class="form-label"><i
+                                    class="fi fi-rr-briefcase me-1"></i>មុខរបរ</label>
+                            <input type="text" class="form-control" id="reg_fatherJob" placeholder="បញ្ចូលមុខរបរ">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="reg_fatherPhone" class="form-label"><i
+                                    class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទ</label>
+                            <input type="text" class="form-control" id="reg_fatherPhone" placeholder="012 345 678">
+                        </div>
+                        <div class="col-md-12">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="reg_fatherAddress" class="form-label mb-0"><i
+                                        class="fi fi-rr-marker me-1"></i>អាសយដ្ឋានបច្ចុប្បន្ន</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="reg_fatherSameAddress">
+                                    <label class="form-check-label small text-muted" for="reg_fatherSameAddress">
+                                        ដូចអាសយដ្ឋានសិស្ស
+                                    </label>
+                                </div>
+                            </div>
+                            <textarea class="form-control" id="reg_fatherAddress" rows="2"
+                                placeholder="បញ្ចូលអាសយដ្ឋានពេញ"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- ផ្នែកទី១០: ព័ត៌មានអំពីម្តាយ -->
+                    <h4 class="section-title"><i class="fi fi-rr-user"></i> ព័ត៌មានអំពីម្តាយ</h4>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <label for="reg_motherName" class="form-label"><i
+                                    class="fi fi-rr-user me-1"></i>ម្តាយឈ្មោះ</label>
+                            <input type="text" class="form-control" id="reg_motherName" placeholder="បញ្ចូលឈ្មោះម្តាយ">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="reg_motherAge" class="form-label"><i
+                                    class="fi fi-rr-cake-birthday me-1"></i>អាយុ
+                                (ឆ្នាំ)</label>
+                            <input type="number" class="form-control" id="reg_motherAge" placeholder="ឧ. ៤២">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="reg_motherJob" class="form-label"><i
+                                    class="fi fi-rr-briefcase me-1"></i>មុខរបរ</label>
+                            <input type="text" class="form-control" id="reg_motherJob" placeholder="ឧ. មេផ្ទះ">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="reg_motherPhone" class="form-label"><i
+                                    class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទ</label>
+                            <input type="text" class="form-control" id="reg_motherPhone" placeholder="012 345 678">
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="reg_motherAddress" class="form-label mb-0"><i
+                                        class="fi fi-rr-marker me-1"></i>អាសយដ្ឋានបច្ចុប្បន្ន</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="reg_motherSameAddress">
+                                    <label class="form-check-label small text-muted" for="reg_motherSameAddress">
+                                        ដូចអាសយដ្ឋានសិស្ស
+                                    </label>
+                                </div>
+                            </div>
+                            <textarea class="form-control" id="reg_motherAddress" rows="2"
+                                placeholder="បញ្ចូលអាសយដ្ឋានពេញ"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- ផ្នែកទី១១: ព័ត៌មានអ្នកមកទទួល -->
+                    <h4 class="section-title"><i class="fi fi-rr-user-check"></i> ព័ត៌មានអ្នកមកទទួល</h4>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label for="reg_pickerName" class="form-label"><i
+                                    class="fi fi-rr-user me-1"></i>អ្នកមកទទួល</label>
+                            <input type="text" class="form-control" id="reg_pickerName"
+                                placeholder="បញ្ចូលឈ្មោះអ្នកមកទទួល">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="reg_pickerPhone" class="form-label"><i
+                                    class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទ</label>
+                            <input type="text" class="form-control" id="reg_pickerPhone" placeholder="012 345 678">
+                        </div>
+                    </div>
+
+                    <!-- ផ្នែកទី១២: ប៊ូតុងសកម្មភាព -->
+                    <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-4 pt-3 border-top">
+                        <button type="submit" class="btn btn-pink-primary btn-lg" id="submitBtn">
+                            <i class="fi fi-rr-paper-plane"></i> បញ្ជូនទម្រង់ចុះឈ្មោះ
+                        </button>
+                        <button type="button" class="btn btn-warning btn-lg" id="updateBtn" style="display: none;">
+                            <i class="fi fi-rr-disk"></i> រក្សាទុកការកែសម្រួល
+                        </button>
+                        <button type="button" class="btn btn-info btn-lg" id="cancelEditBtn" style="display: none;">
+                            <i class="fi fi-rr-cross"></i> ថ្ងាក់ចេញពីការកែសម្រួល
+                        </button>
+                        <button type="reset" class="btn btn-secondary btn-lg" id="resetBtn">
+                            <i class="fi fi-rr-eraser"></i> សម្អាតទម្រង់
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer mt-5 py-4 border-top bg-white text-center text-muted position-relative"
+            style="font-size: 0.9rem; z-index: 100;">
+            <div class="container">
+                <div class="mb-3">
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទីតាំងទី២ របស់សាលា:</span>
+                        ភូមិក្រាំង សង្កាត់ក្រាំងអំពិល ក្រុងកំពត ខេត្តកំពត
+                    </div>
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទំនាក់ទំនង:</span>
+                        <span class="me-2"><i class="fi fi-rr-smartphone me-1 text-primary"></i>093 835 678
+                            (Smart)</span>
+                        <a href="https://t.me/Tian093835678" target="_blank" class="text-decoration-none">
+                            <i class="fi fi-brands-telegram me-1 text-primary"></i>Telegram
+                        </a>
+                    </div>
+                </div>
+
+                <div class="w-75 mx-auto border-top my-3 opacity-25"></div>
+
+                <div class="footer-update-time mb-1">
+                    <i class="fi fi-rr-clock me-1"></i>កាលបរិច្ឆេទចុងក្រោយ: <span id="last-update-time">...</span>
+                </div>
+                <div class="footer-copyright">
+                    ©
+                    <script>document.write(new Date().getFullYear())</script> គ្រប់គ្រងសាលា. Developed by <span
+                        class="fw-bold text-pink-primary">មាស មករា</span>.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Study Time Management Modal -->
+    <div class="modal fade" id="studyTimeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header text-white border-0"
+                    style="background: linear-gradient(135deg, #6f42c1, #8e44ad);">
+                    <h5 class="modal-title">
+                        <i class="fi fi-rr-settings-sliders me-2"></i>គ្រប់គ្រងម៉ោងសិក្សា
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="card border-0 bg-light mb-4 shadow-sm">
+                        <div class="card-body">
+                            <label class="form-label fw-bold mb-2">បន្ថែមម៉ោងសិក្សាថ្មី</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0"><i
+                                        class="fi fi-rr-clock"></i></span>
+                                <input type="text" id="new-study-time" class="form-control border-start-0"
+                                    placeholder="ឧ៖ 7:30-9:30">
+                                <button class="btn btn-primary px-3" onclick="addStudyTime()"
+                                    style="background: #6f42c1; border-color: #6f42c1;">
+                                    <i class="fi fi-rr-add me-1"></i>បន្ថែម
+                                </button>
+                                <button class="btn btn-outline-info px-3" onclick="syncStudentStudyHours()">
+                                    <i class="fi fi-rr-refresh me-1"></i>ទាញយក
+                                </button>
+                            </div>
+                            <small class="text-muted mt-2 d-block">បញ្ជាក់៖
+                                ម៉ោងសិក្សានេះនឹងបង្ហាញក្នុងបញ្ជីជ្រើសរើសសម្រាប់បុគ្គលិក និងសិស្ស។</small>
+                        </div>
+                    </div>
+
+                    <label class="form-label fw-bold mb-3"><i
+                            class="fi fi-rr-list-check me-2"></i>បញ្ជីម៉ោងសិក្សាដែលមានស្រាប់</label>
+                    <div id="study-time-list" class="list-group list-group-flush rounded-3 border shadow-sm"
+                        style="max-height: 400px; overflow-y: auto;">
+                        <div class="text-center py-4 text-muted">កំពុងទាញយកទិន្នន័យ...</div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">បិទ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Students in Time Modal -->
+    <div class="modal fade" id="studentsInTimeModal" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-info text-white border-0">
+                    <h5 class="modal-title">
+                        <i class="fi fi-rr-users me-2"></i>បញ្ជីសិស្សសិក្សាម៉ោង <span id="view-time-label"></span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-primary rounded-pill px-3" id="student-count-badge">0 នាក់</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <label class="small fw-bold text-nowrap">ប្តូរទៅម៉ោង៖</label>
+                            <select id="move-to-time-select" class="form-select form-select-sm" style="width: 150px;">
+                                <option value="">ជ្រើសរើសម៉ោង...</option>
+                            </select>
+                            <button class="btn btn-sm btn-warning" onclick="moveStudentsBulk()">ប្តូរម៉ោង</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive" style="max-height: 50vh;">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 40px;"><input type="checkbox" id="select-all-students-in-time"
+                                            onchange="toggleSelectAllStudentsInTime(this)"></th>
+                                    <th>ឈ្មោះសិស្ស</th>
+                                    <th>ភេទ</th>
+                                    <th>ប្រភេទសិក្សា</th>
+                                    <th>គ្រូបង្គោល</th>
+                                </tr>
+                            </thead>
+                            <tbody id="students-in-time-list">
+                                <!-- Injected by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0 mt-3">
+                    <button type="button" class="btn btn-secondary px-4"
+                        onclick="closeStudentsInTimeModal()">ត្រឡប់ក្រោយ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Universal Management Modal (Standardized for Levels, Classes, Rooms) -->
+    <div class="modal fade" id="managementModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; overflow: hidden;">
+                <div id="mgmt-header" class="modal-header text-white border-0">
+                    <h5 class="modal-title">
+                        <i id="mgmt-icon" class="fi fi-rr-settings me-2"></i>
+                        <span id="mgmt-title">គ្រប់គ្រង</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-4">
+                        <label id="mgmt-input-label"
+                            class="form-label fw-bold small text-muted text-uppercase mb-2">បន្ថែមថ្មី</label>
+                        <div class="input-group shadow-sm mb-3">
+                            <span class="input-group-text bg-white border-end-0"><i id="mgmt-input-icon"
+                                    class="fi fi-rr-add"></i></span>
+                            <input type="text" id="mgmt-input" class="form-control border-start-0"
+                                placeholder="បូកបញ្ចូលថ្មី...">
+                            <button id="mgmt-add-btn" class="btn btn-primary px-3">
+                                <i class="fi fi-rr-plus me-1"></i>បន្ថែម
+                            </button>
+                            <button id="mgmt-sync-btn" class="btn btn-outline-info px-3">
+                                <i class="fi fi-rr-refresh me-1"></i>ទាញយក
+                            </button>
+                        </div>
+
+                        <!-- Search in Management -->
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-light border-end-0"><i class="fi fi-rr-search"></i></span>
+                            <input type="text" id="mgmt-search" class="form-control border-start-0 bg-light"
+                                placeholder="ស្វែងរកក្នុងបញ្ជី..." onkeyup="filterManagementList(this.value)">
+                        </div>
+                    </div>
+
+                    <label class="form-label fw-bold small text-muted text-uppercase mb-3">បញ្ជីដែលមានស្រាប់</label>
+                    <div id="mgmt-list" class="list-group list-group-flush rounded-3 border overflow-auto"
+                        style="max-height: 350px;">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">បិទ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="/js/core/firebase-config.js"></script>
+    <script src="/js/core/cloudflare-r2.js"></script>
+    <script src="/js/core/auth-check.js"></script>
+    <script src="/js/core/receiver-utils.js"></script>
+    <script src="/js/core/sidebar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="/js/pages/system-management.js"></script>
+    <script src="/js/pages/registration.js"></script>
+    <script src="/js/core/offline-manager.js"></script>
+
+</body>
+
+</html>
+

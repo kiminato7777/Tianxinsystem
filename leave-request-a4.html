@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ពាក្យសុំច្បាប់ - Form</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .no-print-area {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .print-btn {
+            padding: 12px 24px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .print-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .page-container {
+            width: 210mm;
+            min-height: 297mm;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+
+            body {
+                background-color: white;
+            }
+
+            .no-print-area {
+                display: none;
+            }
+
+            .page-container {
+                box-shadow: none;
+                width: 210mm;
+                height: 297mm;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="no-print-area">
+        <button class="print-btn" onclick="window.print()">បោះពុម្ព (Print)</button>
+    </div>
+
+    <div class="page-container">
+        <img src="/img/AC.jpg" alt="ពាក្យសុំច្បាប់" class="form-image">
+    </div>
+</body>
+
+</html>

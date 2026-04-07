@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>គ្រប់គ្រងអវត្តមានប្រចាំថ្ងៃ - Daily Attendance</title>
+    <link rel="icon" type="image/jpeg" href="/img/1.jpg">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons Section -->
+    <link rel="preload" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"
+        as="style">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="/css/loader.css">
+    <script src="/js/core/loader-init.js"></script>
+
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Firebase SDKs (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    
+    <!-- Core Config & Security -->
+    <script src="/js/core/firebase-config.js"></script>
+    <script src="/js/core/auth-check.js"></script>
+    <script src="/js/core/sidebar.js"></script>
+
+    <style>
+        * {
+            font-family: 'Kantumruy Pro', sans-serif;
+        }
+
+        body {
+            background-color: var(--bs-body-bg);
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        #main-content {
+            flex-grow: 1;
+            padding: 20px 30px;
+            background-color: transparent;
+            margin-left: 250px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+        }
+
+        body.sidebar-collapsed #main-content {
+            margin-left: 70px;
+        }
+
+        .premium-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            background: white;
+            overflow: hidden;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease;
+        }
+
+        .header-section {
+            background: white;
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(138, 14, 91, 0.1);
+        }
+
+        .header-title-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            width: 55px;
+            height: 55px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #eee;
+        }
+
+        .header-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .stat-card {
+            padding: 20px;
+            border-radius: 18px;
+            text-align: center;
+            color: white;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card.total {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        }
+
+        .stat-card.present {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .stat-card.excused {
+            background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+        }
+
+        .stat-card.absent {
+            background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+        }
+
+        .stat-num {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 2px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .filter-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        /* Updated Status Radio Design */
+        .status-radio-group {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .status-btn {
+            cursor: pointer;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.85rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            background: #f8f9fa;
+            color: #adb5bd;
+            user-select: none;
+        }
+
+        .status-radio-btn input {
+            display: none;
+        }
+
+        /* Present - P */
+        .status-radio-btn input[value="P"]:checked+.status-btn {
+            background: rgba(25, 135, 84, 0.1);
+            color: #198754;
+            border-color: #198754;
+            box-shadow: 0 4px 10px rgba(25, 135, 84, 0.2);
+        }
+
+        /* Before - B */
+        .status-radio-btn input[value="B"]:checked+.status-btn {
+            background: rgba(255, 193, 7, 0.1);
+            color: #d39e00;
+            border-color: #ffc107;
+            box-shadow: 0 4px 10px rgba(255, 193, 7, 0.2);
+        }
+
+        /* Compensated - S */
+        .status-radio-btn input[value="S"]:checked+.status-btn {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+            border-color: #6c757d;
+            box-shadow: 0 4px 10px rgba(108, 117, 125, 0.2);
+        }
+
+        /* Absent - A */
+        .status-radio-btn input[value="A"]:checked+.status-btn {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border-color: #dc3545;
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.2);
+        }
+
+        .attendance-table {
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .attendance-table tr {
+            transition: all 0.2s;
+            border-radius: 12px;
+        }
+
+        .attendance-table tbody tr {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .attendance-table tbody tr:hover {
+            transform: scale(1.005);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            background: #fff;
+            z-index: 10;
+        }
+
+        .attendance-table th {
+            background: #f8f9fa !important;
+            color: #888 !important;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none !important;
+            padding: 15px !important;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .attendance-table td {
+            border: none !important;
+            padding: 12px 15px !important;
+        }
+
+        .attendance-table td:first-child {
+            border-radius: 12px 0 0 12px;
+        }
+
+        .attendance-table td:last-child {
+            border-radius: 0 12px 12px 0;
+        }
+
+        /* Row status indicators */
+        .row-absent {
+            border-left: 5px solid #dc3545 !important;
+        }
+
+        .row-before {
+            border-left: 5px solid #ffc107 !important;
+        }
+
+        .row-compensated {
+            border-left: 5px solid #6c757d !important;
+        }
+
+        .row-present {
+            border-left: 5px solid #198754 !important;
+        }
+
+        .hover-pink:hover {
+            color: var(--bs-pink-primary) !important;
+        }
+
+        .pointer {
+            cursor: pointer;
+        }
+
+        /* Floating Stats Bar */
+        .floating-stats-badge {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 1000;
+            border: 1px solid rgba(138, 14, 91, 0.1);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @media print {
+
+            .app-sidebar,
+            .floating-stats-badge,
+            .btn-attendance-save,
+            .premium-card:not(.attendance-table-card) {
+                display: none !important;
+            }
+
+            #main-content {
+                margin-left: 0 !important;
+                padding: 0 !important;
+            }
+
+            .premium-card {
+                box-shadow: none !important;
+                border: 1px solid #eee !important;
+            }
+        }
+
+        .floating-stats-badge:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .radio-p input:checked+.status-radio-box {
+            background-color: #d1e7dd;
+            border-color: #198754;
+            color: #198754;
+        }
+
+        /* Excused Before - B */
+        .radio-b input:checked+.status-radio-box {
+            background-color: #fff3cd;
+            border-color: #ffc107;
+            color: #997404;
+        }
+
+        /* Excused Compensated - S */
+        .radio-s input:checked+.status-radio-box {
+            background-color: #e2e3e5;
+            border-color: #6c757d;
+            color: #41464b;
+        }
+
+        /* Absent - A */
+        .radio-a input:checked+.status-radio-box {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #842029;
+        }
+
+        /* Full row coloring based on status */
+        .row-present {
+            background-color: rgba(25, 135, 84, 0.03) !important;
+        }
+
+        .row-before {
+            background-color: rgba(255, 193, 7, 0.03) !important;
+        }
+
+        .row-compensated {
+            background-color: rgba(108, 117, 125, 0.03) !important;
+        }
+
+        .row-absent {
+            background-color: rgba(220, 53, 69, 0.05) !important;
+        }
+
+        .attendance-table tr {
+            transition: all 0.2s ease;
+            cursor: default;
+        }
+
+        .attendance-table tr:hover {
+            background-color: #fcf6f9 !important;
+        }
+
+        /* Progress section */
+        .progress-container {
+            height: 8px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #8a0e5b, #c2185b);
+            transition: width 0.5s ease;
+        }
+
+        .status-cell {
+            padding: 0 !important;
+            height: 100%;
+        }
+
+        .status-clickable {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .status-clickable:hover {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .status-clickable input {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 0;
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+
+        .search-container input {
+            padding-left: 40px !important;
+        }
+
+        .form-control-premium {
+            border-radius: 12px;
+            padding: 10px 15px;
+            border: 1.5px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .form-control-premium:focus {
+            border-color: var(--bs-pink-primary);
+            box-shadow: 0 0 0 4px rgba(138, 14, 91, 0.1);
+        }
+
+        .btn-attendance-save {
+            background: var(--bs-pink-primary);
+            color: white;
+            border-radius: 12px;
+            padding: 12px 30px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(138, 14, 91, 0.3);
+        }
+
+        .btn-attendance-save:hover {
+            background: var(--bs-pink-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(138, 14, 91, 0.4);
+            color: white;
+        }
+
+        .absence-count-badge {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .badge-none {
+            background: #eee;
+            color: #666;
+        }
+
+        .badge-low {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Standard Dynamic Summary */
+        .icon-box-standard {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(138, 14, 91, 0.1);
+        }
+
+        .label-muted {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .value-bold {
+            font-size: 1.05rem;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        .shadow-premium {
+            box-shadow: 0 5px 15px rgba(138, 14, 91, 0.3);
+        }
+
+        .text-pink-dark {
+            color: #5d0a3d !important;
+        }
+
+        .border-light-subtle {
+            border-color: #f1f1f1 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Animated Butterflies -->
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+
+    <!-- Sidebar Container -->
+    <div id="sidebar"></div>
+
+    <script src="/js/core/sidebar.js"></script>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Dashboard Top Header (Toggle & Fullscreen) -->
+        <div
+            class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 animate__animated animate__fadeInDown">
+            <div class="mb-3 mb-md-0 d-flex align-items-center gap-3">
+                <button
+                    class="btn btn-light rounded-circle shadow-sm d-none d-lg-flex align-items-center justify-content-center"
+                    onclick="toggleDesktopSidebar()" title="បង្រួម/ពង្រីក Sidebar"
+                    style="width: 45px; height: 45px; border: 1px solid #eee; background: white;">
+                    <i class="fi fi-rr-menu-burger" style="font-size: 1rem; color: #8a0e5b;"></i>
+                </button>
+                <button
+                    class="btn btn-light rounded-circle shadow-sm d-none d-lg-flex align-items-center justify-content-center"
+                    onclick="toggleFullScreen()" title="ពេញអេក្រង់"
+                    style="width: 45px; height: 45px; border: 1px solid #eee; background: white;">
+                    <i class="fi fi-rr-expand" style="font-size: 1rem; color: #8a0e5b;"></i>
+                </button>
+                <div>
+                    <h2 class="fw-bold text-pink-dark mb-1">
+                        <i class="fi fi-rr-calendar-check me-2"></i>អវត្តមានប្រចាំថ្ងៃ
+                    </h2>
+                    <p class="text-muted mb-0" style="font-size: 1.05rem;">
+                        សួស្ដី! លោកគ្រូ <span id="welcome-user-name" class="fw-bold text-pink-primary">User</span>
+                        សូមស្វាគមន៍មកកាន់ការគ្រប់គ្រងអវត្តមាន។
+                    </p>
+                </div>
+            </div>
+            <!-- Current Date/Time Info (Like Dashboard) -->
+            <div
+                class="text-center text-md-end bg-white p-3 rounded-4 shadow-sm border border-light animate__animated animate__fadeInRight">
+                <h5 class="fw-bold text-pink-primary mb-0" id="current-khmer-date" style="letter-spacing: 0.5px;">...
+                </h5>
+                <i class="fi fi-rr-clock me-1"></i><span id="current-time-display">កំពុងទាញយក...</span>
+                <span id="current-english-date" class="d-none"></span>
+            </div>
+        </div>
+
+        <!-- ផ្នែកត្រួតពិនិត្យ និងរៀបចំថ្នាក់ (Premium Dynamic Class Summary) -->
+        <div class="premium-card mb-4 animate__animated animate__fadeIn">
+            <div class="card-body p-4">
+                <div class="row align-items-center">
+                    <div class="col-lg-9">
+                        <div class="d-flex flex-wrap gap-4">
+                            <div class="d-flex align-items-center">
+                                <div class="icon-box-standard bg-pink-light text-pink-primary me-3">
+                                    <i class="fi fi-rr-clock"></i>
+                                </div>
+                                <div class="summary-item">
+                                    <div class="label-muted">ម៉ោងសិក្សា</div>
+                                    <div class="value-bold text-pink-dark" id="display-study-time">សូមជ្រើសរើស...</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center border-start ps-4 border-light-subtle">
+                                <div class="icon-box-standard bg-pink-light text-pink-primary me-3">
+                                    <i class="fi fi-rr-user-tie"></i>
+                                </div>
+                                <div class="summary-item">
+                                    <div class="label-muted">ឈ្មោះគ្រូ</div>
+                                    <div class="value-bold text-pink-dark" id="display-teacher">សូមជ្រើសរើស...</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center border-start ps-4 border-light-subtle">
+                                <div class="icon-box-standard bg-pink-light text-pink-primary me-3">
+                                    <i class="fi fi-rr-marker"></i>
+                                </div>
+                                <div class="summary-item">
+                                    <div class="label-muted">បន្ទប់រៀន</div>
+                                    <div class="value-bold text-pink-dark" id="display-classroom">សូមជ្រើសរើស...</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center border-start ps-4 border-light-subtle">
+                                <div class="icon-box-standard bg-pink-light text-pink-primary me-3">
+                                    <i class="fi fi-rr-book-open-reader"></i>
+                                </div>
+                                <div class="summary-item">
+                                    <div class="label-muted">មុខវិជ្ជា/មេរៀន</div>
+                                    <div class="value-bold text-pink-dark" id="display-subject">-</div>
+                                </div>
+                            </div>
+                            <div
+                                class="d-flex align-items-center border-start ps-4 border-light-subtle d-none d-xl-flex">
+                                <div class="icon-box-standard bg-pink-light text-pink-primary me-3">
+                                    <i class="fi fi-rr-calendar"></i>
+                                </div>
+                                <div class="summary-item">
+                                    <div class="label-muted">កាលបរិច្ឆេទ</div>
+                                    <div class="value-bold text-pink-dark" id="display-date">...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 text-lg-end mt-3 mt-lg-0">
+                        <button class="btn btn-pink-primary rounded-pill px-4 py-2 fw-bold shadow-premium"
+                            data-bs-toggle="modal" data-bs-target="#setupClassModal">
+                            <i class="fi fi-rr-settings-sliders me-2"></i> បញ្ចូលអវត្តមាន
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ស្ថិតិសរុប (Attendance Stats Cards - Inputable as requested) -->
+        <div class="row g-3 mb-4 animate__animated animate__fadeIn">
+            <div class="col-md col-6">
+                <div class="stat-card shadow-sm border-0 rounded-4 p-3 bg-white text-center">
+                    <div class="small text-muted mb-1">សិស្សសរុប</div>
+                    <input type="number" id="stat-total"
+                        class="h4 fw-bold text-primary mb-0 border-0 bg-transparent text-center w-100 p-0 shadow-none"
+                        value="0">
+                </div>
+            </div>
+            <div class="col-md col-6">
+                <div
+                    class="stat-card shadow-sm border-0 rounded-4 p-3 bg-white text-center border-start border-success border-4">
+                    <div class="small text-muted mb-1">មករៀន</div>
+                    <input type="number" id="stat-present"
+                        class="h4 fw-bold text-success mb-0 border-0 bg-transparent text-center w-100 p-0 shadow-none"
+                        value="0">
+                </div>
+            </div>
+            <div class="col-md col-4">
+                <div
+                    class="stat-card shadow-sm border-0 rounded-4 p-3 bg-white text-center border-start border-warning border-4">
+                    <div class="small text-muted mb-1">ច្បាប់មុន</div>
+                    <input type="number" id="stat-before"
+                        class="h4 fw-bold text-warning mb-0 border-0 bg-transparent text-center w-100 p-0 shadow-none"
+                        value="0">
+                </div>
+            </div>
+            <div class="col-md col-4">
+                <div
+                    class="stat-card shadow-sm border-0 rounded-4 p-3 bg-white text-center border-start border-secondary border-4">
+                    <div class="small text-muted mb-1">ច្បាប់សង</div>
+                    <input type="number" id="stat-compensated"
+                        class="h4 fw-bold text-secondary mb-0 border-0 bg-transparent text-center w-100 p-0 shadow-none"
+                        value="0">
+                </div>
+            </div>
+            <div class="col-md col-4">
+                <div
+                    class="stat-card shadow-sm border-0 rounded-4 p-3 bg-white text-center border-start border-danger border-4">
+                    <div class="small text-muted mb-1">អត់ call</div>
+                    <input type="number" id="stat-absent"
+                        class="h4 fw-bold text-danger mb-0 border-0 bg-transparent text-center w-100 p-0 shadow-none"
+                        value="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- ផ្នែកទាញយករបាយការណ៍ (Premium Report Center) -->
+        <div class="premium-card mb-4 animate__animated animate__fadeInUp">
+            <div class="card-body p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-box bg-pink-light text-pink-primary me-3">
+                                <i class="fi fi-rr-document"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">ទាញយករបាយការណ៍អវត្តមាន</h6>
+                                <p class="text-muted small mb-0">លោកអ្នកអាចទាញយកជាឯកសារ Excel ឬ PDF សម្រាប់ថ្នាក់នេះ</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex gap-3 justify-content-md-end">
+                            <button
+                                class="btn btn-outline-success rounded-pill px-4 py-2 fw-bold d-flex align-items-center shadow-sm"
+                                onclick="exportToExcel()">
+                                <i class="fi fi-rr-file-excel me-2 fs-5"></i> ទាញយកជា Excel
+                            </button>
+                            <button
+                                class="btn btn-outline-danger rounded-pill px-4 py-2 fw-bold d-flex align-items-center shadow-sm"
+                                onclick="exportToPDF()">
+                                <i class="fi fi-rr-file-pdf me-2 fs-5"></i> ទាញយកជា PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Data Table Container -->
+        <div class="premium-card animate__animated animate__fadeInUp">
+            <div class="card-header bg-white py-4 px-4 border-bottom">
+                <div class="row align-items-center g-3">
+                    <div class="col-md-6">
+                        <h5 class="mb-1 fw-bold d-flex align-items-center gap-2">
+                            <i class="fi fi-rr-list text-pink-primary"></i>
+                            បញ្ជីឈ្មោះសិស្ស៖ <span id="dynamic-table-title"
+                                class="text-muted">សូមជ្រើសរើសថ្នាក់...</span>
+                        </h5>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="progress-container flex-grow-1 mb-0" style="height: 6px;">
+                                <div class="progress-bar" id="attendance-progress" style="width: 0%"></div>
+                            </div>
+                            <span class="small fw-bold text-pink-primary" id="completion-text"
+                                style="min-width: 60px;">កត់បាន: ០%</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-md-end gap-2 align-items-center">
+                        <div class="position-relative search-container flex-grow-1" style="max-width: 250px;">
+                            <i class="fi fi-rr-search"></i>
+                            <input type="text" id="studentSearch" class="form-control form-control-premium"
+                                placeholder="ស្វែងរកឈ្មោះសិស្ស...">
+                        </div>
+                        <button class="btn btn-pink-primary rounded-pill px-4 shadow-sm fw-bold"
+                            onclick="openSearchModal()">
+                            <i class="fi fi-rr-plus-circle me-2"></i> ចុះវត្តមានសិស្ស
+                        </button>
+                        <button class="btn btn-outline-primary rounded-pill px-3 fw-bold" onclick="markAllPresent()">
+                            <i class="fi fi-rr-check me-1"></i> វត្តមានទាំងអស់
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover attendance-table mb-0">
+                        <thead>
+                            <tr>
+                                <th width="60" class="text-center">ល.រ</th>
+                                <th width="110">ម៉ោងសិក្សា</th>
+                                <th width="130">ឈ្មោះគ្រូ</th>
+                                <th width="100" class="text-center">សិស្សសរុប</th>
+                                <th width="180" class="text-center">ស្ថានភាពវត្តមាន (Status)</th>
+                                <th width="180">ឈ្មោះសិស្ស</th>
+                                <th>មូលហេតុ</th>
+                                <th width="120" class="text-center">អវត្តមាន/ខែ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody">
+                            <tr>
+                                <td colspan="8" class="py-5 text-center text-muted">
+                                    <div class="spinner-border text-pink-primary mb-3" role="status"></div>
+                                    <div>កំពុងទាញយកទិន្នន័យ...</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-white py-4 text-center border-top">
+                <button class="btn btn-attendance-save" onclick="saveAttendance()">
+                    <i class="fi fi-rr-disk me-2"></i> រក្សាសុីទុកទិន្នន័យអវត្តមាន (Save Attendance)
+                </button>
+            </div>
+        </div>
+
+        <!-- Floating Status Bar -->
+        <div class="floating-stats-badge d-none d-md-flex" id="floatingStatsBadge">
+            <div class="d-flex align-items-center">
+                <div class="small text-muted me-2">វឌ្ឍនភាព:</div>
+                <div class="fw-bold text-pink-primary" id="floating-progress">០%</div>
+            </div>
+            <div class="vr mx-2"></div>
+            <div class="d-flex align-items-center">
+                <i class="fi fi-rr-users me-2 text-primary"></i>
+                <div class="fw-bold" id="floating-total">0</div>
+            </div>
+            <div class="d-flex align-items-center text-success">
+                <i class="fi fi-rr-check-circle me-2"></i>
+                <div class="fw-bold" id="floating-present">0</div>
+            </div>
+            <div class="d-flex align-items-center text-danger">
+                <i class="fi fi-rr-cross-circle me-2"></i>
+                <div class="fw-bold" id="floating-absent">0</div>
+            </div>
+            <button class="btn btn-pink-primary rounded-pill px-4 ms-3" onclick="saveAttendance()">
+                <i class="fi fi-rr-disk me-2"></i> រក្សាទុក
+            </button>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer mt-5 py-4 border-top bg-white text-center text-muted position-relative"
+            style="font-size: 0.9rem; z-index: 100;">
+            <div class="container">
+                <div class="mb-3">
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទីតាំងទី២ របស់សាលា:</span>
+                        ភូមិក្រាំង សង្កាត់ក្រាំងអំពិល ក្រុងកំពត ខេត្តកំពត
+                    </div>
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទំនាក់ទំនង:</span>
+                        <span class="me-2"><i class="fi fi-rr-smartphone me-1 text-primary"></i>093 835 678
+                            (Smart)</span>
+                        <a href="https://t.me/Tian093835678" target="_blank" class="text-decoration-none">
+                            <i class="fi fi-brands-telegram me-1 text-primary"></i>Telegram
+                        </a>
+                    </div>
+                </div>
+
+                <div class="w-75 mx-auto border-top my-3 opacity-25"></div>
+
+                <div class="footer-update-time mb-1">
+                    <i class="fi fi-rr-clock me-1"></i>កាលបរិច្ឆេទចុងក្រោយ: <span id="last-update-time">...</span>
+                </div>
+                <div class="footer-copyright">
+                    ©
+                    <script>document.write(new Date().getFullYear())</script> គ្រប់គ្រងសាលា. Developed by <span
+                        class="fw-bold text-pink-primary">មាស មករា</span>.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <!-- Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- App Logic -->
+    <script src="/js/utils/khmer-font.js"></script>
+    <script src="/js/pages/daily-attendance.js"></script>
+    <script src="/js/core/offline-manager.js"></script>
+
+    <script>
+        // Standard Topbar Clock & Welcome Logic
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+            const timeElem = document.getElementById('current-time-display');
+            if (timeElem) timeElem.innerHTML = `<i class="fi fi-rr-clock me-1"></i> ${timeStr}`;
+        }
+
+        function updateWelcomeUser() {
+            try {
+                const sessionData = localStorage.getItem('userSession');
+                if (sessionData) {
+                    const user = JSON.parse(sessionData);
+                    const name = user.name || user.email?.split('@')[0] || 'អ្នកប្រើប្រាស់';
+                    const welcomeNameElem = document.getElementById('welcome-user-name');
+                    if (welcomeNameElem) welcomeNameElem.textContent = name;
+                }
+            } catch (e) { console.error('Error user session', e); }
+        }
+
+        function toggleDesktopSidebar() {
+            document.body.classList.toggle('sidebar-collapsed');
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+        updateWelcomeUser();
+        setTimeout(updateWelcomeUser, 1500);
+    </script>
+    <!-- Modal សម្រាប់បញ្ចូលព័ត៌មានអវត្តមាន (Attendance Entry Modal) -->
+    <div class="modal fade" id="attendanceModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden bg-light">
+                <!-- Modern Header -->
+                <div class="modal-header border-0 pb-4 pt-4 px-4 position-relative" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
+                    <div class="position-absolute top-0 end-0 bottom-0 opacity-25 pointer-events-none" style="width: 150px; background: radial-gradient(circle, #8a0e5b 10%, transparent 10%) 0 0 / 10px 10px;"></div>
+                    <div class="d-flex align-items-center w-100 position-relative z-1">
+                        <div class="bg-white rounded-4 shadow-sm d-flex align-items-center justify-content-center flex-shrink-0 me-3 border" style="width: 55px; height: 55px; border-color: rgba(138,14,91,0.08) !important;">
+                            <i class="fi fi-rr-edit fs-3" style="background: linear-gradient(135deg, #8a0e5b 0%, #c01880 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-warning border border-light rounded-circle" style="width: 12px; height: 12px;"></span>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h4 class="modal-title fw-bolder mb-1" style="color: #1e293b; letter-spacing: -0.5px; font-size: 1.25rem;">ចុះមានវត្តមានសិស្ស</h4>
+                            <p class="mb-0 text-muted fw-medium" style="font-size: 0.85rem; letter-spacing: 0.2px;">Single Student Entry</p>
+                        </div>
+                        <button type="button" class="btn-close ms-2 rounded-circle shadow-sm" data-bs-dismiss="modal" style="font-size: 0.75rem; background-color: #ffffff; padding: 10px;"></button>
+                    </div>
+                </div>
+
+                <div class="modal-body p-4 pt-4 position-relative bg-white">
+                    <div class="position-absolute top-0 start-50 translate-middle-x bg-secondary bg-opacity-10 rounded-pill" style="width: 40px; height: 4px; margin-top: -12px;"></div>
+                    
+                    <form id="attendanceEntryForm">
+                        <input type="hidden" id="modalStudentId">
+                        <input type="hidden" id="modalTotalInput" value="0">
+                        <input type="hidden" id="modalPresentInput" value="0">
+
+                        <!-- Section 1: Session Info -->
+                        <div class="px-4 py-3 rounded-4 mb-4 border" style="background-color: #f8fafc; border-color: #f1f5f9 !important;">
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-muted mb-1"><i class="fi fi-rr-clock me-1 text-primary"></i> ម៉ោង (Time)</label>
+                                    <div id="modalTime" class="fw-bold text-pink-dark fs-6">-</div>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-muted mb-1"><i class="fi fi-rr-user-tie me-1 text-primary"></i> គ្រូ (Teacher)</label>
+                                    <div id="modalTeacher" class="fw-bold text-pink-dark fs-6">-</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Student Identity -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted mb-2"><i class="fi fi-rr-graduation-cap me-1 text-primary"></i> ឈ្មោះសិស្ស (Student Name)</label>
+                            <input type="text" id="modalName" class="form-control form-control-premium bg-light fw-bold text-pink-dark fs-5 text-center shadow-sm border-0 py-2" readonly placeholder="ឈ្មោះសិស្ស...">
+                        </div>
+
+                        <!-- Section 3: Status selection -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted d-block mb-3"><i class="fi fi-rr-checkbox me-1 text-primary"></i> ស្ថានភាព (Attendance Status)</label>
+                            <div class="d-flex flex-wrap flex-md-nowrap gap-2 justify-content-between p-2 rounded-4 border bg-light shadow-sm" style="border-color: #f1f5f9 !important;">
+                                <label class="flex-fill text-center pointer mb-0 rounded-3 py-1 hover-bg-white transition-all radio-p">
+                                    <input type="radio" class="form-check-input mb-1 d-none" name="modalStatus" value="P" checked>
+                                    <div class="status-radio-box fw-bold rounded-3 px-2 py-2 mx-1 border" style="color: #198754;">មករៀន (P)</div>
+                                </label>
+                                <label class="flex-fill text-center pointer mb-0 rounded-3 py-1 hover-bg-white transition-all radio-b">
+                                    <input type="radio" class="form-check-input mb-1 d-none" name="modalStatus" value="B">
+                                    <div class="status-radio-box fw-bold rounded-3 px-2 py-2 mx-1 border" style="color: #ffc107;">ច្បាប់មុន (B)</div>
+                                </label>
+                                <label class="flex-fill text-center pointer mb-0 rounded-3 py-1 hover-bg-white transition-all radio-s">
+                                    <input type="radio" class="form-check-input mb-1 d-none" name="modalStatus" value="S">
+                                    <div class="status-radio-box fw-bold rounded-3 px-2 py-2 mx-1 border" style="color: #6c757d;">ច្បាប់សង (S)</div>
+                                </label>
+                                <label class="flex-fill text-center pointer mb-0 rounded-3 py-1 hover-bg-white transition-all radio-a">
+                                    <input type="radio" class="form-check-input mb-1 d-none" name="modalStatus" value="A">
+                                    <div class="status-radio-box fw-bold rounded-3 px-2 py-2 mx-1 border" style="color: #dc3545;">អត់ call (A)</div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Section 4: Reason -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted mb-2"><i class="fi fi-rr-comment-alt-dots me-1 text-primary"></i> មូលហេតុអ្វី? (Reason)</label>
+                            <textarea id="modalReason" class="form-control form-control-premium bg-light shadow-sm border-0" rows="2" placeholder="បញ្ជាក់មូលហេតុនៅទីនេះ..."></textarea>
+                        </div>
+                        
+                        <!-- History/Stats -->
+                        <div class="bg-light p-3 rounded-4 d-flex justify-content-between align-items-center mb-4 border border-light shadow-sm">
+                            <span class="small fw-bold text-muted mb-0"><i class="fi fi-rr-calendar-lines me-1 text-primary"></i> ចំនួនច្បាប់/ខែ</span>
+                            <span id="modalMonthlyCount" class="badge rounded-pill bg-pink-light text-pink-primary fs-6 px-4 py-2 shadow-sm">0 ដង</span>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mt-3 pt-3 border-top">
+                            <button type="button" class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-premium" style="background: linear-gradient(135deg, #8a0e5b 0%, #c01880 100%); border: none;" onclick="saveModalAttendance()">
+                                <i class="fi fi-rr-disk me-2"></i> រក្សាទុកការផ្លាស់ប្តូរ (Save Update)
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="setupClassModal" tabindex="-1" >
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden bg-light">
+                <!-- Modern Header -->
+                <div class="modal-header border-0 pb-4 pt-4 px-4 position-relative" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
+                    <div class="position-absolute top-0 end-0 bottom-0 opacity-25 pointer-events-none" style="width: 150px; background: radial-gradient(circle, #8a0e5b 10%, transparent 10%) 0 0 / 10px 10px;"></div>
+                    <div class="d-flex align-items-center w-100 position-relative z-1">
+                        <div class="bg-white rounded-4 shadow-sm d-flex align-items-center justify-content-center flex-shrink-0 me-3 border" style="width: 55px; height: 55px; border-color: rgba(138,14,91,0.08) !important;">
+                            <i class="fi fi-rr-edit fs-3" style="background: linear-gradient(135deg, #8a0e5b 0%, #c01880 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle" style="width: 12px; height: 12px;"></span>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h4 class="modal-title fw-bolder mb-1" style="color: #1e293b; letter-spacing: -0.5px; font-size: 1.25rem;">បញ្ចូលវត្តមានសិស្ស</h4>
+                            <p class="mb-0 text-muted fw-medium" style="font-size: 0.85rem; letter-spacing: 0.2px;">Add Student Attendance</p>
+                        </div>
+                        <button type="button" class="btn-close ms-2 rounded-circle shadow-sm" data-bs-dismiss="modal" style="font-size: 0.75rem; background-color: #ffffff; padding: 10px;"></button>
+                    </div>
+                </div>
+
+                <div class="modal-body p-4 pt-3 position-relative bg-white">
+                    <div class="position-absolute top-0 start-50 translate-middle-x bg-secondary bg-opacity-10 rounded-pill" style="width: 40px; height: 4px; margin-top: -12px;"></div>
+                    
+                    <form id="attendanceSetupForm">
+                        
+                        <!-- Section 1: General Info -->
+                        <div class="px-4 py-3 rounded-4 mb-4 border" style="background-color: #f8fafc; border-color: #f1f5f9 !important;">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold text-muted mb-2"><i class="fi fi-rr-hashtag me-1 text-primary"></i> លេខរៀង (Order No.)</label>
+                                    <input type="text" id="entryIdField" class="form-control form-control-premium bg-white shadow-sm fw-bold border-0" readonly placeholder="...">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold text-muted mb-2"><i class="fi fi-rr-calendar me-1 text-primary"></i> កាលបរិច្ឆេទ (Date)</label>
+                                    <input type="date" id="attendanceDate" class="form-control form-control-premium bg-white shadow-sm border-0">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold text-muted mb-2"><i class="fi fi-rr-clock me-1 text-primary"></i> ម៉ោងសិក្សា (Time)</label>
+                                    <div id="studyTimeSelectGroup">
+                                        <select id="studyTimeSelect" class="form-select form-control-premium bg-white shadow-sm border-0">
+                                            <option value="">ជ្រើសរើស...</option>
+                                        </select>
+                                    </div>
+                                    <div id="studyTimeInputGroup" class="d-none">
+                                        <input type="text" id="studyTimeManual" class="form-control form-control-premium bg-white shadow-sm border-0" placeholder="វាយបញ្ចូល...">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold text-muted mb-2"><i class="fi fi-rr-user-tie me-1 text-primary"></i> ឈ្មោះគ្រូ (Teacher)</label>
+                                    <div id="teacherSelectGroup">
+                                        <select id="teacherSelect" class="form-select form-control-premium bg-white shadow-sm border-0">
+                                            <option value="">ជ្រើសរើស...</option>
+                                        </select>
+                                    </div>
+                                    <div id="teacherInputGroup" class="d-none">
+                                        <input type="text" id="teacherManual" class="form-control form-control-premium bg-white shadow-sm border-0" placeholder="វាយបញ្ចូល...">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Class Info & Search -->
+                        <div class="px-4 py-3 rounded-4 mb-4 border" style="background-color: #f8fafc; border-color: #f1f5f9 !important;">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold text-muted mb-2"><i class="fi fi-rr-marker me-1 text-primary"></i> បន្ទប់រៀន (Classroom)</label>
+                                    <select id="classroomSelect" class="form-select form-control-premium bg-white shadow-sm border-0">
+                                        <option value="">បន្ទប់...</option>
+                                        <option value="All">ទាំងអស់</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold text-muted mb-2"><i class="fi fi-rr-book-open-reader me-1 text-primary"></i> មុខវិជ្ជា/សម្គាល់</label>
+                                    <input type="text" id="setupSubjectInput" class="form-control form-control-premium bg-white shadow-sm border-0" placeholder="ឧ. មេរៀនទី១...">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-pink-primary mb-2"><i class="fi fi-rr-search me-1"></i> ស្វែងរកឈ្មោះសិស្ស</label>
+                                    <div class="position-relative search-container">
+                                        <i class="fi fi-rr-search"></i>
+                                        <input type="text" id="modalStudentSearch" class="form-control form-control-premium bg-white shadow-sm border-0" placeholder="វាយឈ្មោះសិស្សដើម្បីស្វែងរក...">
+                                        <div id="modalSearchResults" class="dropdown-menu w-100 shadow border-0 mt-1 p-0" style="max-height: 200px; overflow-y: auto; display: none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Statistics grouped neatly -->
+                        <div class="px-4 py-3 rounded-4 mb-4" style="background: linear-gradient(to right, rgba(138,14,91,0.02), rgba(138,14,91,0.05)); border: 1px dashed rgba(138,14,91,0.2);">
+                            <div class="row g-3">
+                                <div class="col-md">
+                                    <label class="form-label small fw-bold text-primary mb-2">សិស្សសរុប (Total)</label>
+                                    <input type="number" id="setupTotalStudents" class="form-control form-control-premium border-primary bg-white fw-bold shadow-sm" style="font-size: 1.1rem; text-align: center;" value="0">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label small fw-bold text-success mb-2">មករៀន (Present)</label>
+                                    <input type="number" id="setupPresentStudents" class="form-control form-control-premium border-success bg-white fw-bold shadow-sm" style="font-size: 1.1rem; text-align: center;" value="0">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label small fw-bold text-warning mb-2">ច្បាប់មុន (Before)</label>
+                                    <input type="number" id="setupBeforeStudents" class="form-control form-control-premium border-warning bg-white fw-bold shadow-sm" style="font-size: 1.1rem; text-align: center;" value="0">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label small fw-bold text-secondary mb-2">ច្បាប់សង (Comp)</label>
+                                    <input type="number" id="setupCompensatedStudents" class="form-control form-control-premium border-secondary bg-white fw-bold shadow-sm" style="font-size: 1.1rem; text-align: center;" value="0">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label small fw-bold text-danger mb-2">អត់call (Absent)</label>
+                                    <input type="number" id="setupAbsentStudents" class="form-control form-control-premium border-danger bg-white fw-bold shadow-sm" style="font-size: 1.1rem; text-align: center;" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 4: Bottom Notes & Actions -->
+                        <div class="row align-items-center mb-4">
+                            <div class="col-md-8">
+                                <label class="form-label small fw-bold text-muted mb-2"><i class="fi fi-rr-document me-1"></i> កំណត់ត្រាផ្សេងៗ (Notes)</label>
+                                <textarea id="setupClassNotes" class="form-control form-control-premium bg-light" rows="1" placeholder="បញ្ជាក់ព័ត៌មានបន្ថែមនៅទីនេះ..."></textarea>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check form-switch pt-4 d-flex justify-content-end align-items-center">
+                                    <input class="form-check-input me-2 shadow-sm pointer" type="checkbox" id="manualEntryToggle" style="width: 45px; height: 22px;">
+                                    <label class="form-check-label small fw-bold text-muted pointer mt-1" for="manualEntryToggle">បញ្ចូលម៉ោងនិងគ្រូដោយដៃ</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-3 pt-3 border-top">
+                            <button type="button" id="btnConfirmSetup" class="btn btn-primary px-5 rounded-pill py-3 fw-bold shadow-premium" style="background: linear-gradient(135deg, #8a0e5b 0%, #c01880 100%); border: none;" data-bs-dismiss="modal" onclick="loadAttendanceData()">
+                                <i class="fi fi-rr-check-double me-2"></i> បញ្ជាក់ និងបង្ហាញបញ្ជីឈ្មោះ
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+

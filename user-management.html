@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ការគ្រប់គ្រងអ្នកប្រើប្រាស់ - ប្រព័ន្ធគ្រប់គ្រងសាលា</title>
+    <link rel="icon" type="image/jpeg" href="/img/1.jpg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- Font Awesome 6 (ផ្លាស់ប្តូរទៅកំណែថ្មី) -->
+    <link rel="preload" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"
+        as="style">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/loader.css">
+    <script src="/js/core/loader-init.js"></script>
+
+    <!-- Font -->
+
+    <style>
+        /* --- FONTS --- */
+        * {
+            font-family: 'Kantumruy Pro', sans-serif;
+        }
+
+        body {
+            font-family: 'Kantumruy Pro', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .title-font {
+            font-family: 'Kantumruy Pro', sans-serif;
+            font-weight: 700;
+        }
+
+        /* --- SIDEBAR STYLES (MATCHING INDEX.HTML) --- */
+        #sidebar {
+            width: 250px;
+            min-width: 250px;
+            background: #8a0e5b;
+            color: white;
+            padding: 0;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1030;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.sidebar-collapsed #sidebar {
+            width: 70px;
+            min-width: 70px;
+        }
+
+        body.sidebar-collapsed #sidebar .nav-link span,
+        body.sidebar-collapsed #sidebar .sidebar-user-profile div,
+        body.sidebar-collapsed #sidebar .badge,
+        body.sidebar-collapsed #sidebar hr,
+        body.sidebar-collapsed #sidebar .sidebar-title-text,
+        body.sidebar-collapsed #sidebar .sidebar-divider {
+            display: none !important;
+        }
+
+        body.sidebar-collapsed #sidebar .nav-link {
+            justify-content: center;
+            padding: 15px;
+        }
+
+        body.sidebar-collapsed #sidebar .nav-link i {
+            margin-right: 0;
+            font-size: 1.2rem;
+        }
+
+
+
+
+        #sidebar .nav {
+            padding-top: 10px;
+        }
+
+        #sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.95) !important;
+            padding: 12px 20px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+
+        #sidebar .nav-link i {
+            margin-right: 10px;
+            width: 25px;
+            text-align: center;
+        }
+
+        #sidebar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            border-left-color: #8a0e5b;
+            padding-left: 25px;
+        }
+
+        #sidebar .nav-link.active {
+            background: linear-gradient(90deg, #ff69b4, rgba(255, 105, 180, 0.8)) !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* --- MAIN CONTENT & CARDS --- */
+        .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s;
+            border: none !important;
+            border-radius: 15px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 15px 15px 0 0 !important;
+            padding: 15px 20px;
+        }
+
+        .text-primary {
+            color: #8a0e5b !important;
+            /* Update to match theme */
+        }
+
+        /* --- PERMISSION CARDS (CUSTOM) --- */
+        .permission-card {
+            border: 1px solid #eef2f7;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background-color: #ffffff;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .permission-card:hover {
+            border-color: #8a0e5b;
+            background-color: #fff0f5;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.15);
+        }
+
+        /* --- SIDEBAR HEADER (MATCHING INDEX.HTML) --- */
+        .sidebar-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 15px;
+            background: #8a0e5b;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        #sidebar-logo {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 5px;
+            object-fit: cover;
+            background: white;
+            padding: 0;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        #sidebar-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .sidebar-title-text {
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .permission-card .form-check-input {
+            cursor: pointer;
+            width: 3em;
+            height: 1.5em;
+        }
+
+        .permission-card .form-check-label {
+            cursor: pointer;
+            font-size: 1.05rem;
+            color: #2c3e50;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .form-check-input:checked {
+            background-color: #ff69b4;
+            border-color: #ff69b4;
+        }
+
+        /* --- FORMS & BUTTONS --- */
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            background-color: #f8f9fa;
+        }
+
+        .form-control:focus {
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(255, 105, 180, 0.15);
+            border-color: #ff69b4;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #ff69b4, #c71585) !important;
+            border: none;
+            box-shadow: 0 4px 10px rgba(199, 21, 133, 0.3);
+            transition: all 0.3s;
+            padding: 10px 20px;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(199, 21, 133, 0.4);
+            filter: brightness(1.1);
+        }
+
+        /* --- TABLE STYLES --- */
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            font-weight: 600;
+            color: #666;
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #eef2f7;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #fff0f5;
+        }
+
+        .badge {
+            padding: 8px 12px;
+            font-weight: 500;
+            border-radius: 6px;
+        }
+
+        .header-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 6px solid var(--bs-pink-dark);
+        }
+
+        .header-title-text {
+            color: var(--bs-pink-dark);
+            font-weight: bold;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .header-breadcrumb a {
+            color: var(--bs-pink-primary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .header-breadcrumb a:hover {
+            color: var(--bs-pink-dark);
+        }
+
+        /* --- NEW UTILITIES --- */
+        :root {
+            --bs-pink-primary: #ff69b4;
+            --bs-pink-dark: #c71585;
+            --bs-pink-light: #fff0f5;
+        }
+
+        .text-pink-dark {
+            color: var(--bs-pink-dark) !important;
+        }
+
+        .bg-pink-light {
+            background-color: var(--bs-pink-light) !important;
+        }
+
+        .bg-gradient-pink {
+            background: linear-gradient(135deg, #ff69b4, #c71585) !important;
+        }
+
+        .font-size-xs {
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .pointer-events-none {
+            pointer-events: none;
+        }
+
+        .hover-shadow-sm:hover {
+            box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important;
+            transform: translateY(-1px);
+        }
+
+        .transition-all {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Ensure main content fits correctly */
+        /* Ensure main content fits correctly - Override/Fix */
+        #main-content {
+            margin-left: 250px;
+            width: auto;
+            /* Let it fill naturally */
+            max-width: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+        }
+
+        body.sidebar-collapsed #main-content {
+            margin-left: 70px !important;
+            width: auto;
+            max-width: none;
+        }
+
+        /* Full Width Mode */
+        body.full-width-mode #sidebar {
+            transform: translateX(-100%);
+        }
+
+        body.full-width-mode #main-content {
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
+
+        @media (max-width: 991.98px) {
+            #sidebar {
+                transform: translateX(-100%);
+            }
+
+            body.sidebar-active #sidebar {
+                transform: translateX(0);
+            }
+
+            #main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <!-- Sidebar -->
+    <div id="sidebar">
+    </div>
+
+    <script src="/js/core/sidebar.js"></script>
+
+    <!-- Check Auth & Main Content -->
+    <script>
+        // Simple inline check to ensure only admin sees this page quickly
+        // Real protection is in auth-check.js
+    </script>
+
+    <!-- Page Content -->
+
+    <!-- Page Content -->
+    <div id="main-content" class="flex-grow-1 transition-all">
+        <div class="header-container animate__animated animate__fadeIn">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-light bg-white shadow-sm rounded-circle me-3 border" id="sidebarToggle"
+                    style="width: 45px; height: 45px;">
+                    <i class="fi fi-rr-menu-burger text-pink-dark"></i>
+                </button>
+                <div class="header-title-text">
+                    <div class="bg-pink-light rounded-circle p-2 d-inline-flex me-2 shadow-sm"
+                        style="background: #fff0f5;">
+                        <i class="fi fi-rr-shield-check fa-lg" style="color: #c71585;"></i>
+                    </div>
+                    <h2 class="fs-3 m-0 title-font">ការគ្រប់គ្រងអ្នកប្រើប្រាស់ (User Management)</h2>
+                </div>
+            </div>
+            <div class="header-breadcrumb d-none d-lg-flex">
+                <button class="btn btn-outline-pink-dark btn-sm me-2 border-0 rounded-pill px-3" id="fullWidthToggle">
+                    <i class="fi fi-rr-expand-arrows-alt me-1"></i> Full Width
+                </button>
+                <button class="btn btn-outline-secondary btn-sm me-3 border-0 rounded-pill px-3"
+                    onclick="toggleFullscreen()">
+                    <i class="fi fi-rr-expand me-1"></i> Full Screen
+                </button>
+
+                <!-- System Updates Notification -->
+                <div class="position-relative me-3">
+                    <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+                        id="notificationBtn" title="អ្វីដែលបាន Update ថ្មីៗ (System Updates)"
+                        data-bs-toggle="offcanvas" data-bs-target="#systemUpdatesOffcanvas"
+                        style="width: 45px; height: 45px; border: 1px solid #eee; background: white;">
+                        <i class="fi fi-rr-bell" style="font-size: 1.2rem; color: #8a0e5b;"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger border border-light"
+                            id="notificationBadge" style="padding: 5px; display: none;">
+                            <span class="visually-hidden">New updates</span>
+                        </span>
+                    </button>
+                </div>
+
+                <i class="fi fi-rr-home"></i>
+                <a href="/index.html">ផ្ទាំងគ្រប់គ្រង</a>
+                <i class="fi fi-rr-angle-right small"></i>
+                <span class="active text-pink-dark fw-bold">គ្រប់គ្រងអ្នកប្រើប្រាស់</span>
+            </div>
+        </div>
+
+        <!-- Control Bar -->
+        <div class="row mb-4 align-items-center animate__animated animate__fadeInUp">
+            <div class="col-md-6">
+                <div class="input-group shadow-sm" style="border-radius: 12px; overflow: hidden;">
+                    <span class="input-group-text bg-white border-0 ps-3 text-muted">
+                        <i class="fi fi-rr-search"></i>
+                    </span>
+                    <input type="text" id="searchInput" class="form-control border-0 py-3"
+                        placeholder="ស្វែងរកតាមឈ្មោះ ឬអ៊ីមែល (Search)..." onkeyup="filterUsers()">
+                </div>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <button class="btn btn-success px-4 py-2 fw-bold shadow-sm rounded-pill" data-bs-toggle="modal"
+                    data-bs-target="#addUserModal">
+                    <i class="fi fi-rr-user-add me-2"></i>បង្កើតអ្នកប្រើប្រាស់ថ្មី
+                </button>
+            </div>
+        </div>
+
+        <!-- Users List -->
+        <div class="card shadow-sm border-0 animate__animated animate__fadeInUp"
+            style="border-radius: 15px; animation-delay: 0.1s;">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold text-pink-dark"><i class="fi fi-rr-users me-2"></i>បញ្ជីអ្នកប្រើប្រាស់</h5>
+                <span class="badge bg-pink-light text-pink-dark" id="userCountBadge">0 Users</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="usersTable">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="py-3 ps-4 text-secondary text-uppercase font-size-xs">ឈ្មោះ (Name)</th>
+                                <th class="py-3 text-secondary text-uppercase font-size-xs">អ៊ីមែល (Email)</th>
+                                <th class="py-3 text-secondary text-uppercase font-size-xs">តួនាទី (Role)</th>
+                                <th class="py-3 text-secondary text-uppercase font-size-xs">សិទ្ធិប្រើប្រាស់
+                                    (Permissions)</th>
+                                <th class="py-3 text-secondary text-uppercase font-size-xs">ពាក្យសម្ងាត់ (Password)</th>
+                                <th class="py-3 text-secondary text-uppercase font-size-xs">បង្កើតដោយ (Created By)</th>
+                                <th class="py-3 text-end pe-4 text-secondary text-uppercase font-size-xs">សកម្មភាព
+                                    (Actions)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Footer -->
+        <footer class="app-footer mt-5 py-4 border-top bg-white text-center text-muted position-relative"
+            style="font-size: 0.9rem; z-index: 100;">
+            <div class="container">
+                <div class="mb-3">
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទីតាំងទី២ របស់សាលា:</span>
+                        ភូមិក្រាំង សង្កាត់ក្រាំងអំពិល ក្រុងកំពត ខេត្តកំពត
+                    </div>
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទំនាក់ទំនង:</span>
+                        <span class="me-2"><i class="fi fi-rr-smartphone me-1 text-primary"></i>093 835 678
+                            (Smart)</span>
+                        <a href="https://t.me/Tian093835678" target="_blank" class="text-decoration-none">
+                            <i class="fi fi-brands-telegram me-1 text-primary"></i>Telegram
+                        </a>
+                    </div>
+                </div>
+
+                <div class="w-75 mx-auto border-top my-3 opacity-25"></div>
+
+                <div class="footer-update-time mb-1">
+                    <i class="fi fi-rr-clock me-1"></i>កាលបរិច្ឆេទចុងក្រោយ: <span id="last-update-time">...</span>
+                </div>
+                <div class="footer-copyright">
+                    ©
+                    <script>document.write(new Date().getFullYear())</script> គ្រប់គ្រងសាលា. Developed by <span
+                        class="fw-bold text-pink-primary">មាស មករា</span>.
+                </div>
+            </div>
+        </footer>
+    </div>
+    </div>
+
+
+    <!-- Create User Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" >
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <div class="modal-header text-white"
+                    style="background-color: #8a0e5b; border-bottom: 2px solid rgba(255,255,255,0.1);">
+                    <h5 class="modal-title fw-bold title-font"><i
+                            class="fi fi-rr-user-add me-2"></i>បង្កើតអ្នកប្រើប្រាស់ថ្មី</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <form id="createUserForm">
+                        <div class="row g-4">
+                            <!-- Basic Info -->
+                            <div class="col-md-6">
+                                <div class="bg-white p-4 rounded-4 shadow-sm h-100 border border-light">
+                                    <h6
+                                        class="fw-bold text-pink-dark mb-4 border-bottom pb-2 d-flex align-items-center">
+                                        <div class="bg-pink-light rounded-circle p-2 me-2 d-flex justify-content-center align-items-center"
+                                            style="width: 35px; height: 35px;">
+                                            <i class="fi fi-rr-info text-pink-dark"></i>
+                                        </div>
+                                        ព័ត៌មានគណនី
+                                    </h6>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="newUserName" placeholder="Name"
+                                            required style="border-radius: 10px;">
+                                        <label for="newUserName">ឈ្មោះ (Name)</label>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="email" class="form-control" id="newUserEmail" placeholder="Email"
+                                            required style="border-radius: 10px;">
+                                        <label for="newUserEmail">អ៊ីមែល (Email)</label>
+                                    </div>
+
+                                    <div class="input-group mb-3">
+                                        <div class="form-floating flex-grow-1">
+                                            <input type="password" class="form-control" id="newUserPassword"
+                                                placeholder="Password" required
+                                                style="border-radius: 10px 0 0 10px; border-right: none;">
+                                            <label for="newUserPassword">ពាក្យសម្ងាត់ (Password)</label>
+                                        </div>
+                                        <button class="btn btn-outline-secondary bg-white border-start-0" type="button"
+                                            style="border-radius: 0 10px 10px 0; border-color: #ced4da;"
+                                            onclick="togglePasswordVisibility('newUserPassword', this)">
+                                            <i class="fi fi-rr-eye"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="form-floating">
+                                        <select class="form-select" id="newUserRole" placeholder="Role"
+                                            style="border-radius: 10px;">
+                                            <option value="staff" selected>បុគ្គលិក (Staff)</option>
+                                            <option value="admin">អ្នកគ្រប់គ្រង (Admin)</option>
+                                        </select>
+                                        <label for="newUserRole">តួនាទី (Role)</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Permissions -->
+                            <div class="col-md-6">
+                                <div class="bg-white p-4 rounded-4 shadow-sm h-100 border border-light">
+                                    <h6
+                                        class="fw-bold text-pink-dark mb-4 border-bottom pb-2 d-flex align-items-center">
+                                        <div class="bg-pink-light rounded-circle p-2 me-2 d-flex justify-content-center align-items-center"
+                                            style="width: 35px; height: 35px;">
+                                            <i class="fi fi-rr-shield-check text-pink-dark"></i>
+                                        </div>
+                                        សិទ្ធិប្រើប្រាស់
+                                    </h6>
+
+                                    <p class="small text-muted mb-3">ជ្រើសរើសផ្នែកដែលអ្នកប្រើប្រាស់នេះអាចចូលបាន៖</p>
+
+                                    <div class="d-flex flex-column gap-3">
+                                        <div class="d-flex flex-row gap-2 overflow-auto pb-2"
+                                            style="scrollbar-width: thin;" id="createPermissionContainer">
+                                            <!-- Permissions generated by JS -->
+                                        </div>
+                                        <div class="text-muted small text-center mt-2">
+                                            <i class="fi fi-rr-arrow-right me-1"></i> Scroll to see more
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn text-white py-3 fw-bold shadow-sm"
+                                style="background-color: #8a0e5b; border-radius: 12px; transition: all 0.3s;"
+                                onmouseover="this.style.backgroundColor='#700b4a'"
+                                onmouseout="this.style.backgroundColor='#8a0e5b'">
+                                <i class="fi fi-rr-disk me-2"></i>បង្កើតគណនី (Create Account)
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" >
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <div class="modal-header text-white"
+                    style="background-color: #0d6efd; border-bottom: 2px solid rgba(255,255,255,0.1);">
+                    <h5 class="modal-title fw-bold title-font"><i
+                            class="fi fi-rr-edit me-2"></i>កែប្រែសិទ្ធិអ្នកប្រើប្រាស់</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <form id="editUserForm">
+                        <input type="hidden" id="editUserUid">
+                        <div class="row g-4">
+                            <!-- Basic Info -->
+                            <div class="col-md-6">
+                                <div class="bg-white p-4 rounded-4 shadow-sm h-100 border border-light">
+                                    <h6 class="fw-bold text-primary mb-4 border-bottom pb-2 d-flex align-items-center">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2 d-flex justify-content-center align-items-center"
+                                            style="width: 35px; height: 35px;">
+                                            <i class="fi fi-rr-info text-primary"></i>
+                                        </div>
+                                        ព័ត៌មានគណនី
+                                    </h6>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="editUserName" placeholder="Name"
+                                            required style="border-radius: 10px;">
+                                        <label for="editUserName">ឈ្មោះ (Name)</label>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="email" class="form-control bg-light" id="editUserEmail"
+                                            placeholder="Email" readonly style="border-radius: 10px;">
+                                        <label for="editUserEmail">អ៊ីមែល (Email - កែមិនបាន)</label>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="editUserRole" style="border-radius: 10px;">
+                                            <option value="staff">បុគ្គលិក (Staff)</option>
+                                            <option value="admin">អ្នកគ្រប់គ្រង (Admin)</option>
+                                        </select>
+                                        <label for="editUserRole">តួនាទី (Role)</label>
+                                    </div>
+
+                                    <div class="mb-0">
+                                        <label class="form-label fw-bold small text-muted mb-2">ប្ដូរពាក្យសម្ងាត់ថ្មី
+                                            (Optional):</label>
+                                        <div class="input-group">
+                                            <div class="form-floating flex-grow-1">
+                                                <input type="password" class="form-control" id="editUserPassword"
+                                                    placeholder="Password"
+                                                    style="border-radius: 10px 0 0 10px; border-right: none;">
+                                                <label for="editUserPassword">Password ថ្មី</label>
+                                            </div>
+                                            <button class="btn btn-outline-secondary bg-white border-start-0"
+                                                type="button"
+                                                style="border-radius: 0 10px 10px 0; border-color: #ced4da;"
+                                                onclick="togglePasswordVisibility('editUserPassword', this)">
+                                                <i class="fi fi-rr-eye"></i>
+                                            </button>
+                                        </div>
+                                        <div class="form-text text-danger mt-1" style="font-size: 0.7rem;">*
+                                            ទុកទំនេរប្រសិនបើមិនប្ដូរ</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Permissions -->
+                            <div class="col-md-6">
+                                <div class="bg-white p-4 rounded-4 shadow-sm h-100 border border-light">
+                                    <h6 class="fw-bold text-success mb-4 border-bottom pb-2 d-flex align-items-center">
+                                        <div class="bg-success bg-opacity-10 rounded-circle p-2 me-2 d-flex justify-content-center align-items-center"
+                                            style="width: 35px; height: 35px;">
+                                            <i class="fi fi-rr-shield-check text-success"></i>
+                                        </div>
+                                        សិទ្ធិប្រើប្រាស់
+                                    </h6>
+
+                                    <p class="small text-muted mb-3">កំណត់សិទ្ធិប្រើប្រាស់ថ្មី៖</p>
+
+                                    <div class="d-flex flex-wrap gap-2" id="editPermissionContainer">
+                                        <!-- Permissions generated by JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success py-3 fw-bold shadow-sm"
+                                style="border-radius: 12px; transition: all 0.3s;">
+                                <i class="fi fi-rr-disk me-2"></i>រក្សាទុកការផ្លាស់ប្តូរ (Save Changes)
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View User Modal -->
+    <div class="modal fade" id="viewUserModal" tabindex="-1" >
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <div class="modal-header text-white position-relative"
+                    style="background: linear-gradient(135deg, #8a0e5b, #c71585); height: 120px; border-bottom: none;">
+                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-4 pb-4 pt-0">
+                    <div class="text-center" style="margin-top: -50px;">
+                        <div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-lg p-1"
+                            style="width: 100px; height: 100px;">
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center w-100 h-100"
+                                style="overflow: hidden;">
+                                <i class="fi fi-rr-user text-secondary" style="font-size: 3rem;"></i>
+                            </div>
+                        </div>
+                        <h4 class="fw-bold mt-3 mb-1" id="viewUserName">User Name</h4>
+                        <div class="badge bg-primary px-3 py-2 rounded-pill shadow-sm" id="viewUserRole">Role</div>
+                    </div>
+
+                    <div class="row g-4 mt-2">
+                        <div class="col-12">
+                            <div class="p-3 rounded-4 bg-light bg-opacity-50 border">
+                                <h6 class="fw-bold text-muted small text-uppercase mb-3"><i
+                                        class="fi fi-rr-info me-2"></i>ព័ត៌មានគណនី (Account Info)</h6>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted"><i class="fi fi-rr-envelope me-2"></i>Email:</span>
+                                    <span class="fw-bold text-dark" id="viewUserEmail">user@example.com</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted"><i class="fi fi-rr-key me-2"></i>Password:</span>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="fw-bold text-dark" id="viewUserPassword">******</span>
+                                        <button class="btn btn-sm btn-link p-0 text-muted" id="btnToggleViewPass"
+                                            onclick="toggleViewPass()">
+                                            <i class="fi fi-rr-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-link p-0 text-info" id="btnCopyViewPass"
+                                            onclick="copyViewPass()">
+                                            <i class="fi fi-rr-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted"><i class="fi fi-rr-calendar me-2"></i>Created:</span>
+                                    <span class="fw-bold text-dark" id="viewUserCreated">...</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted"><i class="fi fi-rr-user-add me-2"></i>Created By:</span>
+                                    <span class="fw-bold text-pink-dark" id="viewUserCreatedBy">...</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted"><i class="fi fi-rr-clock me-2"></i>Last Login:</span>
+                                    <span class="fw-bold text-dark" id="viewUserLastLogin">...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="p-3 rounded-4 border" style="background-color: #fff0f5;">
+                                <h6 class="fw-bold text-pink-dark small text-uppercase mb-3"><i
+                                        class="fi fi-rr-shield-check me-2"></i>សិទ្ធិប្រើប្រាស់ (Permissions)</h6>
+                                <div class="d-flex flex-wrap gap-2" id="viewUserPermissions">
+                                    <!-- Badges will be injected here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="button" class="btn btn-outline-secondary py-2 rounded-pill fw-bold"
+                            data-bs-dismiss="modal">
+                            បិទ (Close)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <!-- Config & Scripts -->
+    <script src="/js/core/firebase-config.js"></script>
+    <script src="/js/core/auth-check.js"></script>
+    <script src="/js/pages/system-updates.js"></script>
+    <script src="/js/pages/user-management.js"></script>
+    <script src="/js/core/offline-manager.js"></script>
+
+
+    <script>
+        // Sidebar Toggle Logic
+        document.getElementById('sidebarToggle').addEventListener('click', function () {
+            if (window.innerWidth >= 992) {
+                document.body.classList.toggle('sidebar-collapsed');
+            } else {
+                document.body.classList.toggle('sidebar-active');
+            }
+        });
+
+        // Full Width Toggle Logic
+        document.getElementById('fullWidthToggle').addEventListener('click', function () {
+            document.body.classList.toggle('full-width-mode');
+            const icon = this.querySelector('i');
+            if (document.body.classList.contains('full-width-mode')) {
+                icon.className = 'fi fi-rr-compress-arrows-alt me-1';
+                this.innerHTML = '<i class="fi fi-rr-compress-arrows-alt me-1"></i> Normal Width';
+            } else {
+                icon.className = 'fi fi-rr-expand-arrows-alt me-1';
+                this.innerHTML = '<i class="fi fi-rr-expand-arrows-alt me-1"></i> Full Width';
+            }
+        });
+
+        // Fullscreen Toggle Logic
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+    </script>
+    <!-- System Updates Offcanvas (Side Panel) -->
+    <div class="offcanvas offcanvas-end border-0 shadow-lg" tabindex="-1" id="systemUpdatesOffcanvas" aria-labelledby="systemUpdatesLabel" style="width: 400px; border-radius: 30px 0 0 30px;">
+        <div class="offcanvas-header border-bottom-0 pt-4 px-4">
+            <h5 class="offcanvas-title fw-bold text-pink-dark" id="systemUpdatesLabel">
+                <i class="fi fi-rr-bell me-2"></i>អ្វីដែលបាន Update ថ្មីៗ
+            </h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-4" id="notificationList">
+            <!-- Updates will be loaded here -->
+        </div>
+        <div class="p-4 border-top-0 text-center">
+            <small class="text-muted">ប្រព័ន្ធត្រូវបានរក្សាសុវត្ថិភាព និងធ្វើបច្ចុប្បន្នភាពជានិច្ច</small>
+        </div>
+    </div>
+</body>
+
+</html>
+

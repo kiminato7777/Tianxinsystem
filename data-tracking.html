@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បញ្ជីសិស្សដែលបានចុះឈ្មោះ</title>
+    <link rel="icon" type="image/jpeg" href="/img/1.jpg">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    
+    <!-- Google Fonts (Modern Standard) -->
+    <link href="https://fonts.googleapis.com/css2?family=Moul&family=Kantumruy+Pro:wght@100..700&display=swap" rel="stylesheet">
+
+    <!-- Core Loader & Theme -->
+    <link rel="stylesheet" href="/css/loader.css">
+    <script src="/js/core/loader-init.js"></script>
+    <script src="/js/core/theme-mode.js"></script>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.0/css/buttons.dataTables.min.css">
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- Style & Page Specific CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/data-tracking.css">
+</head>
+
+<body>
+
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <!-- Dashboard Sidebar injected by sidebar.js -->
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Header with Notifications and Download buttons -->
+        <div class="main-header">
+            <div class="header-title khmer-muol">
+                <i class="fi fi-rr-users"></i> <span class="ms-1">បញ្ជីឈ្មោះសិស្ស</span>
+            </div>
+
+            <div class="header-right-section d-flex align-items-center gap-3">
+                <!-- Premium Theme Toggle -->
+                <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center theme-toggle-btn"
+                    onclick="toggleTheme()"
+                    style="width: 45px; height: 45px; border: 1px solid #eee; background: white; transition: all 0.3s ease;">
+                    <i class="fi fi-rr-moon" style="font-size: 1.2rem; color: #8a0e5b;"></i>
+                </button>
+
+                <!-- Download buttons -->
+                <div class="downloads-container">
+
+
+                    <div class="dropdown">
+                        <button class="btn btn-light shadow-sm dropdown-toggle fw-bold text-primary" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false"
+                            style="border-radius: 25px; border: 1px solid #dee2e6;">
+                            <i class="fi fi-rr-file-export me-2"></i> របាយការណ៍ & នាំចេញ
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0"
+                            style="border-radius: 15px; overflow: hidden;">
+                            <li>
+                                <a class="dropdown-item py-2 fw-bold text-primary" href="#"
+                                    onclick="showQuickFinancialSummary()">
+                                    <i class="fi fi-rr-calculator text-primary me-2"></i>សរុបទាំងអស់ (Financial Total)
+                                </a>
+                            </li>
+                            <li class="bg-light py-2 px-3 border-bottom"><small
+                                    class="fw-bold text-muted text-uppercase">ទិន្នន័យបច្ចុប្បន្ន (Current View)</small>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="exportCurrentViewExcel()">
+                                    <i class="fi fi-rr-file-excel text-success me-3"></i>នាំចេញជា Excel
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#"
+                                    onclick="exportTrilingualPartTimeOutTimeReport()">
+                                    <i class="fi fi-rr-clock text-primary me-3"></i>របាយការណ៍សិស្សចេញម៉ោង (ចំណះដឹងទូទៅ)
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="exportCurrentViewPDF()">
+                                    <i class="fi fi-rr-file-pdf text-danger me-3"></i>នាំចេញជា PDF
+                                </a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li class="bg-light py-2 px-3 border-bottom border-top"><small
+                                    class="fw-bold text-muted text-uppercase">របាយការណ៍តាមប្រភេទ (By Category)</small>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#"
+                                    onclick="exportSpecificCategoryPDF('chinese-fulltime')">
+                                    <i class="fi fi-rr-file-pdf text-danger me-3"></i>សិស្សចិនពេញម៉ោង (PDF)
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="exportSpecificCategoryPDF('part-time')">
+                                    <i class="fi fi-rr-file-pdf text-danger me-3"></i>សិស្សក្រៅម៉ោង (PDF)
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#"
+                                    onclick="exportSpecificCategoryPDF('3-languages')">
+                                    <i class="fi fi-rr-file-pdf text-danger me-3"></i>ថ្នាក់ចំណះដឹងទូទៅ (PDF)
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="openSessionSelectionModal()">
+                                    <i class="fi fi-rr-file-pdf text-danger me-3"></i>បញ្ជីតាមម៉ោងសិក្សា (PDF)
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="checkAllDuplicates()">
+                                    <i class="fi fi-rr-search-alt text-warning me-3"></i>ពិនិត្យអត្តលេខជាន់គ្នា (Check
+                                    Duplicate IDs)
+                                </a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li class="bg-light py-2 px-3 border-bottom border-top"><small
+                                    class="fw-bold text-muted text-uppercase">របាយការណ៍ប្រចាំខែ (Monthly)</small></li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="downloadMonthlyReport('excel')">
+                                    <i class="fi fi-rr-file-excel text-success me-3"></i>ប្រចាំខែ (Excel)
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="downloadMonthlyReport('pdf')">
+                                    <i class="fi fi-rr-file-pdf text-danger me-3"></i>ប្រចាំខែ (PDF)
+                                </a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li class="bg-light py-2 px-3 border-bottom border-top"><small
+                                    class="fw-bold text-muted text-uppercase">របាយការណ៍ប្រចាំឆ្នាំ (Yearly)</small></li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="downloadYearlyReport('excel')">
+                                    <i class="fi fi-rr-file-excel text-success me-3"></i>ប្រចាំឆ្នាំ (Excel)
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="downloadYearlyReport('pdf')">
+                                    <i class="fi fi-rr-file-pdf text-danger me-3"></i>ប្រចាំឆ្នាំ (PDF)
+                                </a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li class="bg-light py-2 px-3 border-bottom border-top"><small
+                                    class="fw-bold text-muted text-uppercase">របាយការណ៍តាមគ្រូបន្ទុក (Teacher)</small>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="downloadClassTeacherReport('excel')">
+                                    <i class="fi fi-rr-file-excel text-success me-3"></i>តាមគ្រូបន្ទុក (Excel)
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="downloadClassTeacherReport('pdf')">
+                                    <i class="fi fi-rr-file-pdf text-danger me-3"></i>តាមគ្រូបន្ទុក (PDF)
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+
+
+                    <div class="dropdown">
+                        <button class="btn download-header-btn danger dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-exclamation"></i> <span class="ms-1">ស្ថានភាពបំណុល & ការបង់ប្រាក់</span>
+                        </button>
+                        <ul class="dropdown-menu shadow border-0" style="border-radius: 12px;">
+                            <li>
+                                <a class="dropdown-item py-2 text-danger fw-bold d-flex justify-content-between align-items-center"
+                                    href="#" onclick="toggleDebtSummary()">
+                                    <span><i class="fi fi-rr-money-bill-wave me-3"></i>សរុបបំណុល & ស្ថានភាព (Debt
+                                        Status)</span>
+                                    <span class="badge bg-danger rounded-pill shadow-sm ms-2"
+                                        id="dropdownDebtBadge">0</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2 fw-bold text-danger" href="#"
+                                    onclick="exportCategorizedDebtReportPDF()">
+                                    <i class="fi fi-rr-list-check me-3"></i>របាយការណ៍បំណុលតាមប្រភេទ (Categorized Debt)
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="exportDebtReportPDF()">
+                                    <i class="fi fi-rr-file-pdf text-danger me-3"></i>បញ្ជីសិស្សជំពាក់បំណុល (Detailed
+                                    Debt)
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="exportPaymentReportPDF('today')">
+                                    <i class="fi fi-rr-calendar-check text-primary me-2"></i>សិស្សបងបង់ថ្ងៃនេះ
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="exportPaymentReportPDF('overdue')">
+                                    <i class="fi fi-rr-alarm-clock text-danger me-2"></i>សិស្សហួសកំណត់
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="exportPaymentReportPDF('debt')">
+                                    <i class="fi fi-rr-money-bill-wave text-danger me-2"></i>សិស្សជំពាក់
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="exportPaymentReportPDF('delay')">
+                                    <i class="fi fi-rr-time-past text-secondary me-2"></i>សិស្សពន្យារ
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="exportPaymentReportPDF('warning')">
+                                    <i class="fi fi-rr-bell text-warning me-2"></i>សិស្សជិតដល់ថ្ងៃ
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+                        </ul>
+                    </div>
+
+
+
+
+                    <button class="btn download-header-btn primary shadow-sm" onclick="filterDueToday()">
+                        <i class="fi fi-rr-calendar-check"></i> <span class="ms-1">ត្រូវបង់ថ្ងៃនេះ</span>
+                    </button>
+
+                    <div class="dropdown">
+                        <button class="btn download-header-btn info dropdown-toggle shadow-sm" type="button" 
+                            data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #0d6efd; color: white; border: none;">
+                            <i class="fi fi-rr-document"></i> <span class="ms-1">ឯកសារ</span>
+                        </button>
+                        <ul class="dropdown-menu shadow border-0" style="border-radius: 12px;">
+                            <li>
+                                <a class="dropdown-item py-2 fw-bold" href="leave-request-a4.html" target="_blank">
+                                    <i class="fi fi-rr-document text-success me-2"></i> ពាក្យសុំច្បាប់
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2 fw-bold" href="class-change-request-a4.html" target="_blank">
+                                    <i class="fi fi-rr-arrows-repeat text-info me-2"></i> ពាក្យសុំប្តូរថ្នាក់
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2 fw-bold" href="img/register-full-time.pdf" target="_blank">
+                                    <i class="fi fi-rr-print text-danger me-2"></i> ពាក្យសុំចុះឈ្មោះ (ពេញម៉ោង)
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2 fw-bold" href="img/register-3language.pdf" target="_blank">
+                                    <i class="fi fi-rr-print text-primary me-2"></i> ពាក្យសុំចុះឈ្មោះ (ថ្នាក់ចំណះដឹងទូទៅ)
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button class="btn download-header-btn warning shadow-sm" onclick="checkDuplicateNames()">
+                        <i class="fi fi-rr-copy"></i> <span class="ms-1">ឈ្មោះជាន់គ្នា</span>
+                    </button>
+
+                    <button class="btn download-header-btn danger shadow-sm" onclick="checkMissingChineseNames()">
+                        <i class="fi fi-rr-search-alt"></i> <span class="ms-1">គ្មានឈ្មោះចិន</span>
+                    </button>
+                </div>
+
+
+            </div>
+        </div>
+
+        <!-- Alert Container -->
+        <div id="alertContainer"></div>
+
+        <!-- Statistics Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-xl col-md-4 col-sm-6">
+                <div
+                    class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100 border-bottom border-4 border-primary hover-lift">
+                    <div class="text-primary mb-2 opacity-75"><i class="fi fi-rr-book-alt fa-2x"></i></div>
+                    <div class="text-secondary small fw-bold text-uppercase mb-1">សិស្សចិនពេញម៉ោង</div>
+                    <div class="h3 mb-0 fw-bold text-dark" id="statChineseFullTime">0 នាក់</div>
+                    <div class="mt-2 text-muted fw-bold" style="font-size: 0.85rem;">
+                        ប្រុស: <span id="statChineseFullMale" class="text-primary">0</span> | 
+                        ស្រី: <span id="statChineseFullFemale" class="text-danger">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl col-md-4 col-sm-6">
+                <div
+                    class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100 border-bottom border-4 border-warning hover-lift">
+                    <div class="text-warning mb-2 opacity-75"><i class="fi fi-rr-briefcase fa-2x"></i></div>
+                    <div class="text-secondary small fw-bold text-uppercase mb-1">សិស្សក្រៅម៉ោង (សរុប)</div>
+                    <div class="h3 mb-0 fw-bold text-dark" id="statPartTimeTotal">0 នាក់</div>
+                    <div class="mt-2 text-muted fw-bold" style="font-size: 0.85rem;">
+                        ប្រុស: <span id="statPartTimeMale" class="text-primary">0</span> | 
+                        ស្រី: <span id="statPartTimeFemale" class="text-danger">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl col-md-4 col-sm-6">
+                <div
+                    class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100 border-bottom border-4 border-info hover-lift">
+                    <div class="text-info mb-2 opacity-75"><i class="fi fi-rr-child fa-2x"></i></div>
+                    <div class="text-secondary small fw-bold text-uppercase mb-1">ថ្នាក់ចំណះដឹងទូទៅ</div>
+                    <div class="h3 mb-0 fw-bold text-dark" id="statPreschool3Lang">0 នាក់</div>
+                    <div class="mt-2 text-muted fw-bold" style="font-size: 0.85rem;">
+                        ប្រុស: <span id="statPre3LangMale" class="text-primary">0</span> | 
+                        ស្រី: <span id="statPre3LangFemale" class="text-danger">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl col-md-6 col-sm-6">
+                <div
+                    class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100 border-bottom border-4 border-success hover-lift">
+                    <div class="text-success mb-2 opacity-75"><i class="fi fi-rr-users fa-2x"></i></div>
+                    <div class="text-secondary small fw-bold text-uppercase mb-1">សិស្សសរុប (Active)</div>
+                    <div class="h3 mb-0 fw-bold text-dark" id="statTotalStudents">0 នាក់</div>
+                    <div class="mt-2 text-muted fw-bold" style="font-size: 0.85rem;">
+                        ប្រុស: <span id="statActiveMale" class="text-primary">0</span> | 
+                        ស្រី: <span id="statActiveFemale" class="text-danger">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl col-md-6 col-sm-12">
+                <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-danger bg-opacity-10 h-100 border-bottom border-4 border-danger hover-lift"
+                    style="cursor: pointer;" onclick="toggleDebtSummary()">
+                    <div class="text-danger mb-2 opacity-75"><i class="fi fi-rr-money-bill-wave fa-2x"></i></div>
+                    <div class="text-danger small fw-bold text-uppercase mb-1">សរុបបំណុល (Total Debt)</div>
+                    <div class="h3 mb-0 fw-bold text-danger" id="statTotalDebt">$0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-filter-section mb-5">
+            <div class="row g-4 d-flex align-items-end">
+                <div class="col-lg-2">
+                    <label class="form-label small fw-bold text-secondary">ស្វែងរកសិស្ស (Search Student)</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="fi fi-rr-search"></i></span>
+                        <input type="text" class="form-control-saas form-control border-0 bg-light" id="searchName"
+                            placeholder="ឈ្មោះ, ID, ឬលេខទូរស័ព្ទ...">
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <label class="form-label small fw-bold text-secondary">ស្ថានភាព (Status)</label>
+                    <select class="form-select border-0 bg-light rounded-3 py-2" id="filterStatus">
+                        <option value="all">ទាំងអស់</option>
+                        <option value="paid">បង់រួច</option>
+                        <option value="overdue">ហួសកំណត់</option>
+                        <option value="warning">ជិតដល់ថ្ងៃ</option>
+                        <option value="today">ត្រូវបង់ថ្ងៃនេះ</option>
+                    </select>
+                </div>
+                <div class="col-lg-2">
+                    <label class="form-label small fw-bold text-secondary">ម៉ោងសិក្សា (Time)</label>
+                    <select class="form-select border-0 bg-light rounded-3 py-2" id="filterTime">
+                        <option value="all">ទាំងអស់</option>
+                    </select>
+                </div>
+                <div class="col-lg-2">
+                    <label class="form-label small fw-bold text-secondary">កម្រិត (Level)</label>
+                    <select class="form-select border-0 bg-light rounded-3 py-2" id="filterLevel">
+                        <option value="all">ទាំងអស់</option>
+                    </select>
+                </div>
+                <div class="col-lg-2">
+                    <label class="form-label small fw-bold text-secondary">គ្រូបន្ទុកថ្នាក់ (Teacher)</label>
+                    <select class="form-select border-0 bg-light rounded-3 py-2" id="filterClassTeacher">
+                        <option value="all">ទាំងអស់</option>
+                    </select>
+                </div>
+                <div class="col-lg-2 mb-1">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary w-100 rounded-pill py-2 fw-bold" onclick="refreshData()"
+                            title="ធ្វើបច្ចុប្បន្នភាព">
+                            <i class="fi fi-rr-refresh"></i>
+                        </button>
+                        <button class="btn btn-light w-100 rounded-pill py-2 fw-bold border" id="clearFiltersBtn"
+                            title="សម្អាតការស្វែងរក">
+                            <i class="fi fi-rr-filter-slash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- ២. កុងតឺន័រសម្រាប់បង្ហាញរបាយការណ៍សរុបបំណុល (ដាក់នៅពីលើតារាងបញ្ជីសិស្ស) -->
+        <div id="debtSummaryView" style="display: none; margin-bottom: 30px;">
+            <div class="card border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <div
+                    class="card-header bg-danger text-white py-3 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold"><i class="fi fi-rr-stats me-2"></i>សរុបបំណុល & ស្ថានភាពបង់ប្រាក់ (Debt
+                        Status Summary)</h5>
+                    <button class="btn btn-sm btn-light rounded-pill px-3 fw-bold" onclick="toggleDebtSummary()">
+                        <i class="fi fi-rr-cross-small"></i> បិទវិញ
+                    </button>
+                </div>
+                <div class="card-body p-4 bg-light bg-opacity-50">
+                    <div class="table-responsive rounded-4 shadow-sm bg-white">
+                        <table class="table table-hover align-middle mb-0" id="financialSummaryTable">
+                            <thead class="bg-dark text-white">
+                                <tr class="text-center">
+                                    <th class="py-3">ផ្នែកសិក្សា (Section)</th>
+                                    <th class="py-3 bg-primary bg-opacity-10 text-primary">បង់ថ្ងៃនេះ (Today)</th>
+                                    <th class="py-3 bg-danger bg-opacity-10 text-danger">ហួសកំណត់ (Overdue)</th>
+                                    <th class="py-3 bg-warning bg-opacity-10 text-warning">នៅជំណាក់ (Debt)</th>
+                                    <th class="py-3 bg-secondary bg-opacity-10 text-secondary">សិស្សពន្យារ (Delay)</th>
+                                    <th class="py-3 bg-info bg-opacity-10 text-info">សិស្សជិតដល់ថ្ងៃ (Warning)</th>
+                                    <th class="py-3 bg-success bg-opacity-10 text-success">បង់ប្រាក់សរុប (Total Paid)
+                                    </th>
+                                    <th class="py-3 bg-dark text-white border-start border-white border-opacity-25">
+                                        សរុបបំណុល (Total Debt)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="financialSummaryBody">
+                                <!-- ទិន្នន័យនឹងត្រូវបញ្ចូលដោយ JavaScript -->
+                            </tbody>
+                            <tfoot id="financialSummaryFooter" class="bg-light fw-bold">
+                                <!-- សរុបរួមនឹងត្រូវបញ្ចូលដោយ JavaScript -->
+                            </tfoot>
+                        </table>
+                    </div>
+
+
+
+                    <!-- Unified Student Debt List Section (Dynamic & Premium) -->
+                    <div id="unifiedDebtListSection" class="mt-5 animate__animated animate__fadeIn">
+                        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-4">
+                            <div>
+                                <h5 class="fw-bold mb-1 text-dark">
+                                    <i class="fi fi-rr-users-list me-2 text-danger"></i>បញ្ជីរាយនាមសិស្សតាមស្ថានភាពបំណុល
+                                </h5>
+                                <div class="d-flex gap-3 mt-2">
+                                    <div class="bg-light px-3 py-1 rounded-pill border">
+                                        <span class="text-muted small" style="font-size: 0.75rem;">ចំនួនសិស្ស៖</span>
+                                        <span class="fw-bold text-dark ms-1" id="unifiedTotalCount">0</span>
+                                    </div>
+                                    <div
+                                        class="bg-danger bg-opacity-10 px-3 py-1 rounded-pill border border-danger border-opacity-25">
+                                        <span class="text-danger small" style="font-size: 0.75rem;">សរុបបំណុល៖</span>
+                                        <span class="fw-bold text-danger ms-1" id="unifiedTotalAmount">$0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-3 flex-wrap align-items-center">
+                                <div class="filter-tab-container shadow-sm border">
+                                    <button class="filter-tab-btn active" onclick="filterUnifiedList('all')"
+                                        id="btnFilterAll">ទាំងអស់</button>
+                                    <button class="filter-tab-btn" onclick="filterUnifiedList('today')"
+                                        id="btnFilterToday">ថ្ងៃនេះ</button>
+                                    <button class="filter-tab-btn" onclick="filterUnifiedList('overdue')"
+                                        id="btnFilterOverdue">ហួសកំណត់</button>
+                                    <button class="filter-tab-btn" onclick="filterUnifiedList('debt')"
+                                        id="btnFilterDebt">នៅជំពាក់</button>
+                                    <button class="filter-tab-btn" onclick="filterUnifiedList('warning')"
+                                        id="btnFilterWarning">ជិតដល់ថ្ងៃ</button>
+                                    <button class="filter-tab-btn" onclick="filterUnifiedList('delay')"
+                                        id="btnFilterDelay">ពន្យារពេល</button>
+                                    <button class="filter-tab-btn" onclick="filterUnifiedList('paid_off')"
+                                        id="btnFilterPaidOff">បង់រួច</button>
+
+
+                                </div>
+                                <button class="btn btn-sm btn-danger rounded-pill px-4 fw-bold shadow-sm py-2"
+                                    onclick="exportCurrentDetailedListPDF()">
+                                    <i class="fi fi-rr-file-pdf me-2"></i> ទាញយកបញ្ជី (PDF)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Search Bar for Unified List -->
+                        <div class="mb-3">
+                            <div class="input-group shadow-sm rounded-pill overflow-hidden border">
+                                <span class="input-group-text bg-white border-0 ps-3"><i
+                                        class="fi fi-rr-search text-muted"></i></span>
+                                <input type="text" id="unifiedDebtSearch" class="form-control border-0 py-2 small"
+                                    placeholder="ស្វែងរកឈ្មោះ អត្តលេខ ឬស្ថានភាពក្នុងបញ្ជីនេះ..."
+                                    onkeyup="filterUnifiedDebtTable()">
+                            </div>
+                        </div>
+
+                        <div class="table-container">
+                            <div class="table-responsive">
+                                <table class="table align-middle" id="unifiedDebtTable">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 60px;">ល.រ</th>
+                                            <th style="width: 100px;">អត្តលេខ</th>
+                                            <th class="text-start px-4">ឈ្មោះសិស្ស</th>
+                                            <th class="text-start" style="width: 150px;">ផ្នែកសិក្សា</th>
+                                            <th class="text-start" style="width: 150px;">គ្រូបន្ទុកថ្នាក់</th>
+                                            <th style="width: 130px;">ម៉ោងសិក្សា</th>
+                                            <th style="width: 120px;">តម្លៃសិក្សា</th>
+                                            <th style="width: 160px;">ស្ថានភាព</th>
+                                            <th style="width: 120px;">ថ្ងៃត្រូវបង់</th>
+
+                                            <th class="delay-col d-none" style="width: 120px;">ថ្ងៃពន្យារ</th>
+                                            <th class="delay-col d-none" style="width: 150px;">មូលហេតុ</th>
+                                            <th style="width: 110px;">នៅជំពាក់</th>
+                                            <th class="text-start px-4">សម្គាល់</th>
+                                            <th style="width: 60px;">លម្អិត</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="unifiedDebtBody">
+                                        <!-- Data will be loaded by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden old sections if needed, or we can just remove them -->
+                    <div id="debtDetailsSection" style="display: none;"></div>
+                    <div id="allCategorizedLists" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-pills mb-4 nav-justified bg-white p-2 rounded-4 shadow-sm" id="studentTabs" role="tablist"
+            style="border: 1px solid rgba(0,0,0,0.05);">
+            <li class="nav-item" role="presentation">
+                <button
+                    class="nav-link active rounded-4 fw-bold py-3 d-flex align-items-center justify-content-center gap-2"
+                    id="fulltime-tab" data-bs-toggle="pill" data-bs-target="#fulltime-pane" type="button" role="tab"
+                    aria-controls="fulltime-pane" aria-selected="true" onclick="adjustTableColumns('fullTime')">
+                    <i class="fi fi-rr-book-alt"></i>
+                    <span>សិស្សចិនពេញម៉ោង (Full-Time)</span>
+                    <span class="badge bg-white text-pink-dark rounded-pill shadow-sm ms-2" id="badge-fulltime">0</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-4 fw-bold py-3 d-flex align-items-center justify-content-center gap-2"
+                    id="parttime-tab" data-bs-toggle="pill" data-bs-target="#parttime-pane" type="button" role="tab"
+                    aria-controls="parttime-pane" aria-selected="false" onclick="adjustTableColumns('partTime')">
+                    <i class="fi fi-rr-briefcase"></i>
+                    <span>សិស្សក្រៅម៉ោង (Part-Time)</span>
+                    <span class="badge bg-white text-warning rounded-pill shadow-sm ms-2" id="badge-parttime">0</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-4 fw-bold py-3 d-flex align-items-center justify-content-center gap-2"
+                    id="trilingual-tab" data-bs-toggle="pill" data-bs-target="#trilingual-pane" type="button" role="tab"
+                    aria-controls="trilingual-pane" aria-selected="false" onclick="adjustTableColumns('trilingual')">
+                    <i class="fi fi-rr-child"></i>
+                    <span>ថ្នាក់ចំណះដឹងទូទៅ</span>
+                    <span class="badge bg-white text-purple rounded-pill shadow-sm ms-2" id="badge-trilingual">0</span>
+                </button>
+            </li>
+
+        </ul>
+
+        <style>
+            .nav-pills .nav-link {
+                color: #6c757d;
+                transition: all 0.3s ease;
+                border: 2px solid transparent;
+            }
+
+            .nav-pills .nav-link:hover {
+                background-color: #f8f9fa;
+                transform: translateY(-2px);
+            }
+
+            .nav-pills .nav-link.active {
+                background: linear-gradient(135deg, #8a0e5b 0%, #c71585 100%) !important;
+                color: white !important;
+                box-shadow: 0 5px 15px rgba(138, 14, 91, 0.4);
+            }
+
+            .nav-pills .nav-link.active .badge {
+                color: #8a0e5b !important;
+            }
+
+            #parttime-tab.active {
+                background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%) !important;
+                color: white !important;
+                box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+            }
+
+            #parttime-tab.active .badge {
+                color: #fd7e14 !important;
+            }
+
+            #trilingual-tab.active {
+                background: linear-gradient(135deg, #6f42c1 0%, #6610f2 100%) !important;
+                color: white !important;
+                box-shadow: 0 5px 15px rgba(111, 66, 193, 0.4);
+            }
+
+            #trilingual-tab.active .badge {
+                color: #6f42c1 !important;
+            }            .tab-pane {
+                animation: fadeIn 0.4s ease-in-out;
+            }
+        </style>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="studentTabContent">
+
+            <!-- Full Time Pane -->
+            <div class="tab-pane fade show active" id="fulltime-pane" role="tabpanel" aria-labelledby="fulltime-tab"
+                tabindex="0">
+                <!-- Chinese Full-Time Table Card -->
+                <div class="card shadow-lg mb-4 border-0 rounded-4 overflow-hidden">
+                    <div
+                        class="card-header card-header-pink border-0 d-flex justify-content-between align-items-center">
+                        <div class="card-header-title">
+                            <span><i class="fi fi-rr-book-alt me-2"></i>សិស្សចិនពេញម៉ោង (Full-time Chinese)</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-light rounded-pill dropdown-toggle shadow-sm px-3"
+                                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fi fi-rr-print me-2"></i>របាយការណ៍ផ្នែកនេះ
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                    <li><a class="dropdown-item py-2" href="#"
+                                            onclick="exportCurrentViewPDF('chinese-fulltime')"><i
+                                                class="fi fi-rr-file-pdf text-danger me-2"></i>ទាញយកជា PDF</a></li>
+                                    <li><a class="dropdown-item py-2" href="#"
+                                            onclick="exportCurrentViewExcel('chinese-fulltime')"><i
+                                                class="fi fi-rr-file-excel text-success me-2"></i>ទាញយកជា Excel</a></li>
+                                </ul>
+                            </div>
+                            <div class="text-white opacity-75 small d-none d-md-block">
+                                <i class="fi fi-rr-cursor me-2"></i>ចុចលើឈ្មោះដើម្បីមើលលម្អិត
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover mb-0" id="studentTableFullTime"
+                                width="100%">
+                                <thead>
+                                    <tr>
+                                        <th width="3%" class="text-center fw-bold">#</th>
+                                        <th width="5%" class="text-center fw-bold">ID</th>
+                                        <th width="10%" class="text-center fw-bold">ឈ្មោះសិស្ស</th>
+                                        <th width="5%" class="text-center fw-bold">ភេទ</th>
+                                        <th width="8%" class="text-center fw-bold">ថ្ងៃចូលរៀន</th>
+                                        <th width="10%" class="text-center fw-bold">ម៉ោងសិក្សា</th>
+                                        <th width="6%" class="text-center fw-bold">កម្រិត</th>
+                                        <th width="8%" class="text-center fw-bold">គ្រូបន្ទុកថ្នាក់</th>
+                                        <th width="10%" class="text-center fw-bold">ថ្ងៃត្រូវបង់</th>
+                                        <th width="5%" class="text-center fw-bold">ខែ</th>
+                                        <th width="8%" class="text-center fw-bold">តម្លៃ ($)</th>
+                                        <th width="8%" class="text-center fw-bold">ខ្វះ ($)</th>
+                                        <th width="10%" class="text-center fw-bold">ស្ថានភាព</th>
+                                        <th width="10%" class="text-center fw-bold">សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Data will be loaded by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Part Time Pane -->
+            <div class="tab-pane fade" id="parttime-pane" role="tabpanel" aria-labelledby="parttime-tab" tabindex="0">
+                <!-- Part-Time Table Card -->
+                <div class="card shadow-lg mb-4 border-0 rounded-4 overflow-hidden">
+                    <div class="card-header border-0 d-flex justify-content-between align-items-center"
+                        style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); color: white;">
+                        <div class="fw-bold fs-5">
+                            <span><i class="fi fi-rr-briefcase me-2"></i>សិស្សក្រៅម៉ោង (Part-time)</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-light rounded-pill dropdown-toggle shadow-sm px-3"
+                                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fi fi-rr-print me-2"></i>របាយការណ៍ផ្នែកនេះ
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                    <li><a class="dropdown-item py-2" href="#"
+                                            onclick="exportCurrentViewPDF('part-time')"><i
+                                                class="fi fi-rr-file-pdf text-danger me-2"></i>ទាញយកជា PDF</a></li>
+                                    <li><a class="dropdown-item py-2" href="#"
+                                            onclick="exportCurrentViewExcel('part-time')"><i
+                                                class="fi fi-rr-file-excel text-success me-2"></i>ទាញយកជា Excel</a></li>
+                                </ul>
+                            </div>
+                            <div class="small opacity-75 d-none d-md-block">
+                                <i class="fi fi-rr-cursor me-2"></i>ចុចលើឈ្មោះដើម្បីមើលលម្អិត
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover mb-0" id="studentTablePartTime"
+                                width="100%">
+                                <thead>
+                                    <tr>
+                                        <th width="3%" class="text-center fw-bold">#</th>
+                                        <th width="5%" class="text-center fw-bold">ID</th>
+                                        <th width="10%" class="text-center fw-bold">ឈ្មោះសិស្ស</th>
+                                        <th width="5%" class="text-center fw-bold">ភេទ</th>
+                                        <th width="8%" class="text-center fw-bold">ថ្ងៃចូលរៀន</th>
+                                        <th width="10%" class="text-center fw-bold">ម៉ោងសិក្សា</th>
+                                        <th width="6%" class="text-center fw-bold">កម្រិត</th>
+                                        <th width="10%" class="text-center fw-bold">គ្រូ</th>
+                                        <th width="10%" class="text-center fw-bold">ថ្ងៃត្រូវបង់</th>
+                                        <th width="5%" class="text-center fw-bold">ខែ</th>
+                                        <th width="8%" class="text-center fw-bold">តម្លៃ ($)</th>
+                                        <th width="8%" class="text-center fw-bold">ខ្វះ ($)</th>
+                                        <th width="10%" class="text-center fw-bold">ស្ថានភាព</th>
+                                        <th width="10%" class="text-center fw-bold">សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Data will be loaded by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trilingual Pane -->
+            <div class="tab-pane fade" id="trilingual-pane" role="tabpanel" aria-labelledby="trilingual-tab"
+                tabindex="0">
+                <!-- Trilingual / Preschool Table Card -->
+                <div class="card shadow-lg mb-4 border-0 rounded-4 overflow-hidden">
+                    <div class="card-header border-0 d-flex justify-content-between align-items-center"
+                        style="background: linear-gradient(135deg, #6f42c1 0%, #6610f2 100%); color: white;">
+                        <div class="fw-bold fs-5">
+                            <span><i class="fi fi-rr-child me-2"></i>ថ្នាក់ចំណះដឹងទូទៅ</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-light rounded-pill dropdown-toggle shadow-sm px-3"
+                                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fi fi-rr-print me-2"></i>របាយការណ៍ផ្នែកនេះ
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                    <li><a class="dropdown-item py-2" href="#"
+                                            onclick="exportCurrentViewPDF('trilingual')"><i
+                                                class="fi fi-rr-file-pdf text-danger me-2"></i>ទាញយកជា PDF</a></li>
+                                    <li><a class="dropdown-item py-2" href="#"
+                                            onclick="exportCurrentViewExcel('trilingual')"><i
+                                                class="fi fi-rr-file-excel text-success me-2"></i>ទាញយកជា Excel</a></li>
+                                    <li class="border-top"><a class="dropdown-item py-2" href="#"
+                                            onclick="exportTrilingualPartTimeOutTimeReport()"><i
+                                                class="fi fi-rr-clock text-primary me-2"></i>បញ្ជីឈ្មោះសិស្សចេញម៉ោង</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="small opacity-75 d-none d-md-block">
+                                <i class="fi fi-rr-cursor me-2"></i>ចុចលើឈ្មោះដើម្បីមើលលម្អិត
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover mb-0"
+                                id="studentTableTrilingual" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th width="3%" class="text-center fw-bold">#</th>
+                                        <th width="5%" class="text-center fw-bold">ID</th>
+                                        <th width="10%" class="text-center fw-bold">ឈ្មោះសិស្ស</th>
+                                        <th width="5%" class="text-center fw-bold">ភេទ</th>
+                                        <th width="8%" class="text-center fw-bold">ថ្ងៃចូលរៀន</th>
+                                        <th width="10%" class="text-center fw-bold">ម៉ោងសិក្សា</th>
+                                        <th width="6%" class="text-center fw-bold">កម្រិត</th>
+                                        <th width="10%" class="text-center fw-bold">គ្រូ</th>
+                                        <th width="10%" class="text-center fw-bold">ថ្ងៃត្រូវបង់</th>
+                                        <th width="5%" class="text-center fw-bold">ខែ</th>
+                                        <th width="8%" class="text-center fw-bold">តម្លៃ ($)</th>
+                                        <th width="8%" class="text-center fw-bold">ខ្វះ ($)</th>
+                                        <th width="10%" class="text-center fw-bold">ស្ថានភាព</th>
+                                        <th width="10%" class="text-center fw-bold">សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Data will be loaded by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-3 p-3 bg-white rounded-4 shadow-sm border">
+            <div class="table-info text-secondary fw-bold">
+                <i class="fi fi-rr-users me-2"></i>សិស្សសរុប (Global Total): <span id="displayCountGlobal"
+                    class="text-primary fs-5">0</span> នាក់
+                <span class="ms-2 fw-normal" style="font-size: 0.9rem;">(ប្រុស: <span id="maleStudentCount" class="text-primary fw-bold">0</span>, ស្រី: <span id="femaleStudentCount" class="text-danger fw-bold">0</span>)</span>
+            </div>
+            <div class="table-actions d-flex gap-2">
+                <button class="btn btn-primary bg-pink-primary border-0 rounded-pill px-4"
+                    onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    <i class="fi fi-rr-arrow-small-up me-2"></i>ខាងលើ
+                </button>
+                <button class="btn btn-outline-primary rounded-pill px-4" onclick="checkAllPayments()">
+                    <i class="fi fi-rr-refresh me-2"></i> ពិនិត្យបង់ប្រាក់
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer mt-5 py-4 border-top bg-white text-center text-muted position-relative"
+            style="font-size: 0.9rem; z-index: 100;">
+            <div class="container">
+                <div class="mb-3 fw-bold">
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទីតាំងទី២ របស់សាលា:</span>
+                        <span class="fw-bold text-dark">ភូមិក្រាំង សង្កាត់ក្រាំងអំពិល ក្រុងកំពត ខេត្តកំពត</span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទំនាក់ទំនង:</span>
+                        <span class="me-2 fw-bold text-dark"><i class="fi fi-rr-smartphone me-1 text-primary"></i>093
+                            835 678 (Smart)</span>
+                        <a href="https://t.me/Tian093835678" target="_blank" class="text-decoration-none fw-bold">
+                            <i class="fi fi-brands-telegram me-1 text-primary"></i>Telegram
+                        </a>
+                    </div>
+                </div>
+
+                <div class="w-75 mx-auto border-top my-3 opacity-25"></div>
+
+                <div class="footer-update-time mb-1 fw-bold">
+                    <i class="fi fi-rr-clock me-2"></i>កាលបរិច្ឆេទចុងក្រោយ: <span id="last-update-time"
+                        class="fw-bold">...</span>
+                </div>
+                <div class="footer-copyright fw-bold text-dark">
+                    ©
+                    <script>document.write(new Date().getFullYear())</script> គ្រប់គ្រងសាលា. Developed by <span
+                        class="fw-bold text-pink-primary">មាស មករា</span>.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Student Details Modal -->
+    <div class="modal fade" id="studentDetailsModal" tabindex="-1" aria-labelledby="studentDetailsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header text-white" style="background-color: #8a0e5b;">
+                    <h5 class="modal-title" id="studentDetailsModalLabel">
+                        <i class="fi fi-rr-info me-2"></i> ព័ត៌មានលម្អិតរបស់សិស្ស និងបង់ប្រាក់បន្ថែម
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalBodyContent">
+                    <div class="text-center py-5">
+                        <p class="text-muted mt-4">កំពុងរៀបចំទិន្នន័យ...</p>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between align-items-center">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                        <i class="fi fi-rr-cross me-2"></i> បិទ
+                    </button>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn fw-bold rounded-pill px-4 text-white" id="detailsEditBtn"
+                            onclick="openEditFromDetails()"
+                            style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 12px rgba(245,158,11,0.3);">
+                            <i class="fi fi-rr-edit me-2"></i> កែប្រែ
+                        </button>
+                        <button type="button" class="btn fw-bold rounded-pill px-4 text-white" onclick="window.print()"
+                            style="background: linear-gradient(135deg, #8a0e5b, #c71585); border: none; box-shadow: 0 4px 12px rgba(138,14,91,0.3);">
+                            <i class="fi fi-rr-print me-2"></i> បោះពុម្ព
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Payment Modal is dynamically generated by showAdditionalPaymentModal() in JS -->
+
+
+
+
+    <div class="modal fade" id="posReceiptModal" tabindex="-1" aria-labelledby="posReceiptModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="posReceiptModalLabel">
+                        <i class="fi fi-rr-receipt"></i> មើលវិក្កយបត្រមុនបោះពុម្ព
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body receipt-preview-container">
+                    <div id="posReceiptModalContent">
+                        <!-- POS Receipt content will be generated here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fi fi-rr-cross"></i> បិទ
+                    </button>
+                    <button type="button" class="btn btn-primary bg-info border-info" onclick="printModalReceipt()">
+                        <i class="fi fi-rr-print"></i> បោះពុម្ពវិក្កយបត្រ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contract/Warning Letter Modal -->
+    <div class="modal fade" id="contractModal" tabindex="-1" aria-labelledby="contractModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title fw-bold" id="contractModalLabel">
+                        <i class="fi fi-rr-document-signed"></i> លិខិតព្រមាន / កិច្ចសន្យាបង់ប្រាក់
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <div id="contractContent" class="bg-white p-5 shadow-sm"
+                        style="font-family: 'Kantumruy Pro'; line-height: 1.6;">
+                        <!-- Contract content will be injected here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">បិទ</button>
+                    <button type="button" class="btn btn-primary" onclick="printContract()">
+                        <i class="fi fi-rr-print me-2"></i>បោះពុម្ព
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.0/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <!-- Firebase Configuration -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="/js/core/firebase-config.js"></script>
+    <script src="/js/core/cloudflare-r2.js"></script>
+    <script src="/js/core/auth-check.js"></script>
+    <script src="/js/core/sidebar.js"></script>
+    <script src="/js/core/receiver-utils.js"></script>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Local Script -->
+    <script src="/js/utils/khmer-font.js"></script>
+
+    <script src="/js/utils/delete-teacher-filter.js"></script>
+    <script src="/js/pages/data-tracking.js"></script>
+    <script src="/js/pages/payment-modal.js"></script>
+    <script src="/js/pages/session-selection.js"></script>
+
+    <!-- Leave Request Modal -->
+    <div class="modal fade" id="leaveRequestModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold"><i class="fi fi-rr-document me-2"></i>បង្កើតពាក្យសុំច្បាប់ (Create
+                        Leave Request Form)</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="alert alert-info border-0 shadow-sm rounded-4 mb-4">
+                        <i class="fi fi-rr-info me-2"></i> បញ្ចូលឈ្មោះសិស្សដើម្បីស្វែងរកព័ត៌មាន
+                        បន្ទាប់មកបំពេញថ្ងៃសុំច្បាប់។
+                    </div>
+                    <form id="leaveRequestForm">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold text-primary">ស្វែងរកសិស្ស (Search Student)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i
+                                            class="fi fi-rr-search text-primary"></i></span>
+                                    <input type="text" class="form-control bg-light border-start-0 ps-0"
+                                        id="lrSearchStudent" placeholder="ស្វែងរកតាមឈ្មោះ ឬ អត្តលេខ..."
+                                        list="studentListDataset">
+                                </div>
+                                <datalist id="studentListDataset"></datalist>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">ឈ្មោះសិស្ស (Student Name)</label>
+                                <input type="text" class="form-control" id="lrStudentName" readonly
+                                    style="background-color: #f8f9fa;">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-success">សុំច្បាប់ចំនួនថ្ងៃ (Total Days)</label>
+                                <input type="number" class="form-control border-success" id="lrDays"
+                                    placeholder="ឧទាហរណ៍៖ ០៣" required>
+                            </div>
+
+                            <hr class="my-2 opacity-50">
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">រៀននៅឆ្នាំ (Year)</label>
+                                <input type="text" class="form-control" id="lrYear">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">កម្រិត (Level)</label>
+                                <input type="text" class="form-control" id="lrLevel">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">បន្ទប់លេខ (Room No.)</label>
+                                <input type="text" class="form-control" id="lrRoom">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">ម៉ោងសិក្សា (Study Time)</label>
+                                <input type="text" class="form-control" id="lrTime">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">គ្រូបន្ទុកឈ្មោះ (Teacher Name)</label>
+                                <input type="text" class="form-control" id="lrTeacher">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-success">ពីថ្ងៃទី (Start Date)</label>
+                                <input type="date" class="form-control border-success" id="lrStartDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-success">រហូតដល់ថ្ងៃទី (End Date)</label>
+                                <input type="date" class="form-control border-success" id="lrEndDate" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">មូលហេតុ (Reason)</label>
+                                <textarea class="form-control" id="lrReason" rows="2"
+                                    placeholder="បញ្ជាក់មូលហេតុ..."></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">បោះបង់
+                        (Cancel)</button>
+                    <button type="button" class="btn btn-success shadow-sm rounded-pill px-4"
+                        onclick="printLeaveRequest()">
+                        <i class="fi fi-rr-print me-2"></i>ព្រីនក្រដាស A4 (Print Standard A4)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Professional A4 Printable Template (Hidden) -->
+    <div id="printLeaveRequestContainer" style="display: none;">
+        <div class="standard-a4-sheet"
+            style="width: 210mm; height: 297mm; padding: 0; background: url('លិខិតសុំច្បាប់.jpg') no-repeat; background-size: 100% 100%; margin: 0 auto; position: relative; box-sizing: border-box; background-color: white;">
+
+            <style>
+                .overlay-data {
+                    position: absolute;
+                    font-family: 'Kantumruy Pro', sans-serif;
+                    font-weight: bold;
+                    color: black !important;
+                    font-size: 16px;
+                    white-space: nowrap;
+                }
+            </style>
+
+            <!-- Positioning fields (Estimated - Adjust top/left % if needed) -->
+            <div class="overlay-data" id="pLrStudentName" style="top: 29.5%; left: 32%;"></div>
+            <div class="overlay-data" id="pLrYear" style="top: 29.5%; left: 63%;"></div>
+            <div class="overlay-data" id="pLrLevel" style="top: 29.5%; left: 77%;"></div>
+            <div class="overlay-data" id="pLrRoom" style="top: 29.5%; left: 91%;"></div>
+
+            <div class="overlay-data" id="pLrTime" style="top: 32.5%; left: 24%;"></div>
+            <div class="overlay-data" id="pLrTeacher" style="top: 32.5%; left: 58%;"></div>
+
+            <div class="overlay-data" id="pLrDays" style="top: 45.4%; left: 45%;"></div>
+
+            <!-- Start Date -->
+            <div class="overlay-data" id="pLrStartDay" style="top: 45.4%; left: 60%;"></div>
+            <div class="overlay-data" id="pLrStartMonth" style="top: 45.4%; left: 73%;"></div>
+            <div class="overlay-data" id="pLrStartYear" style="top: 45.4%; left: 88%;"></div>
+
+            <!-- End Date -->
+            <div class="overlay-data" id="pLrEndDay" style="top: 48.5%; left: 28%;"></div>
+            <div class="overlay-data" id="pLrEndMonth" style="top: 48.5%; left: 42%;"></div>
+            <div class="overlay-data" id="pLrEndYear" style="top: 48.5%; left: 56%;"></div>
+
+            <!-- Reason (Multline if needed) -->
+            <div class="overlay-data" id="pLrReason"
+                style="top: 51.5%; left: 21%; width: 70%; white-space: normal; line-height: 1.8;"></div>
+
+            <!-- Today's Date -->
+            <div class="overlay-data" id="pTodayDay" style="top: 67.5%; left: 65%;"></div>
+            <div class="overlay-data" id="pTodayMonth" style="top: 67.5%; left: 78%;"></div>
+            <div class="overlay-data" id="pTodayYear" style="top: 67.5%; left: 91%;"></div>
+        </div>
+    </div>
+
+    <!-- Add Score Modal (General Knowledge & Chinese Full-time) -->
+    <div class="modal fade" id="addScoreModal" tabindex="-1" aria-hidden="true" style="overflow-y: auto;">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <div class="modal-header bg-primary text-white border-0 py-3">
+                    <h5 class="modal-title fw-bold moul-font small"><i class="fi fi-rr-add me-2"></i>បញ្ចូលពិន្ទុប្រចាំខែ (Add Monthly Score)</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 bg-light bg-opacity-50">
+                    <form id="addScoreForm">
+                        <input type="hidden" id="scoreStudentKey" value="">
+                        
+                        <div class="row g-3 mb-4">
+                             <div class="col-md-6 col-12">
+                                <div class="p-3 bg-white rounded-4 shadow-sm border border-light h-100">
+                                    <div class="small text-muted mb-1 moul-font" style="font-size: 0.65rem;">ព័ត៌មានសិស្ស (Student Info)</div>
+                                    <div id="scoreStudentNameDisplay" class="fw-bold text-primary fs-5 mb-1 text-truncate">---</div>
+                                    <div class="d-flex gap-2">
+                                        <span class="badge bg-light text-dark border px-2 py-1 rounded-pill" id="scoreStudentIDDisplay">ID: ---</span>
+                                        <span class="badge bg-pink-primary bg-opacity-10 text-pink-dark border border-pink-subtle px-2 py-1 rounded-pill" id="scoreProgramDisplay">---</span>
+                                    </div>
+                                </div>
+                             </div>
+                             <div class="col-md-3 col-6">
+                                <div class="p-3 bg-white rounded-4 shadow-sm border border-light h-100">
+                                    <label class="form-label fw-bold small text-muted moul-font mb-2" style="font-size: 0.65rem;">ខែ (Month)</label>
+                                    <select class="form-select form-select-sm border-0 bg-light rounded-3" id="scoreMonth">
+                                        <option value="1">មករា (Jan)</option>
+                                        <option value="2">កុម្ភៈ (Feb)</option>
+                                        <option value="3">មីនា (Mar)</option>
+                                        <option value="4">មេសា (Apr)</option>
+                                        <option value="5">ឧសភា (May)</option>
+                                        <option value="6">មិថុនា (Jun)</option>
+                                        <option value="7">កក្កដា (Jul)</option>
+                                        <option value="8">សីហា (Aug)</option>
+                                        <option value="9">កញ្ញា (Sep)</option>
+                                        <option value="10">តុលា (Oct)</option>
+                                        <option value="11">វិច្ឆិកា (Nov)</option>
+                                        <option value="12">ធ្នូ (Dec)</option>
+                                    </select>
+                                </div>
+                             </div>
+                             <div class="col-md-3 col-6">
+                                <div class="p-3 bg-white rounded-4 shadow-sm border border-light h-100">
+                                    <label class="form-label fw-bold small text-muted moul-font mb-2" style="font-size: 0.65rem;">ឆ្នាំ (Year)</label>
+                                    <input type="number" class="form-control form-control-sm border-0 bg-light rounded-3 fw-bold" id="scoreYear" value="2026">
+                                </div>
+                             </div>
+                        </div>
+
+                        <div class="card border-0 shadow-sm mb-4 rounded-4 overflow-hidden animate__animated animate__fadeIn">
+                            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                                <h6 class="fw-bold text-primary mb-0 moul-font small"><i class="fi fi-rr-list-check me-2"></i>បញ្ចូលពិន្ទុតាមមុខវិជ្ជា (Subject Scores)</h6>
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-1" style="font-size: 0.65rem;">ពិន្ទុអតិបរមា: 10</span>
+                            </div>
+                            <div class="card-body p-4 pt-0">
+                                <div class="row g-3" id="subjectInputsContainer">
+                                    <!-- Inputs will be injected here dynamically by Javascript based on the student's studyType -->
+                                    <div class="text-center py-5 text-muted opacity-50">
+                                        <i class="fi fi-rr-loading-spinner animate__animated animate__rotate"></i>
+                                        <div class="small mt-2">កំពុងរៀបចំកម្មវិធីសិក្សា...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 text-center mb-2">
+                             <div class="col-md-4 col-4">
+                                <div class="p-3 bg-success bg-opacity-10 rounded-4 border border-success border-opacity-20 shadow-sm animate__animated animate__pulse animate__infinite animate__slow">
+                                    <div class="small text-muted mb-1 moul-font" style="font-size: 0.6rem;">សរុប (Total)</div>
+                                    <div class="h4 fw-black text-success mb-0" id="displayScoreTotal">0.00</div>
+                                    <input type="hidden" id="scoreTotal" value="0">
+                                </div>
+                             </div>
+                              <div class="col-md-4 col-4">
+                                <div class="p-3 bg-info bg-opacity-10 rounded-4 border border-info border-opacity-20 shadow-sm">
+                                    <div class="small text-muted mb-1 moul-font" style="font-size: 0.6rem;">មធ្យម (Avg)</div>
+                                    <div class="h4 fw-black text-info mb-0" id="displayScoreAverage">0.00</div>
+                                    <input type="hidden" id="scoreAverage" value="0">
+                                </div>
+                             </div>
+                             <div class="col-md-4 col-4">
+                                <div class="p-3 bg-primary bg-opacity-10 rounded-4 border border-primary border-opacity-20 shadow-sm">
+                                    <div class="small text-muted mb-1 moul-font" style="font-size: 0.6rem;">និទ្ទេស (Grade)</div>
+                                    <div class="h4 fw-black text-primary mb-0" id="displayScoreGrade">F</div>
+                                    <input type="hidden" id="scoreGrade" value="F">
+                                </div>
+                             </div>
+                             <div class="col-12 mt-3">
+                                 <div class="d-flex gap-3 align-items-center bg-white p-3 rounded-pill shadow-sm border border-light">
+                                     <label class="form-label fw-bold small text-warning moul-font mb-0 px-3 border-end" style="font-size: 0.65rem; white-space: nowrap;">ចំណាត់ថ្នាក់ (Rank)</label>
+                                     <input type="number" class="form-control border-0 bg-transparent fw-black text-warning fs-5 p-0" id="scoreRank" placeholder="បញ្ចូលលេខរៀង..." min="1">
+                                 </div>
+                             </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer border-0 bg-white p-4 justify-content-between align-items-center">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">
+                        <i class="fi fi-rr-arrow-left me-2"></i>បោះបង់
+                    </button>
+                    <button type="button" class="btn btn-primary fw-bold shadow-sm rounded-pill px-5 py-2" onclick="saveAdminScore()">
+                        <i class="fi fi-rr-disk me-2"></i>រក្សាទុកទិន្នន័យ (Save Scores)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/core/offline-manager.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>គ្រប់គ្រងស្តុកសម្ភារៈ (Inventory)</title>
+    <link rel="icon" type="image/jpeg" href="/img/1.jpg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome 6 (ផ្លាស់ប្តូរទៅកំណែថ្មី) -->
+    <link rel="preload" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"
+        as="style">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel="stylesheet" href="/css/loader.css">
+    <script src="/js/core/loader-init.js"></script>
+
+
+
+
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    
+    <!-- Flatpickr for Custom Date Format -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/km.js"></script>
+
+    <!-- SweetAlert2 for Premium Popups -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Firebase SDKs (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    
+    <!-- Core Config & Security -->
+    <script src="/js/core/firebase-config.js"></script>
+    <script src="/js/core/auth-check.js"></script>
+    <script src="/js/core/sidebar.js"></script>
+
+    <style>
+        /* FONT CONFIGURATION */
+        * {
+            font-family: 'Kantumruy Pro', sans-serif;
+        }
+
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        span,
+        div,
+        a,
+        button,
+        input,
+        select,
+        textarea,
+        label,
+        table {
+            font-family: 'Kantumruy Pro', sans-serif !important;
+        }
+
+        /* PREMIUM UI STYLING */
+        body {
+            background-color: #f0f2f5;
+        }
+
+        /* Sidebar enhancement */
+        #sidebar {
+            background: #8a0e5b;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 15px;
+            background: #8a0e5b;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        #sidebar-logo {
+            width: 70px;
+            height: 70px;
+            margin-right: 0;
+            margin-bottom: 10px;
+            object-fit: cover;
+            padding: 0;
+            border-radius: 50%;
+        }
+
+        .sidebar-title-text {
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Nav Link Styles */
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            padding: 15px 20px;
+            transition: all 0.3s ease;
+            border-left: 5px solid transparent;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link i {
+            margin-right: 10px;
+            width: 25px;
+            text-align: center;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white !important;
+            border-left-color: #ff69b4;
+            padding-left: 25px;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(90deg, #ff69b4, rgba(255, 105, 180, 0.8));
+            color: white !important;
+            font-weight: bold;
+            border-left-color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Glassmorphism Cards */
+        .card {
+            border: none;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Stat Cards */
+        .inventory-stat-card {
+            position: relative;
+            overflow: hidden;
+            border-left: none;
+        }
+
+        .stat-icon-bg {
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            font-size: 8rem;
+            opacity: 0.1;
+            transform: rotate(-15deg);
+        }
+
+        /* Table Styling */
+        .table-responsive {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .table thead th {
+            background: #8a0e5b;
+            /* Update to theme color */
+            background: #8a0e5b;
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 15px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        .table tbody tr:hover {
+            background-color: #fff0f5;
+            /* Light pink hover */
+        }
+
+        .table td {
+            vertical-align: middle;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #444;
+            font-size: 0.95rem;
+        }
+
+        /* Badges */
+        .badge-stock {
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .badge-in {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge-out {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .badge-remain {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        /* Buttons */
+        .btn-primary-custom {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-action {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 2px;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-add-stock {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+        }
+
+        .btn-sell-stock {
+            background-color: #ffebee;
+            color: #b71c1c;
+        }
+
+        .btn-delete {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+
+        .btn-back-home {
+            background: linear-gradient(135deg, #ff69b4, #c71585);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(255, 105, 180, 0.3);
+        }
+
+        .btn-back-home:hover {
+            transform: translateX(-5px);
+            color: white;
+            box-shadow: 0 6px 15px rgba(255, 105, 180, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="sidebar">
+    </div>
+
+    <script src="/js/core/sidebar.js"></script>
+
+    <div id="main-content">
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1 fw-bold text-dark"><i class="fi fi-rr-warehouse-alt text-primary"></i>
+                    គ្រប់គ្រងស្តុកសម្ភារៈ
+                </h2>
+                <p class="text-muted small mb-0">ពិនិត្យ និងគ្រប់គ្រងទិន្នន័យស្តុកទាំងអស់</p>
+            </div>
+
+            <!-- Currency & Rate Controls -->
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center bg-white p-2 rounded shadow-sm">
+                    <div class="d-flex align-items-center me-3">
+                        <span class="text-secondary small me-2"><i class="fi fi-rr-editns"></i> រូបិយបណ្ណ:</span>
+                        <select id="currencySelector" class="form-select form-select-sm border-0 bg-light"
+                            style="width: 100px; font-weight:bold;">
+                            <option value="USD">USD ($)</option>
+                            <option value="KHR">KHR (៛)</option>
+                        </select>
+                    </div>
+                    <div class="vr h-100 mx-2"></div>
+                    <div class="d-flex align-items-center">
+                        <span class="text-secondary small me-2">អត្រាដូរ:</span>
+                        <input type="number" id="exchangeRate"
+                            class="form-control form-control-sm border-0 bg-light text-end" value="4100"
+                            style="width: 80px; font-weight:bold;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS CARDS -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <div class="card-body">
+                        <h6 class="text-white-50 text-uppercase small ls-1">ស្តុកនៅសល់ (Remaining)</h6>
+                        <h2 class="display-5 fw-bold mb-0" id="totalItems">0</h2>
+                        <i class="fi fi-rr-box-open stat-icon-bg"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm" style="background: white;">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small ls-1">ស្តុកទាំងអស់ (Total Stock)</h6>
+                        <h2 class="display-5 fw-bold text-primary mb-0" id="statTotalIn">0</h2>
+                        <i class="fi fi-rr-arrow-down stat-icon-bg text-primary"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm" style="background: white;">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small ls-1">ស្តុកចេញ (Stock Out)</h6>
+                        <h2 class="display-5 fw-bold text-danger mb-0" id="statTotalOut">0</h2>
+                        <i class="fi fi-rr-shopping-cart stat-icon-bg text-danger"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm" style="background: white;">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small ls-1">តម្លៃសរុប (Total Value)</h6>
+                        <h2 class="display-5 fw-bold text-success mb-0" id="totalCost">$0.00</h2>
+                        <i class="fi fi-rr-dollar stat-icon-bg text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXPORT & CONTROLS -->
+        <div class="card mb-4">
+            <div class="card-body p-4 border-bottom">
+                <div class="row align-items-center g-3">
+                    <div class="col-md-auto">
+                        <h5 class="mb-0 fw-bold"><i class="fi fi-rr-print text-secondary me-2"></i>របាយការណ៍</h5>
+                    </div>
+                    <div class="col-md-auto">
+                        <select class="form-select form-select-sm" id="reportCategory">
+                            <option value="inventory">ស្តុកបច្ចុប្បន្ន (Current Stock)</option>
+                            <option value="stockIn">ស្តុកចូល (Stock In)</option>
+                            <option value="stockOut" selected>ស្តុកចេញ (Stock Out)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-auto">
+                        <select class="form-select form-select-sm" id="exportType">
+                            <option value="all">ទាំងអស់ (All Time)</option>
+                            <option value="daily" selected>ប្រចាំថ្ងៃ (Daily)</option>
+                            <option value="monthly">ប្រចាំខែ (Monthly)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-auto">
+                        <div class="input-group input-group-sm report-date-wrapper">
+                            <span class="input-group-text">
+                                <i class="fi fi-rr-calendar"></i>
+                            </span>
+                            <input type="text" id="reportDate" class="form-control fw-bold" placeholder="ជ្រើសរើសថ្ងៃខែ" style="width: 200px;">
+                        </div>
+                    </div>
+                    <div class="col-md-auto">
+                        <button class="btn btn-outline-danger btn-sm" onclick="exportToPDF()">
+                            <i class="fi fi-rr-file-pdf me-1"></i> Export PDF
+                        </button>
+                    </div>
+                    <div class="col-md-auto">
+                        <button class="btn btn-outline-success btn-sm" onclick="exportToExcel()">
+                            <i class="fi fi-rr-file-excel me-1"></i> Export Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <style>
+                    /* Premium Tab Styles */
+                    .nav-pills .nav-link {
+                        color: #64748b;
+                        background: #f1f5f9;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 16px;
+                        font-weight: 600;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        padding: 14px 20px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+                    }
+
+                    .nav-pills .nav-link:hover {
+                        background: #ffffff;
+                        color: #1e293b;
+                        border-color: #cbd5e1;
+                        transform: translateY(-3px);
+                        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+                    }
+
+                    .nav-pills .nav-link i {
+                        font-size: 1.25rem;
+                        transition: transform 0.3s ease;
+                    }
+
+                    .nav-pills .nav-link:hover i {
+                        transform: scale(1.1);
+                    }
+
+                    /* Active State - Current Stock (Indigo-Blue theme) */
+                    #pills-stock-tab.active {
+                        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%) !important;
+                        color: #ffffff !important;
+                        border-color: #4338ca;
+                        box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+                    }
+
+                    /* Active State - Sold History (Rose-Red theme) */
+                    #pills-sales-tab.active {
+                        background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
+                        color: #ffffff !important;
+                        border-color: #be123c;
+                        box-shadow: 0 10px 15px -3px rgba(225, 29, 72, 0.4);
+                    }
+                </style>
+
+                <style>
+                    /* Premium Date Picker Style */
+                    .report-date-wrapper {
+                        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                        border-radius: 12px;
+                        overflow: hidden;
+                        border: 2px solid #fecdd3;
+                        background: white;
+                    }
+
+                    .report-date-wrapper:hover {
+                        transform: translateY(-3px);
+                        border-color: #fb7185;
+                        box-shadow: 0 10px 20px -5px rgba(225, 29, 72, 0.2);
+                    }
+
+                    .report-date-wrapper .input-group-text {
+                        background: #fff1f2 !important;
+                        color: #e11d48 !important;
+                        border: none !important;
+                        padding: 0 15px;
+                        font-size: 1.1rem;
+                        transition: all 0.3s ease;
+                    }
+
+                    .report-date-wrapper:hover .input-group-text {
+                        background: #e11d48 !important;
+                        color: white !important;
+                    }
+
+                    .report-date-wrapper .form-control {
+                        border: none !important;
+                        padding: 10px 15px;
+                        font-size: 0.95rem;
+                        color: #1e293b;
+                        background: transparent !important;
+                        cursor: pointer;
+                    }
+
+                    .report-date-wrapper .form-control:focus {
+                        box-shadow: none !important;
+                    }
+
+                    /* Flatpickr Red Theme Customization */
+                    .flatpickr-calendar.red-theme {
+                        border: none;
+                        box-shadow: 0 15px 30px -5px rgba(0,0,0,0.15);
+                        border-radius: 16px;
+                    }
+                    .flatpickr-calendar.red-theme .flatpickr-day.selected {
+                        background: #e11d48;
+                        border-color: #e11d48;
+                    }
+                </style>
+
+                <div class="d-flex flex-column gap-4 mb-4">
+                    <!-- TABS -->
+                    <ul class="nav nav-pills nav-fill gap-3" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active shadow-sm" id="pills-stock-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-stock" type="button" role="tab" aria-selected="true">
+                                <i class="fi fi-rr-box-alt me-2 fa-lg"></i> ស្តុកបច្ចុប្បន្ន (Current Stock)
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link shadow-sm" id="pills-sales-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-sales" type="button" role="tab" aria-selected="false">
+                                <i class="fi fi-rr-history me-2 fa-lg"></i> ប្រវត្តិលក់ចេញ (Sold Stock History)
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary btn-primary-custom px-4 py-2 rounded-pill shadow-sm"
+                            data-bs-toggle="modal" data-bs-target="#addInventoryModal">
+                            <i class="fi fi-rr-plus-circle me-2"></i> បញ្ចូលស្តុកថ្មី
+                        </button>
+                        <div class="input-group" style="width: 300px;">
+                            <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3"><i
+                                    class="fi fi-rr-search text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0 rounded-end-pill ps-0"
+                                id="inventorySearchInput" placeholder="ស្វែងរក...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="pills-tabContent">
+                    <!-- CURRENT STOCK TABLE -->
+                    <div class="tab-pane fade show active" id="pills-stock" role="tabpanel" tabindex="0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" id="inventoryTable">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="ps-4">#</th>
+                                        <th>ស្តុកចាស់ (Old)</th>
+                                        <th>ឈ្មោះទំនិញ</th>
+                                        <th>ថ្ងៃនាំចូល</th>
+                                        <th class="text-center">ក្នុងឃ្លាំង (Warehouse)</th>
+                                        <th class="text-center">ការិយាល័យ (Office)</th>
+                                        <th class="text-center">លក់ចេញ (Sold)</th>
+                                        <th class="text-center">សរុប (Total)</th>
+                                        <th>អ្នកកាន់ស្តុក</th>
+                                        <th class="text-center pe-4">សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="currentStockTableBody">
+                                    <!-- Filled by JS -->
+                                    <tr>
+                                        <td colspan="9" class="text-center py-4 text-muted">កំពុងដំណើរការ...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3 px-2">
+                            <div id="stockPaginationInfo" class="small text-muted fw-bold"></div>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination pagination-sm mb-0 gap-1" id="stockPagination"></ul>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <!-- SOLD STOCK TABLE -->
+                    <div class="tab-pane fade" id="pills-sales" role="tabpanel" tabindex="0">
+                        <div class="d-flex justify-content-end mb-3">
+                            <button class="btn btn-danger btn-sm shadow-sm rounded-pill px-3"
+                                onclick="deleteAllSales()">
+                                <i class="fi fi-rr-trash me-2"></i> លុបប្រវត្តិទាំងអស់
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" id="salesTable">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4">#</th>
+                                        <th>កាលបរិច្ឆេទលក់</th>
+                                        <th>អ្នកលក់ (Seller Name)</th>
+                                        <th>ឈ្មោះទំនិញ</th>
+                                        <th class="text-center">ចំនួនលក់</th>
+                                        <th class="text-end">តម្លៃរាយ (៛)</th>
+                                        <th class="text-end">សរុប ($)</th>
+                                        <th class="text-end">សរុប (៛)</th>
+                                        <th>ចំណាំ</th>
+                                        <th class="text-center">សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="soldStockTableBody">
+                                    <tr>
+                                        <td colspan="9" class="text-center py-4 text-muted">កំពុងដំណើរការ...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3 px-2">
+                            <div id="salesPaginationInfo" class="small text-muted fw-bold"></div>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination pagination-sm mb-0 gap-1" id="salesPagination"></ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer -->
+        <footer class="app-footer mt-5 py-4 border-top bg-white text-center text-muted position-relative"
+            style="font-size: 0.9rem; z-index: 100;">
+            <div class="container">
+                <div class="mb-3">
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទីតាំងទី២ របស់សាលា:</span>
+                        ភូមិក្រាំង សង្កាត់ក្រាំងអំពិល ក្រុងកំពត ខេត្តកំពត
+                    </div>
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទំនាក់ទំនង:</span>
+                        <span class="me-2"><i class="fi fi-rr-smartphone me-1 text-primary"></i>093 835 678
+                            (Smart)</span>
+                        <a href="https://t.me/Tian093835678" target="_blank" class="text-decoration-none">
+                            <i class="fi fi-brands-telegram me-1 text-primary"></i>Telegram
+                        </a>
+                    </div>
+                </div>
+
+                <div class="w-75 mx-auto border-top my-3 opacity-25"></div>
+
+                <div class="footer-update-time mb-1">
+                    <i class="fi fi-rr-clock me-1"></i>កាលបរិច្ឆេទចុងក្រោយ: <span id="last-update-time">...</span>
+                </div>
+                <div class="footer-copyright">
+                    ©
+                    <script>document.write(new Date().getFullYear())</script> គ្រប់គ្រងសាលា. Developed by <span
+                        class="fw-bold text-pink-primary">មាស មករា</span>.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ADD INVENTORY MODAL -->
+    <div class="modal fade" id="addInventoryModal" tabindex="-1" >
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header bg-primary text-white" style="border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold"><i class="fi fi-rr-plus-square me-2"></i> បញ្ចូលសម្ភារៈចូលស្តុកថ្មី
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <form id="addInventoryForm">
+                    <div class="modal-body p-4">
+                        <div class="row g-3">
+                            <!-- STOCK KEEPER (New) -->
+                            <div class="col-md-12">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ឈ្មោះអ្នកកាន់ស្តុក (Stock Keeper)</label>
+                                <select class="form-select" id="stockKeeperName" required>
+                                    <option value="">-- ជ្រើសរើស --</option>
+                                    <option value="冯 老师">冯 老师</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ឈ្មោះសម្ភារៈ</label>
+                                <select class="form-select" id="itemNameSelect" required>
+                                    <option value="">-- ជ្រើសរើស --</option>
+                                    <option value="ប៊ិកខៀវ">ប៊ិកខៀវ</option>
+                                    <option value="ប៊ិកក្រហម">ប៊ិកក្រហម</option>
+                                    <option value="សៀវភៅ(200ទំព័រ)">សៀវភៅ(200ទំព័រ)</option>
+                                    <option value="សៀវភៅ(400ទំព័រ)">សៀវភៅ(400ទំព័រ)</option>
+                                    <option value="សៀវភៅ(250ទំព័រ)">សៀវភៅ(250ទំព័រ)</option>
+                                    <option value="ក្រដាសច្បាប់">ក្រដាសច្បាប់</option>
+                                    <option value="ក្រដាសចេញមុន">ក្រដាសចេញមុន</option>
+                                    <option value="ឯកសណ្ឋានគ្រូ">ឯកសណ្ឋានគ្រូ</option>
+                                    <option value="ឯកសណ្ឋានក្មេង">ឯកសណ្ឋានក្មេង</option>
+                                    <option value="ឯកសណ្ឋានសិស្ស">ឯកសណ្ឋានសិស្ស</option>
+                                    <option value="អាវយឺតក្មេង">អាវយឺតក្មេង</option>
+                                    <option value="អាវយឺត">អាវយឺត</option>
+                                    <option value="កាតសិស្ស">កាតសិស្ស</option>
+                                    <option value="សៀវភៅឈុត">សៀវភៅឈុត</option>
+                                    <option value="សៀវភៅឈុតក្មេង">សៀវភៅឈុតក្មេង</option>
+                                    <option value="ពាក្យចុះឈ្មោះ">ពាក្យចុះឈ្មោះ</option>
+                                    <option value="ក្រដាសប្តូរគ្រូ">ក្រដាសប្តូរគ្រូ</option>
+                                    <option value="ក្រដាសកិច្ចសន្យា">ក្រដាសកិច្ចសន្យា</option>
+                                    <option value="ក្រដាសធ្វើតេស្ត">ក្រដាសធ្វើតេស្ត</option>
+                                    <option value="ផ្សេងៗ">ផ្សេងៗ</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6" id="otherItemNameContainer" style="display:none;">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ឈ្មោះផ្សេងៗ</label>
+                                <input type="text" class="form-control" id="otherItemNameInput"
+                                    placeholder="បញ្ចូលឈ្មោះ...">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">កាលបរិច្ឆេទ</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="importDate" placeholder="DD/MM/YYYY"
+                                        required>
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="todayBtn">ថ្ងៃនេះ</button>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ស្តុកចាស់ (Old
+                                    Stock)</label>
+                                <input type="number" class="form-control" id="oldStock" min="0" placeholder="0">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ស្តុកការិយាល័យ
+                                    (Office)</label>
+                                <input type="number" class="form-control" id="officeInitialStock" min="0"
+                                    placeholder="0">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ចំនួននាំចូលថ្មី
+                                    (New Import)</label>
+                                <input type="number" class="form-control" id="quantity" min="0" required
+                                    placeholder="0">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ចំណាំ (Note)</label>
+                                <textarea class="form-control" id="itemNotes" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0">
+                        <button type="button" class="btn btn-light rounded-pill px-4"
+                            data-bs-dismiss="modal">បោះបង់</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">រក្សាទុក</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- SELL STOCK MODAL -->
+    <div class="modal fade" id="sellStockModal" tabindex="-1" >
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header bg-danger text-white" style="border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold"><i class="fi fi-rr-exclamation-circle me-2"></i> លក់ស្តុកចេញ (Sell
+                        Stock)
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <form id="sellStockForm">
+                    <div class="modal-body p-4">
+                        <div class="alert alert-light border border-danger border-start-4 d-flex align-items-center"
+                            role="alert">
+                            <i class="fi fi-rr-info text-danger me-2 fa-lg"></i>
+                            <div>
+                                <small class="text-muted d-block">កំពុងលក់ចេញ:</small>
+                                <span class="fw-bold text-danger fs-5" id="sellItemNameDisplay">Loading...</span>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="sellItemId">
+
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label small text-muted text-uppercase fw-bold">កាលបរិច្ឆេទលក់</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="sellDate" placeholder="DD/MM/YYYY"
+                                        required>
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="todaySellBtn">ថ្ងៃនេះ</button>
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <label
+                                    class="form-label small text-muted text-uppercase fw-bold">ស្តុកបច្ចុប្បន្ន</label>
+                                <input type="text" class="form-control bg-light" id="currentStockDisplay" readonly>
+                            </div>
+
+                            <div class="col-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ចំនួនលក់ (Qty)</label>
+                                <input type="number" class="form-control border-danger" id="sellQuantity" min="1"
+                                    required>
+                            </div>
+
+                            <div class="col-4">
+                                <label class="form-label small text-muted text-uppercase fw-bold">តម្លៃលក់រាយ
+                                    (៛)</label>
+                                <input type="number" class="form-control fw-bold" id="sellUnitPrice" step="100"
+                                    placeholder="0">
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label small text-muted text-uppercase fw-bold">សរុប (៛)</label>
+                                <input type="text" class="form-control fw-bold text-primary" id="sellTotalPriceKHR"
+                                    readonly>
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label small text-muted text-uppercase fw-bold">សរុប ($)</label>
+                                <input type="number" class="form-control fw-bold text-danger" id="sellTotalPriceUSD"
+                                    step="0.01" readonly>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label small text-muted text-uppercase fw-bold">អ្នកលក់ (Seller Name)</label>
+                                <select class="form-select" id="sellStockKeeper" required>
+                                    <option value="">-- ជ្រើសរើស --</option>
+                                    <option value="冯 老师">冯 老师</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ចំណាំ (Note)</label>
+                                <textarea class="form-control" id="sellNote" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0">
+                        <button type="button" class="btn btn-light rounded-pill px-4"
+                            data-bs-dismiss="modal">បោះបង់</button>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4">លក់ចេញ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESTOCK MODAL -->
+    <div class="modal fade" id="restockModal" tabindex="-1" >
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header bg-success text-white" style="border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold"><i class="fi fi-rr-plus-circle me-2"></i> បន្ថែមស្តុក (Add Stock)
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <form id="restockForm">
+                    <div class="modal-body p-4">
+                        <div class="alert alert-light border border-success border-start-4 d-flex align-items-center"
+                            role="alert">
+                            <i class="fi fi-rr-info text-success me-2 fa-lg"></i>
+                            <div>
+                                <small class="text-muted d-block">កំពុងបន្ថែមស្តុក:</small>
+                                <span class="fw-bold text-success fs-5" id="restockItemNameDisplay">Loading...</span>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="restockItemId">
+
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label small text-muted text-uppercase fw-bold">កាលបរិច្ឆេទ</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="restockDate" placeholder="DD/MM/YYYY"
+                                        required>
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="todayRestockBtn">ថ្ងៃនេះ</button>
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <label
+                                    class="form-label small text-muted text-uppercase fw-bold">ស្តុកបច្ចុប្បន្ន</label>
+                                <input type="text" class="form-control bg-light" id="restockCurrentStockDisplay"
+                                    readonly>
+                            </div>
+
+                            <div class="col-12 text-center">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ចំនួនបន្ថែមចូលឃ្លាំង
+                                    (Qty to Warehouse)</label>
+                                <input type="number" class="form-control border-success fw-bold text-center fs-4"
+                                    id="restockQuantity" min="1" required placeholder="0">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label small text-muted text-uppercase fw-bold">អ្នកផ្គត់ផ្គង់
+                                    (Supplier)</label>
+                                <input type="text" class="form-control" id="restockSupplier"
+                                    placeholder="ឈ្មោះអ្នកផ្គត់ផ្គង់...">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label small text-muted text-uppercase fw-bold">តម្លៃដើមរាយ (Cost
+                                    Price)</label>
+                                <input type="number" step="0.01" class="form-control" id="restockUnitCost"
+                                    placeholder="បញ្ចូលតម្លៃដើម">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ចំណាំ (Note)</label>
+                                <textarea class="form-control" id="restockNote" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0">
+                        <button type="button" class="btn btn-light rounded-pill px-4"
+                            data-bs-dismiss="modal">បោះបង់</button>
+                        <button type="submit" class="btn btn-success rounded-pill px-4">បញ្ជាក់</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRANSFER MODAL (Warehouse -> Office) -->
+    <div class="modal fade" id="transferModal" tabindex="-1" >
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header bg-info text-white" style="border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold"><i class="fi fi-rr-exchange-alt me-2"></i> ផ្ទេរស្តុកទៅការិយាល័យ
+                        (Transfer to Office)</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <form id="transferForm">
+                    <div class="modal-body p-4">
+                        <div class="alert alert-info border-0 d-flex align-items-center mb-4">
+                            <i class="fi fi-rr-warehouse-alt me-3 fa-2x"></i>
+                            <div>
+                                <small class="text-muted d-block">ទំនិញ:</small>
+                                <span class="fw-bold fs-5" id="transferItemName">Loading...</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="transferItemId">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <label
+                                    class="form-label small text-muted text-uppercase fw-bold">ស្តុកក្នុងឃ្លាំង</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control bg-light fw-bold text-center"
+                                        id="transferWarehouseStock" readonly>
+                                    <span class="input-group-text">ក្នុងឃ្លាំង</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ចំនួនផ្ទេរចេញ</label>
+                                <input type="number" class="form-control border-info fw-bold text-center text-primary"
+                                    id="transferQty" min="1" required placeholder="0">
+                            </div>
+                            <div class="col-12 mt-3">
+                                <label class="form-label small text-muted text-uppercase fw-bold">កាលបរិច្ឆេទផ្ទេរ
+                                    (Transfer Date)</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="transferDate" required
+                                        placeholder="DD/MM/YYYY">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="transferTodayBtn">ថ្ងៃនេះ</button>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ចំណាំ (Note)</label>
+                                <textarea class="form-control" id="transferNote" rows="2"
+                                    placeholder="បញ្ជាក់មូលហេតុផ្ទេរ..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0">
+                        <button type="button" class="btn btn-light rounded-pill px-4"
+                            data-bs-dismiss="modal">បោះបង់</button>
+                        <button type="submit"
+                            class="btn btn-info text-white rounded-pill px-4 fw-bold">យល់ព្រមផ្ទេរ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- RETURN STOCK MODAL -->
+    <div class="modal fade" id="returnStockModal" tabindex="-1" >
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header bg-secondary text-white" style="border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold"><i class="fi fi-rr-undo me-2"></i> ត្រឡប់ចូលឃ្លាំង (Return to
+                        Warehouse)
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <form id="returnStockForm">
+                    <div class="modal-body p-4">
+                        <div class="alert alert-secondary border-0 d-flex align-items-center mb-4">
+                            <i class="fi fi-rr-box-alt me-3 fa-2x"></i>
+                            <div>
+                                <small class="text-muted d-block">ទំនិញ:</small>
+                                <span class="fw-bold fs-5" id="returnItemName">Loading...</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="returnItemId">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <label
+                                    class="form-label small text-muted text-uppercase fw-bold">ស្តុកនៅការិយាល័យ</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control bg-light fw-bold text-center"
+                                        id="returnOfficeStock" readonly>
+                                    <span class="input-group-text">នៅសល់</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label
+                                    class="form-label small text-muted text-uppercase fw-bold">ចំនួនត្រឡប់ចូលឃ្លាំង</label>
+                                <input type="number" class="form-control border-secondary fw-bold text-center text-dark"
+                                    id="returnQty" min="1" required placeholder="0">
+                            </div>
+                            <div class="col-12 mt-3">
+                                <label class="form-label small text-muted text-uppercase fw-bold">កាលបរិច្ឆេទ
+                                    (Date)</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="returnDate" required
+                                        placeholder="DD/MM/YYYY">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="returnTodayBtn">ថ្ងៃនេះ</button>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ចំណាំ (Note)</label>
+                                <textarea class="form-control" id="returnNote" rows="2"
+                                    placeholder="បញ្ជាក់មូលហេតុ..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0">
+                        <button type="button" class="btn btn-light rounded-pill px-4"
+                            data-bs-dismiss="modal">បោះបង់</button>
+                        <button type="submit"
+                            class="btn btn-secondary text-white rounded-pill px-4 fw-bold">យល់ព្រមត្រឡប់</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT INVENTORY MODAL -->
+    <div class="modal fade" id="editInventoryModal" tabindex="-1" >
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header bg-warning text-dark" style="border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold"><i class="fi fi-rr-edit me-2"></i> កែប្រែព័ត៌មានទំនិញ (Edit Inventory)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editInventoryForm">
+                    <div class="modal-body p-4">
+                        <input type="hidden" id="editItemId">
+
+                        <!-- Item Name Display -->
+                        <div class="alert alert-light border border-warning border-start-4 d-flex align-items-center mb-3" role="alert">
+                            <i class="fi fi-rr-edit text-warning me-2 fa-lg"></i>
+                            <div>
+                                <small class="text-muted d-block">កំពុងកែប្រែ:</small>
+                                <span class="fw-bold text-dark fs-5" id="editItemNameDisplay">...</span>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <!-- ===== ព័ត៌មានទូទៅ ===== -->
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ឈ្មោះទំនិញ (Item Name)</label>
+                                <input type="text" class="form-control fw-bold" id="editItemName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">អ្នកកាន់ស្តុក (Stock Keeper)</label>
+                                <select class="form-select" id="editStockKeeper">
+                                    <option value="">-- ជ្រើសរើស --</option>
+                                    <option value="冯 老师">冯 老师</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ថ្ងៃនាំចូល (Import Date)</label>
+                                <input type="text" class="form-control" id="editImportDate" placeholder="DD/MM/YYYY">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">អ្នកផ្គត់ផ្គង់ (Supplier)</label>
+                                <input type="text" class="form-control" id="editSupplierName">
+                            </div>
+
+                            <!-- ===== ចំនួនស្តុក ===== -->
+                            <div class="col-12">
+                                <hr class="my-1">
+                                <small class="text-muted fw-bold text-uppercase"><i class="fi fi-rr-box-alt me-1"></i> ចំនួនស្តុក (Stock)</small>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ស្តុកចាស់ (Old)</label>
+                                <input type="number" class="form-control text-center fw-bold" id="editOldStock" min="0">
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ចូលឃ្លាំង (In)</label>
+                                <input type="number" class="form-control text-center fw-bold text-info" id="editWarehouseIn" min="0">
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ការិយាល័យ (Office)</label>
+                                <input type="number" class="form-control text-center fw-bold text-primary" id="editOfficeIn" min="0">
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">លក់ចេញ (Sold)</label>
+                                <input type="number" class="form-control text-center fw-bold text-danger" id="editStockOut" min="0">
+                            </div>
+
+                            <!-- Summary Badges -->
+                            <div class="col-12">
+                                <div class="d-flex flex-wrap align-items-center gap-3 p-2 px-3 bg-light rounded-3 border">
+                                    <div class="d-flex align-items-center gap-1">
+                                        <span class="small text-muted">ឃ្លាំង:</span>
+                                        <span class="badge bg-secondary" id="editCalcWarehouse">0</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <span class="small text-muted">ការិយាល័យ:</span>
+                                        <span class="badge bg-primary" id="editCalcOffice">0</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <span class="small text-muted fw-bold">សរុប:</span>
+                                        <span class="badge bg-success fs-6" id="editCalcRemaining">0</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <span class="small text-muted">ទទួល:</span>
+                                        <span class="badge bg-info text-white" id="editCalcTotalIn">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== តម្លៃ ===== -->
+                            <div class="col-12">
+                                <hr class="my-1">
+                                <small class="text-muted fw-bold text-uppercase"><i class="fi fi-rr-dollar me-1"></i> តម្លៃ (Price)</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">តម្លៃដើម (Unit Cost $)</label>
+                                <input type="number" step="0.01" class="form-control" id="editUnitCost">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">តម្លៃលក់ (Selling Price $)</label>
+                                <input type="number" step="0.01" class="form-control" id="editSellingPrice">
+                            </div>
+
+                            <!-- ===== ចំណាំ ===== -->
+                            <div class="col-12">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ចំណាំ (Note)</label>
+                                <textarea class="form-control" id="editNote" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">បោះបង់</button>
+                        <button type="submit" class="btn btn-warning text-dark rounded-pill px-4 fw-bold">
+                            <i class="fi fi-rr-disk me-1"></i> រក្សាទុកការកែប្រែ (Save)
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT SALE MODAL -->
+    <div class="modal fade" id="editSaleModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header bg-warning text-dark" style="border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold"><i class="fi fi-rr-edit me-2"></i> កែប្រែកំណត់ត្រាលក់ (Edit Sale)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editSaleForm">
+                    <div class="modal-body p-4">
+                        <input type="hidden" id="editSaleId">
+                        <input type="hidden" id="editSaleItemId">
+                        <input type="hidden" id="editSaleOldQty">
+
+                        <div class="alert alert-light border border-warning border-start-4 d-flex align-items-center mb-3" role="alert">
+                            <i class="fi fi-rr-info text-warning me-2 fa-lg"></i>
+                            <div>
+                                <small class="text-muted d-block">កំពុងកែប្រែទំនិញ:</small>
+                                <span class="fw-bold text-dark fs-5" id="editSaleItemNameDisplay">...</span>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label small text-muted text-uppercase fw-bold">កាលបរិច្ឆេទលក់</label>
+                                <input type="text" class="form-control" id="editSaleDate" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ចំនួនលក់ (Qty)</label>
+                                <input type="number" class="form-control fw-bold" id="editSaleQty" min="1" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">តម្លៃរាយ (៛)</label>
+                                <input type="number" class="form-control fw-bold border-warning" id="editSalePriceKHR" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">តម្លៃសរុប ($)</label>
+                                <input type="number" step="0.01" class="form-control bg-light" id="editSalePriceUSD" readonly>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small text-muted text-uppercase fw-bold">អ្នកកាន់ស្តុក (Stock Keeper)</label>
+                                <select class="form-select" id="editSaleKeeper">
+                                    <option value="">-- ជ្រើសរើស --</option>
+                                    <option value="冯 老师">冯 老师</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small text-muted text-uppercase fw-bold">ចំណាំ (Note)</label>
+                                <textarea class="form-control" id="editSaleNote" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">បោះបង់</button>
+                        <button type="submit" class="btn btn-warning text-dark rounded-pill px-4 fw-bold">រក្សាទុក</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <script src="/js/utils/khmer-font.js"></script>
+    <script>
+        const inventoryRef = database.ref('inventory');
+        const salesRef = database.ref('sales'); 
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/pages/inventory.js"></script>
+    <script src="/js/core/offline-manager.js"></script>
+
+</body>
+
+</html>
+

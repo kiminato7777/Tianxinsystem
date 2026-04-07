@@ -1,0 +1,211 @@
+@font-face {
+    font-family: 'Kantumruy Pro';
+    src: url('../fonts/Kantumruy-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Kantumruy Pro';
+    src: url('../fonts/Kantumruy-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Kantumruy Pro';
+    src: url('../fonts/Kantumruy-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Standard Beautiful Dynamic Loader - ULTRA PREMIUM 2026 */
+
+/* 1. Main Container with Mesh Gradient & Glass */
+#universal-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Luxury Mesh Gradient */
+    background: radial-gradient(at 0% 0%, rgba(255, 240, 245, 1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, rgba(255, 230, 242, 0.8) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, rgba(255, 240, 245, 1) 0, transparent 50%),
+                #ffffff;
+    background-size: 200% 200%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100000;
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), visibility 1s;
+    animation: meshFlow 15s ease infinite;
+    backdrop-filter: blur(10px);
+}
+
+#universal-loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.05); /* Subtle zoom out on exit */
+}
+
+@keyframes meshFlow {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
+}
+
+/* 2. Central Animation Container */
+.loader-container {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+}
+
+/* 3. Fluid Orbiting Rings */
+.ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    filter: drop-shadow(0 0 8px rgba(138, 14, 91, 0.1));
+}
+
+.ring-1 {
+    width: 100%;
+    height: 100%;
+    border-top-color: #8a0e5b;
+    border-bottom-color: rgba(138, 14, 91, 0.1);
+    animation: spin-fluid 2.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+}
+
+.ring-2 {
+    width: 82%;
+    height: 82%;
+    border-right-color: #ff69b4;
+    border-left-color: rgba(255, 105, 180, 0.1);
+    animation: spin-reverse-fluid 3.5s ease-in-out infinite;
+}
+
+.ring-3 {
+    width: 65%;
+    height: 65%;
+    border-top-color: #ffb6c1;
+    animation: pulse-ring 1.5s ease-in-out infinite;
+}
+
+@keyframes spin-fluid {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.05); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes spin-reverse-fluid {
+    0% { transform: rotate(360deg) scale(1); }
+    50% { transform: rotate(180deg) scale(0.95); }
+    100% { transform: rotate(0deg) scale(1); }
+}
+
+@keyframes pulse-ring {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+/* 4. Glass Logo Wrapper */
+.logo-wrapper {
+    position: relative;
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: #ffffff;
+    padding: 5px;
+    box-shadow: 
+        0 8px 20px rgba(138, 14, 91, 0.15), 
+        inset 0 0 10px rgba(255, 105, 180, 0.1);
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: premiumFloat 3.5s ease-in-out infinite;
+    backdrop-filter: blur(5px);
+    border: 1.5px solid rgba(138, 14, 91, 0.05);
+}
+
+/* 5. The Logo Image */
+.loader-logo {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
+    transition: all 0.5s ease;
+}
+
+@keyframes premiumFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    33% { transform: translateY(-10px) rotate(2deg); }
+    66% { transform: translateY(5px) rotate(-2deg); }
+}
+
+/* 6. Advanced Ripple Glow */
+.logo-glow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 105, 180, 0.3) 0%, transparent 70%);
+    animation: ripple-advanced 3s infinite;
+}
+
+@keyframes ripple-advanced {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { opacity: 0.5; }
+    100% { transform: scale(2); opacity: 0; }
+}
+
+/* 7. Text Animation */
+.loader-text-container {
+    margin-top: 50px;
+    text-align: center;
+    animation: fadeInSlide 1s ease-out;
+}
+
+.loader-title {
+    font-family: 'Kantumruy Pro', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    background: linear-gradient(45deg, #8a0e5b, #ff69b4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 5px;
+    letter-spacing: 1.5px;
+}
+
+.loader-subtitle {
+    font-family: 'Kantumruy Pro', sans-serif;
+    font-size: 0.85rem;
+    color: #ff69b4;
+    font-weight: 500;
+    opacity: 0.6;
+    letter-spacing: 0.5px;
+}
+
+.dots span {
+    display: inline-block;
+    animation: dot-jump 1.4s infinite both;
+}
+
+@keyframes dot-jump {
+    0%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+}
+
+@keyframes fadeInSlide {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

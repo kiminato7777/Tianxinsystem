@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ចំណូលចំណាយ - ប្រព័ន្ធគ្រប់គ្រងសាលា</title>
+    <link rel="icon" type="image/jpeg" href="/img/1.jpg">
+
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/loader.css">
+
+    <!-- JS Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/core/loader-init.js"></script>
+
+    <style>
+        /* Extra custom overrides specific to this page if needed */
+        .card-stat-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 1.5rem;
+        }
+
+        .filter-btn {
+            min-width: 100px;
+        }
+
+        /* Pagination beautification - Premium & Dynamic */
+        .page-link {
+            border: 1px solid #edf2f7;
+            margin: 0 3px;
+            border-radius: 12px !important;
+            width: auto;
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #4a5568;
+            background: #ffffff;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            font-family: 'Kantumruy Pro', sans-serif;
+            padding: 0 12px;
+            text-decoration: none;
+        }
+
+        .page-link:hover:not(.active) {
+            background-color: rgba(138, 14, 91, 0.05);
+            color: #8a0e5b;
+            border-color: rgba(138, 14, 91, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(138, 14, 91, 0.1);
+        }
+
+        .page-item.active .page-link {
+            background: linear-gradient(135deg, #8a0e5b 0%, #c12d7d 100%) !important;
+            color: white !important;
+            border: none;
+            box-shadow: 0 8px 16px rgba(138, 14, 91, 0.3);
+            transform: scale(1.05);
+            z-index: 2;
+        }
+
+        .page-item.disabled .page-link {
+            background-color: #f8fafc;
+            color: #cbd5e1;
+            border-color: #f1f5f9;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none;
+        }
+
+        .page-item:first-child .page-link, 
+        .page-item:last-child .page-link {
+            border-radius: 12px !important;
+            font-size: 1rem;
+        }
+
+        /* Ellipsis styling */
+        .page-item.disabled span.page-link {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+        }
+
+        .description-text {
+            font-size: 0.9rem;
+            color: #555;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* LAYOUT FIX For Fixed Sidebar */
+        #main-content {
+            flex-grow: 1;
+            margin-left: 250px;
+            /* Matches Sidebar Width */
+            width: calc(100% - 250px);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+        }
+
+
+
+        /* Sidebar Collapse Logic */
+        .sidebar-collapsed #sidebar {
+            width: 70px !important;
+            transition: all 0.3s;
+        }
+
+        .sidebar-collapsed #main-content {
+            margin-left: 70px !important;
+            width: calc(100% - 70px) !important;
+        }
+
+        /* ============================================
+           CUSTOM DATE PICKER — DD / MM / YYYY
+        ============================================ */
+        .custom-date-picker {
+            display: inline-flex;
+            align-items: center;
+            background: #fff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 4px 10px;
+            gap: 2px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            cursor: text;
+        }
+
+        .custom-date-picker:focus-within {
+            border-color: #8a0e5b;
+            box-shadow: 0 0 0 3px rgba(138, 14, 91, 0.12);
+        }
+
+        .custom-date-picker .dp-icon {
+            color: #8a0e5b;
+            font-size: 0.85rem;
+            margin-right: 4px;
+            opacity: 0.7;
+        }
+
+        .custom-date-picker input.dp-part {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-weight: 700;
+            font-size: 0.82rem;
+            color: #1e293b;
+            text-align: center;
+            padding: 0;
+            font-family: 'Kantumruy Pro', sans-serif;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .custom-date-picker input.dp-part::-webkit-outer-spin-button,
+        .custom-date-picker input.dp-part::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .custom-date-picker input.dp-part:focus {
+            background: rgba(138, 14, 91, 0.07);
+            border-radius: 4px;
+            color: #8a0e5b;
+        }
+
+        .custom-date-picker input.dp-day {
+            width: 26px;
+        }
+
+        .custom-date-picker input.dp-mon {
+            width: 26px;
+        }
+
+        .custom-date-picker input.dp-year {
+            width: 40px;
+        }
+
+        .custom-date-picker .dp-sep {
+            color: #94a3b8;
+            font-weight: 700;
+            font-size: 0.8rem;
+            user-select: none;
+            padding: 0 1px;
+        }
+
+        #transDate {
+            position: relative;
+        }
+
+        .input-group:focus-within {
+            box-shadow: 0 0 0 0.25rem rgba(138, 14, 91, 0.1) !important;
+            border-radius: 0.375rem;
+        }
+
+        .input-group:focus-within .input-group-text {
+            border-color: var(--bs-pink-primary);
+            color: var(--bs-pink-primary) !important;
+        }
+
+        .input-group-text {
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-collapsed #sidebar .nav-link span,
+        .sidebar-collapsed #sidebar .sidebar-user-profile div:not(.bg-white),
+        .sidebar-collapsed #sidebar .badge,
+        .sidebar-collapsed #sidebar hr,
+        .sidebar-collapsed #sidebar .sidebar-divider,
+        .sidebar-collapsed #sidebar .text-muted {
+            display: none !important;
+        }
+
+        .sidebar-collapsed #sidebar .nav-link {
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .sidebar-collapsed #sidebar .nav-link i {
+            margin-right: 0;
+            font-size: 1.3rem;
+        }
+
+        .sidebar-collapsed #sidebar-logo {
+            width: 40px;
+            height: 40px;
+        }
+
+        @media (max-width: 991.98px) {
+            #main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        /* Dynamic Enhancements */
+        .quick-filter-pill {
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 11px;
+            border: 1px solid #dee2e6;
+            background: #fff;
+            padding: 4px 12px;
+            border-radius: 50px;
+            color: #6c757d;
+            font-weight: bold;
+        }
+
+        .quick-filter-pill:hover,
+        .quick-filter-pill.active {
+            background: #0d6efd;
+            color: #fff !important;
+            border-color: #0d6efd;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
+        }
+
+        .stat-card-pulse {
+            animation: soft-pulse 0.5s ease;
+        }
+
+        @keyframes soft-pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .balance-progress {
+            height: 6px;
+            border-radius: 10px;
+            background: #e9ecef;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .balance-bar-income {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-count-badge {
+            font-size: 0.65rem;
+            padding: 3px 6px;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7) !important;
+            backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07) !important;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+
+        /* Shortcut Badge */
+        .kbs-hint {
+            border: 1px solid #dee2e6;
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #6c757d;
+            font-size: 0.6rem;
+            font-weight: bold;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            margin-left: 5px;
+        }
+
+        /* Custom Modal Theme */
+        .modal-income .modal-header {
+            background: linear-gradient(135deg, #10b981, #059669) !important;
+        }
+
+        .modal-expense .modal-header {
+            background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+        }
+
+        /* Row Hover Highlight */
+        #transactionsTableBody tr {
+            transition: all 0.2s;
+        }
+
+        #transactionsTableBody tr:hover {
+            background-color: rgba(138, 14, 91, 0.05) !important;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <!-- Sidebar -->
+    <div id="sidebar"></div>
+
+    <!-- Page Content -->
+    <div id="main-content">
+
+        <!-- Header -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
+            <div class="d-flex align-items-center justify-content-between w-100">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-light bg-white shadow-sm rounded-circle me-3 border" id="sidebarToggle"
+                        onclick="toggleDesktopSidebar()" style="width: 45px; height: 45px;">
+                        <i class="fi fi-rr-menu-burger text-pink-dark"></i>
+                    </button>
+
+                    <div class="ms-4">
+                        <h2 class="fs-2 m-0 fw-bold text-pink-primary">
+                            <i class="fi fi-rr-receipt me-2"></i>គ្រប់គ្រងចំណូលចំណាយ
+                        </h2>
+                        <p class="text-muted small mb-0 mt-1">គ្រប់គ្រងនិងតាមដានប្រតិបត្តិការហិរញ្ញវត្ថុរបស់សាលា</p>
+                    </div>
+                </div>
+
+                <!-- Date/Time Display -->
+                <div class="d-flex gap-3 align-items-center border-start ps-4 d-none d-md-flex">
+                    <div class="text-end">
+                        <div class="text-muted small text-uppercase fw-bold" style="font-size: 0.7rem;">កាលបរិច្ឆេទ
+                        </div>
+                        <div class="fw-bold text-dark" id="currentDateDisplay">...</div>
+                    </div>
+                    <div class="vr"></div>
+                    <div class="text-end">
+                        <div class="text-muted small text-uppercase fw-bold" style="font-size: 0.7rem;">ម៉ោង</div>
+                        <div class="fw-bold text-primary" id="currentTimeDisplay">...</div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid px-4 animate__animated animate__fadeIn mb-4">
+
+            <!-- 1. DATE FILTER & GLOBAL TOOLS -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-3">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+
+                        <!-- Date Filters -->
+                        <div class="d-flex align-items-center gap-2 bg-light p-2 rounded-3 border flex-wrap">
+                            <span class="text-muted small fw-bold text-uppercase ms-2"><i
+                                    class="fi fi-rr-calendar-clock me-1"></i>កាលបរិច្ឆេទ:</span>
+
+                            <!-- START DATE Custom Picker -->
+                            <div class="custom-date-picker" title="ថ្ងៃចាប់ផ្ដើម">
+                                <i class="fi fi-rr-calendar dp-icon"></i>
+                                <input type="number" class="dp-part dp-day" id="startDay" min="1" max="31"
+                                    placeholder="DD" autocomplete="off">
+                                <span class="dp-sep">/</span>
+                                <input type="number" class="dp-part dp-mon" id="startMon" min="1" max="12"
+                                    placeholder="MM" autocomplete="off">
+                                <span class="dp-sep">/</span>
+                                <input type="number" class="dp-part dp-year" id="startYear" min="2020" max="2099"
+                                    placeholder="YYYY" autocomplete="off">
+                            </div>
+                            <!-- Hidden input for JS compatibility -->
+                            <input type="hidden" id="reportStartDate">
+
+                            <span class="text-muted fw-bold">→</span>
+
+                            <!-- END DATE Custom Picker -->
+                            <div class="custom-date-picker" title="ថ្ងៃបញ្ចប់">
+                                <i class="fi fi-rr-calendar dp-icon"></i>
+                                <input type="number" class="dp-part dp-day" id="endDay" min="1" max="31"
+                                    placeholder="DD" autocomplete="off">
+                                <span class="dp-sep">/</span>
+                                <input type="number" class="dp-part dp-mon" id="endMon" min="1" max="12"
+                                    placeholder="MM" autocomplete="off">
+                                <span class="dp-sep">/</span>
+                                <input type="number" class="dp-part dp-year" id="endYear" min="2020" max="2099"
+                                    placeholder="YYYY" autocomplete="off">
+                            </div>
+                            <!-- Hidden input for JS compatibility -->
+                            <input type="hidden" id="reportEndDate">
+
+                            <!-- Quick Filter Pills -->
+                            <div class="vr mx-1"></div>
+                            <div class="d-flex gap-1" id="quickDateFilters">
+                                <div class="quick-filter-pill" onclick="setQuickDate('today')">ថ្ងៃនេះ</div>
+                                <div class="quick-filter-pill" onclick="setQuickDate('week')">សប្តាហ៍នេះ</div>
+                                <div class="quick-filter-pill active" onclick="setQuickDate('month')">ខែនេះ</div>
+                                <div class="quick-filter-pill" onclick="setQuickDate('all')">ទាំងអស់</div>
+                            </div>
+
+                            <button class="btn btn-sm btn-primary shadow-sm ms-2" id="btnApplyDateFilter">
+                                <i class="fi fi-rr-refresh"></i>
+                            </button>
+                        </div>
+
+
+                        <!-- Global Actions -->
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-info rounded-pill px-3 shadow-sm"
+                                onclick="exportReport('monthly')" title="ទាញរបាយការណ៍ប្រចាំខែ">
+                                <i class="fi fi-rr-calendar me-2"></i>របាយការណ៍ប្រចាំខែ
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-sm"
+                                onclick="exportReport('range')" title="ទាញរបាយការណ៍ចន្លោះថ្ងៃដែលបានជ្រើស">
+                                <i class="fi fi-rr-calendar-lines me-2"></i>របាយការណ៍ចន្លោះថ្ងៃ
+                            </button>
+                            <button class="btn btn-success btn-sm rounded-pill px-3 fw-bold shadow-sm"
+                                data-bs-toggle="modal" data-bs-target="#transactionModal" data-type="income">
+                                <i class="fi fi-rr-plus-circle me-2"></i>បន្ថែមចំណូលថ្មី
+                            </button>
+                            <button class="btn btn-danger btn-sm rounded-pill px-3 fw-bold shadow-sm"
+                                data-bs-toggle="modal" data-bs-target="#transactionModal" data-type="expense">
+                                <i class="fi fi-rr-plus-circle me-2"></i>បន្ថែមចំណាយថ្មី
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SUMMARY CARDS (Live Update based on Date Range) -->
+            <div class="row g-4 mb-4">
+                <!-- Income -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden position-relative">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start z-1 position-relative mb-3">
+                                <div>
+                                    <h6 class="text-success text-uppercase fw-bold mb-1 small opacity-75">ចំណូលសរុប
+                                        (Income)</h6>
+                                    <h2 class="fw-bold text-success mb-0" id="statTotalIncome"
+                                        style="font-size: 2.25rem;">$0.00</h2>
+                                    <div class="fw-bold text-success opacity-75 small" id="statTotalIncomeKHR">0 ៛</div>
+                                </div>
+                                <div class="card-stat-icon bg-success bg-opacity-10 text-success rounded-circle p-3">
+                                    <i class="fi fi-rr-arrow-trend-up fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="pt-3 border-top border-light">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-muted small fw-bold">🏠 សាច់ប្រាក់</span>
+                                    <span class="text-dark small fw-bold" id="statIncCashDetail">$0 | 0 ៛</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted small fw-bold">📱 ABA Bank</span>
+                                    <span class="text-primary small fw-bold" id="statIncAbaDetail">$0 | 0 ៛</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expense -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden position-relative">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start z-1 position-relative mb-3">
+                                <div>
+                                    <h6 class="text-danger text-uppercase fw-bold mb-1 small opacity-75">ចំណាយសរុប
+                                        (Expense)</h6>
+                                    <h2 class="fw-bold text-danger mb-0" id="statTotalExpense"
+                                        style="font-size: 2.25rem;">$0.00</h2>
+                                    <div class="fw-bold text-danger opacity-75 small" id="statTotalExpenseKHR">0 ៛</div>
+                                </div>
+                                <div class="card-stat-icon bg-danger bg-opacity-10 text-danger rounded-circle p-3">
+                                    <i class="fi fi-rr-arrow-trend-down fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="pt-3 border-top border-light">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-muted small fw-bold">🏠 សាច់ប្រាក់</span>
+                                    <span class="text-dark small fw-bold" id="statExpCashDetail">$0 | 0 ៛</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted small fw-bold">📱 ABA Bank</span>
+                                    <span class="text-primary small fw-bold" id="statExpAbaDetail">$0 | 0 ៛</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Balance -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden position-relative">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start z-1 position-relative mb-3">
+                                <div>
+                                    <h6 class="text-primary text-uppercase fw-bold mb-1 small opacity-75">ប្រាក់សរុប
+                                        (ABA + សាច់ប្រាក់)</h6>
+                                    <h2 class="fw-bold text-dark mb-0" id="statNetBalance" style="font-size: 2.25rem;">
+                                        $0.00</h2>
+                                    <div class="fw-bold text-dark opacity-75 small" id="statNetBalanceKHR">0 ៛</div>
+                                </div>
+                                <div class="card-stat-icon bg-primary bg-opacity-10 text-primary rounded-circle p-3">
+                                    <i class="fi fi-rr-piggy-bank fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="pt-3 border-top border-light">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-muted small fw-bold">🏠 សាច់ប្រាក់សុទ្ធ</span>
+                                    <span class="text-dark small fw-bold" id="statNetCashDetail">$0 | 0 ៛</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted small fw-bold">📱 ABA សុទ្ធ</span>
+                                    <span class="text-primary small fw-bold" id="statNetAbaDetail">$0 | 0 ៛</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row: Summary Breakdown -->
+            <div class="row g-4 mb-4">
+                <!-- ABA Total Breakdown -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm rounded-4 h-100"
+                        style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+                        <div class="card-body p-4">
+                            <h6
+                                class="text-uppercase fw-bold text-primary small mb-3 border-bottom pb-2 d-flex justify-content-between align-items-center">
+                                <span><i class="fi fi-rr-bank me-2"></i>សរុប ABA (ABA Summary)</span>
+                                <span class="badge bg-primary bg-opacity-10 text-primary">Gross Stats</span>
+                            </h6>
+                            <div class="row text-center g-3">
+                                <div class="col-6 border-end">
+                                    <div class="small text-muted fw-bold mb-1">ចំណូល ABA ($)</div>
+                                    <h4 class="fw-bold mb-0 text-success" id="statAbaIncUSD">$0.00</h4>
+                                    <div class="small fw-bold text-success opacity-75 mt-1" id="statAbaIncKHR">0 ៛</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="small text-muted fw-bold mb-1">ចំណាយ ABA ($)</div>
+                                    <h4 class="fw-bold mb-0 text-danger" id="statAbaExpUSD">$0.00</h4>
+                                    <div class="small fw-bold text-danger opacity-75 mt-1" id="statAbaExpKHR">0 ៛</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cash & Net ABA -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                        <div class="card-body p-4">
+                            <h6 class="text-uppercase fw-bold text-muted small mb-3 border-bottom pb-2">
+                                <i class="fi fi-rr-wallet me-2 text-warning"></i>សមតុល្យសុទ្ធ (Net Method Balance)
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-6 border-end">
+                                    <div class="small text-muted fw-bold mb-1">សាច់ប្រាក់សុទ្ធ (Net Cash)</div>
+                                    <h4 class="fw-bold mb-0" id="statCashUSD">$0.00</h4>
+                                    <div class="small fw-bold opacity-75" id="statCashKHR">0 ៛</div>
+                                </div>
+                                <div class="col-6 ps-3">
+                                    <div class="small text-muted fw-bold mb-1">ABA សុទ្ធ (Net ABA)</div>
+                                    <h4 class="fw-bold mb-0 text-primary" id="statAbaUSD">$0.00</h4>
+                                    <div class="small fw-bold text-primary opacity-75" id="statAbaKHR">0 ៛</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. DATA LIST & FILTERS -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-5">
+                <div class="card-header bg-white border-0 py-3 px-4">
+                    <div class="row g-3 align-items-center">
+                        <!-- Title & Tabs -->
+                        <div class="col-md-6">
+                            <h5 class="fw-bold mb-3 text-secondary"><i class="fi fi-rr-list me-2"></i>ប្រតិបត្តិការ
+                                (Transactions)</h5>
+                            <div class="d-flex align-items-center flex-wrap gap-3">
+                                <div class="btn-group shadow-sm rounded-pill" role="group">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary active filter-btn"
+                                        id="filterAll" onclick="applyTypeFilter('all')">ទាំងអស់ <span
+                                            class="badge bg-secondary ms-1" id="badgeAll">0</span></button>
+                                    <button type="button" class="btn btn-sm btn-outline-success filter-btn"
+                                        id="filterIncome" onclick="applyTypeFilter('income')">ចំណូល <span
+                                            class="badge bg-success ms-1" id="badgeIncome">0</span></button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger filter-btn"
+                                        id="filterExpense" onclick="applyTypeFilter('expense')">ចំណាយ <span
+                                            class="badge bg-danger ms-1" id="badgeExpense">0</span></button>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                        <!-- Search -->
+                        <div class="col-md-6 text-end">
+                            <div class="position-relative d-inline-block w-100" style="max-width: 300px;">
+                                <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted">
+                                    <i class="fi fi-rr-search"></i>
+                                </span>
+                                <input type="text" class="form-control border bg-light ps-5 rounded-pill"
+                                    id="searchDescription" placeholder="ស្វែងរក...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="transactionsTable">
+                            <thead class="bg-light text-secondary">
+                                <tr style="font-size: 0.9rem;">
+                                    <th class="py-3 ps-4 text-center">#</th>
+                                    <th class="py-3 text-center">កាលបរិច្ឆេទ</th>
+                                    <th class="py-3 text-center">ប្រភេទ</th>
+                                    <th class="py-3 text-center">មធ្យោបាយ</th>
+                                    <th class="py-3">ប្រភព/ចំណាយ</th>
+                                    <th class="py-3">សិស្ស/អ្នកចំណាយ</th>
+                                    <th class="py-3">អ្នកទទួល</th>
+                                    <th class="py-3" style="width: 20%;">ការបរិយាយ</th>
+                                    <th class="py-3 text-end">ទឹកប្រាក់ ($)</th>
+                                    <th class="py-3 text-end pe-4">ទឹកប្រាក់ខ្មែរ (៛)</th>
+                                    <th class="py-3 text-center">សកម្មភាព</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTableBody" class="border-top-0">
+                                <!-- Dynamic rows -->
+                                <tr>
+                                    <td colspan="11" class="text-center py-5 text-muted">
+                                        <div class="spinner-border text-primary mb-3" role="status"></div>
+                                        <p class="mb-0 small">កំពុងផ្ទុកទិន្នន័យ...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot id="transactionsTableFooter" class="bg-light border-top-2 fw-bold">
+                                <!-- Totals will be injected here -->
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Footer / Pagination -->
+                <div class="card-footer bg-white border-0 py-3 px-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted small" id="paginationInfo">
+                            កំពុងបង្ហាញ <span id="displayStartCount" class="fw-bold text-dark">0</span> ទៅ <span
+                                id="displayEndCount" class="fw-bold text-dark">0</span> នៃ <span id="totalCount"
+                                class="fw-bold text-dark">0</span> ទិន្នន័យ
+                        </div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0 gap-1" id="paginationControls"></ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Main Footer -->
+        <footer class="app-footer mt-auto py-4 border-top bg-white text-center text-muted position-relative">
+            <div class="container">
+                <div class="mb-3">
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទីតាំងទី២ របស់សាលា:</span>
+                        ភូមិក្រាំង សង្កាត់ក្រាំងអំពិល ក្រុងកំពត ខេត្តកំពត
+                    </div>
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទំនាក់ទំនង:</span>
+                        <span class="me-2"><i class="fi fi-rr-smartphone me-1 text-primary"></i>093 835 678
+                            (Smart)</span>
+                        <a href="https://t.me/Tian093835678" target="_blank" class="text-decoration-none">
+                            <i class="fi fi-brands-telegram me-1 text-primary"></i>Telegram
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-copyright small">
+                    ©
+                    <script>document.write(new Date().getFullYear())</script> គ្រប់គ្រងសាលា. Developed by <span
+                        class="fw-bold text-pink-primary">មាស មករា</span>.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+
+    <!-- Refined Premium Transaction Modal Styling -->
+    <style>
+        :root {
+            --income-color: #059669;
+            /* Sophisticated Emerald */
+            --income-bg: #ecfdf5;
+            --expense-color: #e11d48;
+            /* Premium Rose */
+            --expense-bg: #fff1f2;
+            --modal-grad-income: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            --modal-grad-expense: linear-gradient(135deg, #be123b 0%, #fb7185 100%);
+            --ui-border: #e2e8f0;
+            --ui-text-main: #1e293b;
+            --ui-text-muted: #64748b;
+        }
+
+        #transactionModal .modal-content {
+            background: #ffffff;
+            border: none;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Thematic Headers - Softer & More Professional */
+        #transactionModal.income-theme .modal-header {
+            background: var(--modal-grad-income) !important;
+        }
+
+        #transactionModal.expense-theme .modal-header {
+            background: var(--modal-grad-expense) !important;
+        }
+
+        #transactionModal.income-theme .btn-primary.bg-pink-primary {
+            background: var(--income-color) !important;
+            border: none !important;
+            box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3) !important;
+        }
+
+        #transactionModal.expense-theme .btn-primary.bg-pink-primary {
+            background: var(--expense-color) !important;
+            border: none !important;
+            box-shadow: 0 4px 14px rgba(225, 29, 72, 0.3) !important;
+        }
+
+        #transactionModal .card {
+            border: 1px solid var(--ui-border) !important;
+            background: #ffffff;
+            border-radius: 1.25rem !important;
+            transition: all 0.3s ease;
+        }
+
+        #transactionModal .card-header {
+            background: transparent !important;
+            padding-top: 1.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: none !important;
+        }
+
+        #transactionModal .form-label {
+            color: var(--ui-text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            margin-bottom: 0.5rem;
+        }
+
+        #transactionModal .form-control {
+            background-color: #f8fafc;
+            border: 1px solid var(--ui-border) !important;
+            color: var(--ui-text-main);
+            font-weight: 600;
+            border-radius: 0.75rem !important;
+            padding: 0.65rem 1rem;
+            transition: all 0.2s ease;
+        }
+
+        #transactionModal .form-control:focus {
+            background-color: #ffffff;
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+        }
+
+        /* Money Block Styling - More Legible Icons */
+        .money-block {
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .income-theme .money-block-cash {
+            background-color: var(--income-bg);
+            border-color: rgba(5, 150, 105, 0.1);
+        }
+
+        .expense-theme .money-block-cash {
+            background-color: var(--expense-bg);
+            border-color: rgba(225, 29, 72, 0.1);
+        }
+
+        /* Summary Card - High Contrast & Thematic Background */
+        .summary-card-premium {
+            border-radius: 1.5rem !important;
+            overflow: hidden;
+            border: none !important;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        #transactionModal.income-theme .summary-card-premium {
+            background: linear-gradient(135deg, #064e3b 0%, #065f46 100%) !important;
+            border-bottom: 6px solid #10b981 !important;
+            box-shadow: 0 10px 30px rgba(6, 78, 59, 0.4) !important;
+        }
+
+        #transactionModal.expense-theme .summary-card-premium {
+            background: linear-gradient(135deg, #4c0519 0%, #881337 100%) !important;
+            border-bottom: 6px solid #f43f5e !important;
+            box-shadow: 0 10px 30px rgba(76, 5, 25, 0.4) !important;
+        }
+
+        /* High Legibility on Summary Card */
+        .summary-card-premium .text-white-50 {
+            color: rgba(255, 255, 255, 0.7) !important;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        #transactionModal.income-theme #transTotalKHR {
+            color: #a7f3d0 !important;
+        }
+
+        #transactionModal.expense-theme #transTotalKHR {
+            color: #fecdd3 !important;
+        }
+
+        /* Custom Toggle Buttons */
+        .type-toggle-btn {
+            border: 1px solid var(--ui-border) !important;
+            background: #f8fafc;
+            color: var(--ui-text-muted);
+            font-weight: 700;
+        }
+
+        .btn-check:checked+.type-toggle-btn.income-choice {
+            background: var(--income-color) !important;
+            border-color: var(--income-color) !important;
+            color: white;
+        }
+
+        .btn-check:checked+.type-toggle-btn.expense-choice {
+            background: var(--expense-color) !important;
+            border-color: var(--expense-color) !important;
+            color: white;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal.show .modal-dialog {
+            animation: fadeInScale 0.3s ease-out;
+        }
+    </style>
+    <div class="modal fade income-theme" id="transactionModal" tabindex="-1" 
+        data-bs-backdrop="static">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <!-- Premium Header -->
+                <div class="modal-header text-white border-0 py-3 px-4">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-white bg-opacity-20 p-2 rounded-4 me-3">
+                            <i class="fi fi-rr-edit-alt fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold mb-0" id="modalTitle">ប្រព័ន្ធគ្រប់គ្រងប្រតិបត្តិការ</h5>
+                            <p class="small mb-0 opacity-75">សូមបំពេញព័ត៌មានលម្អិតខាងក្រោម</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-4 bg-light bg-opacity-30">
+                    <form id="transactionForm">
+                        <input type="hidden" id="editTransactionId">
+
+                        <div class="row g-4">
+                            <!-- Column 1: Config -->
+                            <div class="col-xl-3">
+                                <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+                                    <div class="card-header bg-white py-3 border-0">
+                                        <h6 class="fw-bold m-0 text-dark d-flex align-items-center">
+                                            <i class="fi fi-rr-settings-sliders text-primary me-2"></i> បច្ចេកទេស
+                                        </h6>
+                                    </div>
+                                    <div class="card-body px-4 pb-4 pt-0">
+                                        <div class="mb-4">
+                                            <label class="form-label">ប្រតិបត្តិការ</label>
+                                            <div class="p-1 bg-light rounded-3 d-flex gap-1">
+                                                <input type="radio" class="btn-check" name="transType" id="typeIncome"
+                                                    value="income" checked>
+                                                <label
+                                                    class="btn type-toggle-btn income-choice flex-grow-1 py-2 rounded-2"
+                                                    for="typeIncome">ចំណូល</label>
+                                                <input type="radio" class="btn-check" name="transType" id="typeExpense"
+                                                    value="expense">
+                                                <label
+                                                    class="btn type-toggle-btn expense-choice flex-grow-1 py-2 rounded-2"
+                                                    for="typeExpense">ចំណាយ</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label class="form-label">មធ្យោបាយចម្បង</label>
+                                            <div class="p-1 bg-light rounded-3 d-flex gap-1">
+                                                <input type="radio" class="btn-check" name="paymentMethod"
+                                                    id="methodCash" value="cash" checked>
+                                                <label class="btn type-toggle-btn flex-grow-1 py-2 rounded-2"
+                                                    for="methodCash"><i class="fi fi-rr-money-bill-wave"></i></label>
+                                                <input type="radio" class="btn-check" name="paymentMethod"
+                                                    id="methodABA" value="aba">
+                                                <label class="btn type-toggle-btn flex-grow-1 py-2 rounded-2"
+                                                    for="methodABA"><i class="fi fi-rr-bank"></i></label>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <div class="d-flex justify-content-between mb-1">
+                                                <label class="form-label m-0">កាលបរិច្ឆេទ</label>
+                                                <button type="button"
+                                                    class="btn btn-link btn-sm p-0 text-primary fw-bold text-decoration-none"
+                                                    id="btnSetToday" style="font-size: 0.65rem;">ថ្ងៃនេះ</button>
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white border-0"><i
+                                                        class="fi fi-rr-calendar text-primary"></i></span>
+                                                <input type="date" class="form-control fw-bold" id="transDate" required>
+                                            </div>
+                                            <div id="transDateHint" class="small text-success mt-1 fw-bold"
+                                                style="font-size: 0.6rem;"></div>
+                                        </div>
+
+                                        <div class="mb-0">
+                                            <label class="form-label">ចំណាត់ថ្នាក់ (Category)</label>
+                                            <div id="incomeInputContainer">
+                                                <input type="text" class="form-control mb-2" id="transIncomeSource"
+                                                    placeholder="ប្រភពចំណូល..." list="incomeCategories">
+                                                <datalist id="incomeCategories">
+                                                    <option value="សិស្សចុះឈ្មោះថ្មី">
+                                                    <option value="សិស្សបង់ប្រាក់បន្ថែម">
+                                                    <option value="លក់សម្ភារៈ">
+                                                    <option value="ថ្លៃផ្ញើរម៉ូតូ">
+                                                    <option value="បង់ថ្លៃស្នាក់នៅ (ជំណាក់)">
+                                                    <option value="ថ្លៃលក់សម្ភារៈការិយាល័យ">
+                                                    <option value="ចំណូលផ្សេងៗ">
+                                                </datalist>
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    <button type="button"
+                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
+                                                        style="font-size:0.65rem"
+                                                        onclick="setIncomeSource('សិស្សចុះឈ្មោះថ្មី')">🎓
+                                                        សិស្សថ្មី</button>
+                                                    <button type="button"
+                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
+                                                        style="font-size:0.65rem"
+                                                        onclick="setIncomeSource('សិស្សបង់ប្រាក់បន្ថែម')">💵
+                                                        បង់បន្ថែម</button>
+                                                    <button type="button"
+                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
+                                                        style="font-size:0.65rem"
+                                                        onclick="setIncomeSource('ថ្លៃផ្ញើរម៉ូតូ')">🏍️
+                                                        ថ្លៃម៉ូតូ</button>
+                                                    <button type="button"
+                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
+                                                        style="font-size:0.65rem"
+                                                        onclick="setIncomeSource('បង់ថ្លៃស្នាក់នៅ (ជំណាក់)')">🏠
+                                                        ជំណាក់</button>
+                                                    <button type="button"
+                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
+                                                        style="font-size:0.65rem"
+                                                        onclick="setIncomeSource('ថ្លៃលក់សម្ភារៈការិយាល័យ')">📦
+                                                        លក់សម្ភារៈ</button>
+                                                </div>
+                                            </div>
+                                            <div id="expenseSelectContainer" style="display:none;">
+                                                <input type="text" class="form-control mb-2" id="transExpenseCategory"
+                                                    placeholder="ប្រភេទចំណាយ..." list="expenseCategories">
+                                                <datalist id="expenseCategories">
+                                                    <option value="ទឹក-ភ្លើង">
+                                                    <option value="ថ្លៃជួលផ្ទះ/ដី">
+                                                    <option value="ប្រាក់ខែបុគ្គលិក">
+                                                    <option value="សម្ភារៈការិយាល័យ">
+                                                    <option value="ជួសជុល">
+                                                    <option value="សាំង">
+                                                    <option value="អាហារ">
+                                                </datalist>
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    <button type="button"
+                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
+                                                        style="font-size:0.65rem" onclick="setCategory('ទឹក-ភ្លើង')">🚰
+                                                        ទឹក-ភ្លើង</button>
+                                                    <button type="button"
+                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
+                                                        style="font-size:0.65rem"
+                                                        onclick="setCategory('សម្ភារៈការិយាល័យ')">📦
+                                                        សម្ភារៈ</button>
+                                                    <button type="button"
+                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
+                                                        style="font-size:0.65rem"
+                                                        onclick="setCategory('ប្រាក់ខែបុគ្គលិក')">👥
+                                                        ប្រាក់ខែ</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Column 2: Parties -->
+                            <div class="col-xl-5">
+                                <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+                                    <div class="card-header bg-white py-3 border-0">
+                                        <h6 class="fw-bold m-0 text-dark d-flex align-items-center">
+                                            <i class="fi fi-rr-user-add text-info me-2"></i> មនុស្សពាក់ព័ន្ធ
+                                        </h6>
+                                    </div>
+                                    <div class="card-body px-4 pb-4 pt-0">
+                                        <div class="mb-4">
+                                            <label class="form-label">ស្វែងរកសិស្ស (Smart Search)</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white border-0 py-2"><i
+                                                        class="fi fi-rr-search text-info"></i></span>
+                                                <input type="text" class="form-control fw-medium"
+                                                    id="studentSearchInModal" placeholder="វាយឈ្មោះ ឬអត្តលេខ..."
+                                                    autocomplete="off">
+                                                <button class="btn btn-white border-0 text-muted" type="button"
+                                                    id="btnClearStudentSearch" style="display:none;"><i
+                                                        class="fi fi-rr-cross-small"></i></button>
+                                            </div>
+                                            <div id="studentSearchResults"
+                                                class="list-group shadow-lg border rounded-3 overflow-auto mt-2"
+                                                style="max-height: 180px; display: none; position: absolute; width: calc(100% - 3rem); z-index: 2000; background: white;">
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4 p-3 bg-light bg-opacity-50 rounded-4 border">
+                                            <div class="small fw-bold text-muted mb-2 d-flex align-items-center"><i
+                                                    class="fi fi-rr-clock-three me-2 text-info"></i>
+                                                សិស្សថ្មីៗដែលទើបចុះឈ្មោះ</div>
+                                            <div class="d-flex flex-wrap gap-1" id="recentStudentButtons">
+                                                <span class="text-muted small italic">កំពុងទាញយក...</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-1">
+                                            <div class="col-6">
+                                                <label class="form-label" id="labelPayer">អ្នកបង់ប្រាក់</label>
+                                                <input type="text" class="form-control px-3" id="transPayer"
+                                                    placeholder="ឈ្មោះអ្នកផ្ដល់...">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label" id="labelReceiver">អ្នកទទួលប្រាក់</label>
+                                                <select class="form-select px-3" id="transReceiver" required>
+                                                    <option value="">ជ្រើសរើសអ្នកទទួល...</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-4" id="boardingPlaceSection">
+                                            <label
+                                                class="form-label d-flex align-items-center mb-2 fw-bold text-dark"><i
+                                                    class="fa-solid fa-hotel me-2 text-warning"></i> កន្លែងស្នាក់នៅ /
+                                                ជំណាក់ (Boarding Place)</label>
+                                            <input type="text"
+                                                class="form-control px-3 py-2 border-warning border-opacity-25"
+                                                id="transBoardingPlace" placeholder="បន្ទប់លេខ ឬ ទីតាំងស្នាក់នៅ...">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Column 3: Finance -->
+                            <div class="col-xl-4">
+                                <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+                                    <div class="card-header bg-white py-3 border-0">
+                                        <h6 class="fw-bold m-0 text-dark d-flex align-items-center">
+                                            <i class="fi fi-rr-wallet text-success me-2"></i> ទឹកប្រាក់សរុប
+                                        </h6>
+                                    </div>
+                                    <div class="card-body px-4 pb-4 pt-0 d-flex flex-column">
+                                        <!-- Source Row 1: Cash -->
+                                        <div class="money-block money-block-cash">
+                                            <div class="small fw-bold mb-2 d-flex align-items-center">
+                                                <i class="fi fi-rr-money-bill-wave me-2"></i> សាច់ប្រាក់ (Cash)
+                                            </div>
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <div class="input-group input-group-sm bg-white overflow-hidden">
+                                                        <span
+                                                            class="input-group-text bg-white border-0 text-success fw-bold">$</span>
+                                                        <input type="number" step="0.01"
+                                                            class="form-control border-0 fw-bold py-2"
+                                                            id="transAmountCash" placeholder="0.00">
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="input-group input-group-sm bg-white overflow-hidden">
+                                                        <span
+                                                            class="input-group-text bg-white border-0 text-info fw-bold">៛</span>
+                                                        <input type="number" step="100"
+                                                            class="form-control border-0 fw-bold py-2"
+                                                            id="transAmountCashKHR" placeholder="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Source Row 2: ABA -->
+                                        <div class="money-block" style="background: #f0f9ff; border-color: #bae6fd;">
+                                            <div class="small fw-bold text-info mb-2 d-flex align-items-center">
+                                                <i class="fi fi-rr-bank me-2"></i> តាមរយៈ ABA
+                                            </div>
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <div class="input-group input-group-sm bg-white overflow-hidden">
+                                                        <span
+                                                            class="input-group-text bg-white border-0 text-info fw-bold">$</span>
+                                                        <input type="number" step="0.01"
+                                                            class="form-control border-0 fw-bold py-2"
+                                                            id="transAmountAba" placeholder="0.00">
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="input-group input-group-sm bg-white overflow-hidden">
+                                                        <span
+                                                            class="input-group-text bg-white border-0 text-info fw-bold">៛</span>
+                                                        <input type="number" step="100"
+                                                            class="form-control border-0 fw-bold py-2"
+                                                            id="transAmountAbaKHR" placeholder="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">បរិយាយ</label>
+                                            <textarea class="form-control px-3" id="transDescription" rows="1"
+                                                placeholder="ពណ៌នាខ្លីៗ..."></textarea>
+                                        </div>
+
+                                        <!-- Grand Total Dashboard Style -->
+                                        <div class="summary-card-premium p-4 mt-auto text-center position-relative">
+                                            <div class="small fw-bold mb-1 position-relative"
+                                                style="color: rgba(255,255,255,0.6); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                                                <i class="fi fi-rr-calculator me-1"></i> ទឹកប្រាក់សរុប (Grand Total)
+                                            </div>
+                                            <h2 id="transTotalDisplay" class="fw-bold text-white mb-0 position-relative"
+                                                style="letter-spacing: -1px; font-size: 2.25rem;">$0.00</h2>
+                                            <div id="transTotalKHR" class="fw-bold position-relative mt-1 fs-5">0 ៛
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Bar -->
+                        <div class="mt-4 pt-3 d-flex justify-content-end gap-2">
+                            <div class="text-muted small d-none d-md-block me-auto">
+                                <i class="fi fi-rr-info me-1"></i> បំពេញទាំងរូបិយប័ណ្ណដុល្លារ និងរៀល។
+                            </div>
+                            <button type="button" class="btn btn-light px-4 fw-bold rounded-pill border py-2"
+                                data-bs-dismiss="modal">បោះបង់</button>
+                            <button type="submit"
+                                class="btn btn-primary px-5 fw-bold text-white shadow bg-pink-primary border-0 rounded-pill py-2">
+                                <i class="fi fi-rr-check me-2"></i>រក្សាទុក
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <script src="/js/core/firebase-config.js"></script>
+    <script src="/js/core/auth-check.js"></script>
+    <script src="/js/core/receiver-utils.js"></script>
+    <script src="/js/core/sidebar.js"></script>
+    <script src="/js/pages/income-expense.js"></script>
+    <script src="/js/core/offline-manager.js"></script>
+    <script>
+        function toggleDesktopSidebar() {
+            const body = document.body;
+            body.classList.toggle('sidebar-collapsed');
+        }
+    </script>
+    <!-- Reporter Selection Modal -->
+    <div class="modal fade" id="reporterModal" tabindex="-1" >
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden" style="background: #ffffff;">
+                <div class="modal-header border-0 pb-4 pt-4 px-4 position-relative" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
+                    <!-- Subtle pattern background for modern look -->
+                    <div class="position-absolute top-0 end-0 bottom-0 opacity-25 pointer-events-none" style="width: 150px; background: radial-gradient(circle, #8a0e5b 10%, transparent 10%) 0 0 / 10px 10px;"></div>
+                    
+                    <div class="d-flex align-items-center w-100 position-relative z-1">
+                        <!-- Icon Block -->
+                        <div class="bg-white rounded-4 shadow-sm d-flex align-items-center justify-content-center flex-shrink-0 me-3 position-relative" style="width: 55px; height: 55px; border: 1px solid rgba(138,14,91,0.08);">
+                            <i class="fi fi-rr-document-signed fs-3" style="background: linear-gradient(135deg, #8a0e5b 0%, #c01880 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle" style="width: 12px; height: 12px;"></span>
+                        </div>
+                        <!-- Text Content -->
+                        <div class="flex-grow-1">
+                            <h4 class="modal-title fw-bolder mb-1" style="color: #1e293b; letter-spacing: -0.5px; font-size: 1.25rem;">ចេញរបាយការណ៍</h4>
+                            <p class="mb-0 text-muted fw-medium" style="font-size: 0.8rem; letter-spacing: 0.2px;">សូមផ្ទៀងផ្ទាត់ព័ត៌មានខាងក្រោម</p>
+                        </div>
+                        <button type="button" class="btn-close ms-2 rounded-circle shadow-sm" data-bs-dismiss="modal" aria-label="Close" style="font-size: 0.65rem; background-color: #ffffff; padding: 10px;"></button>
+                    </div>
+                </div>
+                <div class="modal-body p-4 pt-3 position-relative">
+                    <div class="position-absolute top-0 start-50 translate-middle-x bg-secondary bg-opacity-10 rounded-pill" style="width: 40px; height: 4px; margin-top: -12px;"></div>
+                    <!-- Reporter Name -->
+                    <div class="mb-4">
+                        <label class="small fw-bold text-muted mb-2 d-flex align-items-center">
+                            <i class="fi fi-rr-user-pen me-2 text-primary"></i>ឈ្មោះអ្នកធ្វើរបាយការណ៍:
+                        </label>
+                        
+                        <!-- Dynamic Pills Container -->
+                        <div class="d-flex flex-wrap gap-2 mb-2" id="quickReporterList">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+
+                        <div class="input-group mt-1 shadow-sm rounded-3 overflow-hidden">
+                            <span class="input-group-text bg-white border text-muted"><i class="fi fi-rr-edit"></i></span>
+                            <input type="text" id="customReporterName" class="form-control bg-white border fw-bold border-start-0 ps-0" placeholder="វាយឈ្មោះថ្មី..." list="reporterDatalist">
+                            <datalist id="reporterDatalist"></datalist>
+                        </div>
+                    </div>
+
+                    <!-- Report Date -->
+                    <div class="mb-4">
+                        <label class="small fw-bold text-muted mb-2 d-flex align-items-center">
+                            <i class="fi fi-rr-calendar-clock me-2 text-primary"></i>ថ្ងៃចុះហត្ថលេខា:
+                        </label>
+                        <div class="row g-2">
+                            <div class="col-4">
+                                <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                                    <span class="input-group-text bg-white border text-muted px-2">ថ្ងៃ</span>
+                                    <input type="number" id="reportSignDay" class="form-control bg-white border fw-bold text-center border-start-0 px-1" placeholder="០១" min="1" max="31">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                                    <span class="input-group-text bg-white border text-muted px-2">ខែ</span>
+                                    <input type="number" id="reportSignMonth" class="form-control bg-white border fw-bold text-center border-start-0 px-1" placeholder="១២" min="1" max="12">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                                    <span class="input-group-text bg-white border text-muted px-2">ឆ្នាំ</span>
+                                    <input type="number" id="reportSignYear" class="form-control bg-white border fw-bold text-center border-start-0 px-1" placeholder="YYYY" min="2000" max="2099">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Selection (Hidden by default) -->
+                    <div class="mb-0 p-3 bg-light rounded-3" id="monthlySelectionArea" style="display: none;">
+                        <label class="small fw-bold text-muted mb-2"><i class="fi fi-rr-calendar-lines me-1"></i> ខែ និង ឆ្នាំរបាយការណ៍:</label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                                    <span class="input-group-text bg-white border text-muted">ខែ</span>
+                                    <input type="number" id="reportMonth" class="form-control bg-white border fw-bold text-center border-start-0 px-2" placeholder="១-១២" min="1" max="12">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                                    <span class="input-group-text bg-white border text-muted">ឆ្នាំ</span>
+                                    <input type="number" id="reportYear" class="form-control bg-white border fw-bold text-center border-start-0 px-2" placeholder="YYYY" min="2000" max="2099">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Range Selection (Hidden by default) -->
+                    <div class="mb-0 p-3 bg-light rounded-3" id="rangeSelectionArea" style="display: none;">
+                        <label class="small fw-bold text-muted mb-2"><i class="fi fi-rr-calendar-lines me-1"></i> ចន្លោះថ្ងៃរបាយការណ៍:</label>
+                        
+                        <!-- Start Date -->
+                        <div class="mb-2">
+                            <label class="small text-muted mb-1" style="font-size: 0.7rem;">ថ្ងៃចាប់ផ្តើម:</label>
+                            <div class="row g-2">
+                                <div class="col-4">
+                                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                                        <span class="input-group-text bg-white border text-muted px-2" style="font-size: 0.8rem;">ថ្ងៃ</span>
+                                        <input type="number" id="modalStartDay" class="form-control bg-white border fw-bold text-center border-start-0 px-1" placeholder="DD" min="1" max="31">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                                        <span class="input-group-text bg-white border text-muted px-2" style="font-size: 0.8rem;">ខែ</span>
+                                        <input type="number" id="modalStartMonth" class="form-control bg-white border fw-bold text-center border-start-0 px-1" placeholder="MM" min="1" max="12">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                                        <span class="input-group-text bg-white border text-muted px-2" style="font-size: 0.8rem;">ឆ្នាំ</span>
+                                        <input type="number" id="modalStartYear" class="form-control bg-white border fw-bold text-center border-start-0 px-1" placeholder="YYYY" min="2000" max="2099">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- End Date -->
+                        <div class="mb-0">
+                            <label class="small text-muted mb-1" style="font-size: 0.7rem;">ថ្ងៃបញ្ចប់:</label>
+                            <div class="row g-2">
+                                <div class="col-4">
+                                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                                        <span class="input-group-text bg-white border text-muted px-2" style="font-size: 0.8rem;">ថ្ងៃ</span>
+                                        <input type="number" id="modalEndDay" class="form-control bg-white border fw-bold text-center border-start-0 px-1" placeholder="DD" min="1" max="31">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                                        <span class="input-group-text bg-white border text-muted px-2" style="font-size: 0.8rem;">ខែ</span>
+                                        <input type="number" id="modalEndMonth" class="form-control bg-white border fw-bold text-center border-start-0 px-1" placeholder="MM" min="1" max="12">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                                        <span class="input-group-text bg-white border text-muted px-2" style="font-size: 0.8rem;">ឆ្នាំ</span>
+                                        <input type="number" id="modalEndYear" class="form-control bg-white border fw-bold text-center border-start-0 px-1" placeholder="YYYY" min="2000" max="2099">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-3 pt-0 gap-2">
+                    <button type="button" class="btn btn-light flex-grow-1 rounded-pill fw-bold border py-2"
+                        data-bs-dismiss="modal">បោះបង់</button>
+                    <button type="button" class="btn btn-primary flex-grow-1 rounded-pill fw-bold shadow-sm py-2"
+                        onclick="confirmReportPrint()">
+                        <i class="fi fi-rr-print me-2"></i>ទាញយក
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    // ============================================================
+    //  CUSTOM DATE PICKER SYNC — DD / MM / YYYY  ↔  YYYY-MM-DD
+    // ============================================================
+    (function () {
+        // Map each picker group to its hidden input
+        const pickers = [
+            { day: 'startDay', mon: 'startMon', year: 'startYear', hidden: 'reportStartDate' },
+            { day: 'endDay', mon: 'endMon', year: 'endYear', hidden: 'reportEndDate' }
+        ];
+
+        // Pad number to 2 digits
+        const pad2 = n => String(n).padStart(2, '0');
+
+        // Build YYYY-MM-DD from parts
+        function buildISO(d, m, y) {
+            if (!d || !m || !y || y < 2020) return '';
+            d = Math.min(Math.max(parseInt(d) || 1, 1), 31);
+            m = Math.min(Math.max(parseInt(m) || 1, 1), 12);
+            return `${y}-${pad2(m)}-${pad2(d)}`;
+        }
+
+        // Populate spinners from YYYY-MM-DD string (called by setQuickDate)
+        function iso2spinners(isoStr, pk) {
+            if (!isoStr || isoStr.length < 10) return;
+            const [y, m, d] = isoStr.split('-');
+            const dayEl = document.getElementById(pk.day);
+            const monEl = document.getElementById(pk.mon);
+            const yearEl = document.getElementById(pk.year);
+            if (dayEl) dayEl.value = parseInt(d, 10);
+            if (monEl) monEl.value = parseInt(m, 10);
+            if (yearEl) yearEl.value = parseInt(y, 10);
+        }
+
+        // Wire up each picker
+        pickers.forEach(pk => {
+            const dayEl = document.getElementById(pk.day);
+            const monEl = document.getElementById(pk.mon);
+            const yearEl = document.getElementById(pk.year);
+            const hidEl = document.getElementById(pk.hidden);
+            if (!dayEl || !monEl || !yearEl || !hidEl) return;
+
+            function sync() {
+                let d = parseInt(dayEl.value) || 0;
+                let m = parseInt(monEl.value) || 0;
+                let y = parseInt(yearEl.value) || 0;
+                // Clamp
+                if (d > 31) { d = 31; dayEl.value = 31; }
+                if (d < 1 && dayEl.value !== '') { d = 1; dayEl.value = 1; }
+                if (m > 12) { m = 12; monEl.value = 12; }
+                if (m < 1 && monEl.value !== '') { m = 1; monEl.value = 1; }
+                hidEl.value = buildISO(d, m, y);
+            }
+
+            // Auto-advance: after 2 digits in day → focus month; after 2 digits in month → focus year
+            dayEl.addEventListener('input', () => {
+                sync();
+                if (String(dayEl.value).length >= 2) monEl.focus();
+            });
+            monEl.addEventListener('input', () => {
+                sync();
+                if (String(monEl.value).length >= 2) yearEl.focus();
+            });
+            yearEl.addEventListener('input', sync);
+
+            // Prevent mousewheel from accidentally changing values
+            [dayEl, monEl, yearEl].forEach(el => {
+                el.addEventListener('wheel', e => e.preventDefault(), { passive: false });
+            });
+        });
+
+        // Override toLocalISO so setQuickDate() also updates the spinners
+        const _origToLocalISO = window.toLocalISO;
+        // We patch the hidden inputs' setter via MutationObserver approach — 
+        // instead, we override setQuickDate after page load:
+        window.addEventListener('load', () => {
+            const _origSetQuickDate = window.setQuickDate;
+            if (_origSetQuickDate) {
+                window.setQuickDate = function (period) {
+                    _origSetQuickDate(period);
+                    // After JS sets hidden inputs, reflect back to spinners
+                    setTimeout(() => {
+                        pickers.forEach(pk => {
+                            const hid = document.getElementById(pk.hidden);
+                            if (hid && hid.value) iso2spinners(hid.value, pk);
+                        });
+                    }, 10);
+                };
+            }
+
+            // Init spinners from current hidden values (set on DOMContentLoaded by JS)
+            setTimeout(() => {
+                pickers.forEach(pk => {
+                    const hid = document.getElementById(pk.hidden);
+                    if (hid && hid.value) iso2spinners(hid.value, pk);
+                });
+            }, 300);
+        });
+    })();
+</script>
+
+<!-- ============================================================
+     PRINT PREVIEW OVERLAY — in-page, no new tab
+============================================================ -->
+<div id="printPreviewOverlay" style="
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: #0f172a;
+    flex-direction: column;
+    font-family: 'Kantumruy Pro', sans-serif;
+">
+    <div id="ppTopBar" style="
+        background: #1e293b;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+        border-bottom: 2px solid #334155;
+        gap: 16px;
+    ">
+        <div style="display:flex; align-items:center; gap:14px;">
+            <div style="
+                background: linear-gradient(135deg,#8a0e5b,#c01880);
+                border-radius: 10px;
+                width:44px; height:44px;
+                display:flex; align-items:center; justify-content:center;
+                flex-shrink:0;
+                box-shadow: 0 4px 12px rgba(138,14,91,0.45);
+            ">
+                <i class="fi fi-rr-file-invoice-dollar" style="color:#fff;font-size:1.2rem;line-height:1;"></i>
+            </div>
+            <div>
+                <div id="ppTitle" style="
+                    color:#f1f5f9; font-weight:800;
+                    font-size:15px; letter-spacing:0.3px;
+                ">របាយការណ៍</div>
+                <div style="
+                    color:#94a3b8; font-size:12px;
+                    margin-top:3px; font-weight:600;
+                    display:flex; align-items:center; gap:6px;
+                ">
+                    <i class="fi fi-rr-calendar" style="font-size:11px;"></i>
+                    <span id="ppPeriodText">...</span>
+                </div>
+            </div>
+        </div>
+        <div style="display:flex; gap:10px; flex-shrink:0;">
+            <button onclick="printFromPreview()" style="
+                background:linear-gradient(135deg,#059669,#10b981);
+                color:#fff; border:none;
+                padding:9px 20px; border-radius:10px;
+                font-weight:800; cursor:pointer; font-size:13px;
+                display:flex; align-items:center; gap:7px;
+                font-family:'Kantumruy Pro',sans-serif;
+                box-shadow:0 4px 12px rgba(5,150,105,0.35);
+            "><i class="fi fi-rr-print"></i> បោះពុម្ព</button>
+            <button onclick="closePrintPreview()" style="
+                background:#334155; color:#cbd5e1;
+                border:1px solid #475569;
+                padding:9px 18px; border-radius:10px;
+                font-weight:700; cursor:pointer; font-size:13px;
+                display:flex; align-items:center; gap:7px;
+                font-family:'Kantumruy Pro',sans-serif;
+            "><i class="fi fi-rr-cross-small"></i> បិទ</button>
+        </div>
+    </div>
+    <iframe id="printPreviewFrame" style="
+        flex:1; border:none;
+        background:#f8fafc; width:100%;
+    "></iframe>
+</div>
+
+<style>
+    @media print {
+        body>*:not(#printPreviewOverlay) {
+            display: none !important;
+        }
+
+        #printPreviewOverlay {
+            display: flex !important;
+            position: static !important;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        #ppTopBar {
+            display: none !important;
+        }
+
+        #printPreviewFrame {
+            flex: 1;
+            width: 100%;
+            height: 100vh;
+            border: none;
+        }
+    }
+</style>
+
+<script>
+    function openPrintPreview(html, title, periodText) {
+        const overlay = document.getElementById('printPreviewOverlay');
+        const frame = document.getElementById('printPreviewFrame');
+        document.getElementById('ppTitle').textContent = title || 'របាយការណ៍';
+        document.getElementById('ppPeriodText').textContent = periodText || '';
+        overlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        const doc = frame.contentDocument || frame.contentWindow.document;
+        doc.open();
+        doc.write(html);
+        doc.close();
+    }
+    function closePrintPreview() {
+        document.getElementById('printPreviewOverlay').style.display = 'none';
+        document.body.style.overflow = '';
+        const frame = document.getElementById('printPreviewFrame');
+        const doc = frame.contentDocument || frame.contentWindow.document;
+        doc.open(); doc.write(''); doc.close();
+    }
+    function printFromPreview() {
+        const frame = document.getElementById('printPreviewFrame');
+        if (frame && frame.contentWindow) { frame.contentWindow.focus(); frame.contentWindow.print(); }
+    }
+</script>
+
+</html>
+

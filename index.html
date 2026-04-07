@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ប្រព័ន្ធគ្រប់គ្រងសាលាអន្តរជាតិ (Dashboard)</title>
+    <link rel="icon" type="image/jpeg" href="/img/1.jpg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preload" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"
+        as="style">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel="stylesheet" href="/css/loader.css">
+
+    <script src="/js/core/loader-init.js"></script>
+    <script src="/js/core/theme-mode.js"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+    <style>
+        * {
+            font-family: 'Kantumruy Pro', sans-serif;
+        }
+    </style>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+
+<body>
+
+    <!-- Animated Butterflies -->
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+
+    <!-- Enhanced Notification Button -->
+
+
+    <div id="sidebar">
+        <!-- Dashboard Sidebar injected by sidebar.js -->
+    </div>
+
+    <div id="main-content">
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 animate-up">
+            <div class="mb-3 mb-md-0 d-flex align-items-center gap-3">
+                <button
+                    class="btn btn-light rounded-circle shadow-sm d-none d-lg-flex align-items-center justify-content-center"
+                    onclick="toggleDesktopSidebar()" title="បង្រួម/ពង្រីក Sidebar (Toggle Sidebar)"
+                    style="width: 45px; height: 45px; border: 1px solid #eee; background: white;">
+                    <i class="fi fi-rr-menu-burger" style="font-size: 1rem; color: #8a0e5b;"></i>
+                </button>
+                <button
+                    class="btn btn-light rounded-circle shadow-sm d-none d-lg-flex align-items-center justify-content-center"
+                    onclick="toggleFullScreen()" title="ពេញអេក្រង់ (Full Screen)"
+                    style="width: 45px; height: 45px; border: 1px solid #eee; background: white;">
+                    <i class="fi fi-rr-expand" style="font-size: 1rem; color: #8a0e5b;"></i>
+                </button>
+                <button
+                    class="btn btn-light rounded-circle shadow-sm d-none d-lg-flex align-items-center justify-content-center theme-toggle-btn"
+                    onclick="toggleTheme()" title="ប្តូររចនាប័ទ្ម (Change Theme)"
+                    style="width: 45px; height: 45px; border: 1px solid #eee; background: white;">
+                    <i class="fi fi-rr-moon" style="font-size: 1rem; color: #8a0e5b;"></i>
+                </button>
+                <div>
+                    <h2 class="fw-bold text-pink-dark mb-1">
+                        <i class="fi fi-rr-school me-2"></i>ប្រព័ន្ធគ្រប់គ្រងសាលាអន្តរជាតិ ធានស៊ីន
+                    </h2>
+                    <p class="text-muted mb-0" style="font-size: 1.05rem;">
+                        សួស្ដី! លោកគ្រូ <span id="welcome-user-name" class="fw-bold text-pink-primary">User</span>
+                        សូមស្វាគមន៍មកកាន់ផ្ទាំងគ្រប់គ្រងទិន្នន័យ។
+                    </p>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <!-- System Updates Notification -->
+                <div class="position-relative">
+                    <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+                        id="notificationBtn" title="អ្វីដែលបាន Update ថ្មីៗ (System Updates)"
+                        data-bs-toggle="offcanvas" data-bs-target="#systemUpdatesOffcanvas"
+                        style="width: 45px; height: 45px; border: 1px solid #eee; background: white;">
+                        <i class="fi fi-rr-bell" style="font-size: 1.2rem; color: #8a0e5b;"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger border border-light"
+                            id="notificationBadge" style="padding: 5px; display: none;">
+                            <span class="visually-hidden">New updates</span>
+                        </span>
+                    </button>
+                </div>
+
+                <div class="text-center text-md-end bg-white p-3 rounded-4 shadow-sm border border-light">
+                    <h5 class="fw-bold text-pink-primary mb-0" id="current-date-display" style="letter-spacing: 0.5px;">...
+                    </h5>
+                    <div class="text-muted small" id="current-time-display">...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <!-- Full-time Students Card -->
+            <div class="col-md-4 animate-up" style="animation-delay: 0.1s;">
+                <div class="card stat-card p-4 card-gradient-primary">
+                    <div class="card-icon-bg"><i class="fi fi-rr-users"></i></div>
+                    <div class="position-relative z-1">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.8rem;">
+                                    សិស្សពេញម៉ោង</h6>
+                                <h2 class="stat-value text-primary mb-0" id="totalFulltimeStudents">0</h2>
+                            </div>
+                            <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                                <i class="fi fi-rr-users"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-top border-light">
+                            <div class="d-flex justify-content-between text-sm">
+                                <span class="d-flex align-items-center text-primary-emphasis">
+                                    <i class="fi fi-rr-mars me-1"></i> ប្រុស: <span class="fw-bold ms-1"
+                                        id="totalFulltimeMale">0</span>
+                                </span>
+                                <span class="d-flex align-items-center text-danger-emphasis">
+                                    <i class="fi fi-rr-venus me-1"></i> ស្រី: <span class="fw-bold ms-1"
+                                        id="totalFulltimeFemale">0</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Part-time Students Card -->
+            <div class="col-md-4 animate-up" style="animation-delay: 0.2s;">
+                <div class="card stat-card p-4 card-gradient-teal">
+                    <div class="card-icon-bg"><i class="fi fi-rr-user-time"></i></div>
+                    <div class="position-relative z-1">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.8rem;">
+                                    សិស្សក្រៅម៉ោង (Part-time)</h6>
+                                <h2 class="stat-value text-teal mb-0" id="totalParttimeStudents">0</h2>
+                            </div>
+                            <div class="stat-icon bg-success bg-opacity-10 text-teal">
+                                <i class="fi fi-rr-user-time"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-top border-light">
+                            <div class="d-flex justify-content-between text-sm">
+                                <span class="d-flex align-items-center text-success-emphasis">
+                                    <i class="fi fi-rr-mars me-1"></i> ប្រុស: <span class="fw-bold ms-1"
+                                        id="totalParttimeMale">0</span>
+                                </span>
+                                <span class="d-flex align-items-center text-danger-emphasis">
+                                    <i class="fi fi-rr-venus me-1"></i> ស្រី: <span class="fw-bold ms-1"
+                                        id="totalParttimeFemale">0</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total All Students Card -->
+            <div class="col-md-4 animate-up" style="animation-delay: 0.3s;">
+                <div class="card stat-card p-4 card-gradient-success">
+                    <div class="card-icon-bg"><i class="fi fi-rr-users-alt"></i></div>
+                    <div class="position-relative z-1">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.8rem;">
+                                    សិស្សសរុបទាំងអស់</h6>
+                                <h2 class="stat-value text-success mb-0" id="totalAllStudents">0</h2>
+                            </div>
+                            <div class="stat-icon bg-success bg-opacity-10 text-success">
+                                <i class="fi fi-rr-users-alt"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-top border-light">
+                            <div class="d-flex justify-content-between text-sm">
+                                <span class="d-flex align-items-center text-muted">
+                                    <i class="fi fi-rr-info me-1"></i> សរុបសិស្សគ្រប់ផ្នែក
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-between text-sm mt-1">
+                                <span class="d-flex align-items-center text-success-emphasis">
+                                    <i class="fi fi-rr-mars me-1"></i> ប្រុស: <span class="fw-bold ms-1"
+                                        id="totalAllMale">0</span>
+                                </span>
+                                <span class="d-flex align-items-center text-danger-emphasis">
+                                    <i class="fi fi-rr-venus me-1"></i> ស្រី: <span class="fw-bold ms-1"
+                                        id="totalAllFemale">0</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Payments Card -->
+            <div class="col-md-4 animate-up" style="animation-delay: 0.4s;">
+                <div class="card stat-card p-4 card-gradient-warning">
+                    <div class="card-icon-bg"><i class="fi fi-rr-bell"></i></div>
+                    <div class="position-relative z-1">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.8rem;">
+                                    ការជូនដំណឹង (១០ ថ្ងៃ)</h6>
+                                <h2 class="stat-value text-warning mb-0" id="upcomingPayment">0</h2>
+                            </div>
+                            <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                                <i class="fi fi-rr-bell"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-top border-light">
+                            <span class="badge bg-warning text-dark">
+                                <i class="fi fi-rr-calendar-clock me-1"></i> ដល់ថ្ងៃបង់ក្នុងពេលឆាប់ៗ
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Late Pending Payments Card -->
+            <div class="col-md-4 animate-up" style="animation-delay: 0.5s;">
+                <div class="card stat-card p-4 card-gradient-danger">
+                    <div class="card-icon-bg"><i class="fi fi-rr-calendar-times"></i></div>
+                    <div class="position-relative z-1">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.8rem;">ជំពាក់ /
+                                    ហួសថ្ងៃកំណត់</h6>
+                                <h2 class="stat-value text-danger mb-0" id="latePendingTotal">0</h2>
+                            </div>
+                            <div class="stat-icon bg-danger bg-opacity-10 text-danger">
+                                <i class="fi fi-rr-exclamation"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-top border-light">
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger">
+                                <i class="fi fi-rr-triangle-warning me-1"></i> ត្រូវការដោះស្រាយបន្ទាន់
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Income Card -->
+            <div class="col-md-4 animate-up" style="animation-delay: 0.6s;">
+                <div class="card stat-card p-4 card-gradient-success">
+                    <div class="card-icon-bg"><i class="fi fi-rr-coins"></i></div>
+                    <div class="position-relative z-1">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.8rem;">ចំណូលសរុប
+                                    (Income)</h6>
+                                <h2 class="stat-value text-success mb-0" id="totalIncomeCollected">$0.00</h2>
+                            </div>
+                            <div class="stat-icon bg-success bg-opacity-10 text-success">
+                                <i class="fi fi-rr-sack-dollar"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-top border-light">
+                            <div class="text-muted small">
+                                <i class="fi fi-rr-chart-line-up me-1"></i> ប្រាក់សរុបដែលបានប្រមូល
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dropout Students Card -->
+            <div class="col-md-4 animate-up" style="animation-delay: 0.7s;">
+                <div class="card stat-card p-4 card-gradient-danger">
+                    <div class="card-icon-bg"><i class="fi fi-rr-user-remove"></i></div>
+                    <div class="position-relative z-1">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.8rem;">
+                                    សិស្សបោះបង់ការសិក្សា</h6>
+                                <h2 class="stat-value text-danger mb-0" id="totalDropoutStudents">0</h2>
+                            </div>
+                            <div class="stat-icon bg-danger bg-opacity-10 text-danger">
+                                <i class="fi fi-rr-user-remove"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-top border-light">
+                            <div class="d-flex justify-content-between text-sm">
+                                <span class="d-flex align-items-center text-muted">
+                                    <i class="fi fi-rr-mars me-1"></i> ប្រុស: <span class="fw-bold ms-1"
+                                        id="totalDropoutMale">0</span>
+                                </span>
+                                <span class="d-flex align-items-center text-danger">
+                                    <i class="fi fi-rr-venus me-1"></i> ស្រី: <span class="fw-bold ms-1"
+                                        id="totalDropoutFemale">0</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Outstanding Card -> Expense -->
+            <div class="col-md-4 animate-up" style="animation-delay: 0.8s;">
+                <div class="card stat-card p-4 card-gradient-danger">
+                    <div class="card-icon-bg"><i class="fi fi-rr-arrow-trend-down"></i></div>
+                    <div class="position-relative z-1">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.8rem;">ចំណាយសរុប
+                                    (Expense)</h6>
+                                <h2 class="stat-value text-danger mb-0" id="totalExpenseAmount">$0.00</h2>
+                            </div>
+                            <div class="stat-icon bg-danger bg-opacity-10 text-danger">
+                                <i class="fi fi-rr-arrow-trend-down"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-top border-light">
+                            <span class="text-muted small">
+                                <i class="fi fi-rr-info me-1"></i> ការចំណាយប្រតិបត្តិការសរុប
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kindergarten 3 Languages Students Card -->
+            <div class="col-md-4 animate-up" style="animation-delay: 0.9s;">
+                <div class="card stat-card p-4 card-gradient-purple">
+                    <div class="card-icon-bg"><i class="fi fi-rr-child"></i></div>
+                    <div class="position-relative z-1">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.8rem;">
+                                    ថ្នាក់ចំណះដឹងទូទៅ</h6>
+                                <h2 class="stat-value text-purple mb-0" id="totalKindergartenStudents">0</h2>
+                            </div>
+                            <div class="stat-icon bg-primary bg-opacity-10 text-purple">
+                                <i class="fi fi-rr-child"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-top border-light">
+                            <div class="d-flex justify-content-between text-sm">
+                                <span class="d-flex align-items-center text-purple-emphasis">
+                                    <i class="fi fi-rr-mars me-1"></i> ប្រុស: <span class="fw-bold ms-1"
+                                        id="totalKindergartenMale">0</span>
+                                </span>
+                                <span class="d-flex align-items-center text-danger-emphasis">
+                                    <i class="fi fi-rr-venus me-1"></i> ស្រី: <span class="fw-bold ms-1"
+                                        id="totalKindergartenFemale">0</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paid Off Students Card -->
+            <div class="col-md-4 animate-up" style="animation-delay: 1.0s;">
+                <div class="card stat-card p-4 card-gradient-success">
+                    <div class="card-icon-bg"><i class="fi fi-rr-badge-check"></i></div>
+                    <div class="position-relative z-1">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.8rem;">
+                                    សិស្សបង់ផ្តាច់ 100%</h6>
+                                <h2 class="stat-value text-success mb-0" id="totalPaidOffStudents">0</h2>
+                            </div>
+                            <div class="stat-icon bg-success bg-opacity-10 text-success">
+                                <i class="fi fi-rr-badge-check"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-top border-light">
+                            <div class="d-flex justify-content-between text-sm">
+                                <span class="d-flex align-items-center text-success-emphasis">
+                                    <i class="fi fi-rr-mars me-1"></i> ប្រុស: <span class="fw-bold ms-1"
+                                        id="totalPaidOffMale">0</span>
+                                </span>
+                                <span class="d-flex align-items-center text-danger-emphasis">
+                                    <i class="fi fi-rr-venus me-1"></i> ស្រី: <span class="fw-bold ms-1"
+                                        id="totalPaidOffFemale">0</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Analysis Section -->
+        <h4 class="fw-bold text-pink-dark mb-4 animate-up" style="animation-delay: 0.8s;">
+            <i class="fi fi-rr-chart-histogram me-2"></i>ការវិភាគទិន្នន័យ (Data Analysis)
+        </h4>
+
+        <div class="row g-4 mb-5 animate-up" style="animation-delay: 0.9s;">
+            <!-- Financial Overview Chart -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold text-muted mb-0"><i
+                                class="fi fi-rr-chart-line-up me-2 text-primary"></i>ចំណូល និងចំណាយ (Financials)</h6>
+                        <select class="form-select form-select-sm w-auto border-0 bg-light fw-bold text-secondary"
+                            id="financialChartFilter" onchange="updateFinancialChartFilter()">
+                            <option value="6_months">6 ខែចុងក្រោយ</option>
+                            <option value="year">ឆ្នាំនេះ</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="financialChart" style="max-height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Distribution Chart -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h6 class="fw-bold text-muted mb-0"><i
+                                class="fi fi-rr-pie-chart me-2 text-info"></i>បែងចែកសិស្សតាមកម្រិត (Student
+                            Distribution)</h6>
+                    </div>
+                    <div class="card-body position-relative">
+                        <canvas id="studentDistributionChart" style="max-height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enrollment Trends Chart -->
+            <div class="col-12">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h6 class="fw-bold text-muted mb-0"><i
+                                class="fi fi-rr-user-add me-2 text-success"></i>កំណើនសិស្សថ្មី (New Enrolments)</h6>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="enrollmentChart" style="max-height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Update Timestamp -->
+        <div id="data-timestamp" class="text-muted small text-center mb-3">
+            <i class="fi fi-rr-refresh me-1"></i>កំពុងទាញយកទិន្នន័យ...
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer mt-5 py-4 border-top bg-white text-center text-muted position-relative"
+            style="font-size: 0.9rem; z-index: 100;">
+            <div class="container">
+                <div class="mb-3">
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទីតាំងទី២ របស់សាលា:</span>
+                        ភូមិក្រាំង សង្កាត់ក្រាំងអំពិល ក្រុងកំពត ខេត្តកំពត
+                    </div>
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទំនាក់ទំនង:</span>
+                        <span class="me-2"><i class="fi fi-rr-smartphone me-1 text-primary"></i>093 835 678
+                            (Smart)</span>
+                        <a href="https://t.me/Tian093835678" target="_blank" class="text-decoration-none">
+                            <i class="fi fi-brands-telegram me-1 text-primary"></i>Telegram
+                        </a>
+                    </div>
+                </div>
+
+                <div class="w-75 mx-auto border-top my-3 opacity-25"></div>
+
+                <div class="footer-update-time mb-1">
+                    <i class="fi fi-rr-clock me-1"></i>កាលបរិច្ឆេទចុងក្រោយ: <span id="last-update-time">09:44:24</span>
+                </div>
+                <div class="footer-copyright">
+                    ©
+                    <script>document.write(new Date().getFullYear())</script> គ្រប់គ្រងសាលា. Developed by <span
+                        class="fw-bold text-pink-primary">មាស មករា</span>.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="/js/core/firebase-config.js"></script>
+    <script src="/js/core/auth-check.js"></script>
+    <script src="/js/core/receiver-utils.js"></script>
+    <script src="/js/core/sidebar.js"></script>
+
+    <script src="/js/utils/khmer-font.js"></script>
+    <script src="/js/pages/system-updates.js"></script>
+    <script src="/js/pages/dashboard.js"></script>
+
+
+
+    <script src="/js/core/offline-manager.js"></script>
+
+    <script>
+        // Clock & Welcome Script
+        function getKhmerDate(date) {
+            const days = ['អាទិត្យ', 'ចន្ទ', 'អង្គារ', 'ពុធ', 'ព្រហស្បតិ៍', 'សុក្រ', 'សៅរ៍'];
+
+            const dayName = days[date.getDay()];
+            const dayNum = date.getDate().toString().padStart(2, '0');
+            const monthNum = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+
+            // Format: ថ្ងៃចន្ទ ០៩-០២-២០២៦
+            return `ថ្ងៃ${dayName} ${dayNum}-${monthNum}-${year}`;
+        }
+
+        function updateWelcomeUser() {
+            try {
+                // Try from DOM first if sidebar is loaded
+                const sidebarName = document.getElementById('user-display-name');
+                if (sidebarName && sidebarName.textContent !== '...') {
+                    const welcomeNameElem = document.getElementById('welcome-user-name');
+                    if (welcomeNameElem) welcomeNameElem.textContent = sidebarName.textContent;
+                } else {
+                    // Fallback to localStorage
+                    const sessionData = localStorage.getItem('userSession');
+                    if (sessionData) {
+                        const user = JSON.parse(sessionData);
+                        const name = user.name || user.email?.split('@')[0] || 'អ្នកប្រើប្រាស់';
+                        const welcomeNameElem = document.getElementById('welcome-user-name');
+                        if (welcomeNameElem) welcomeNameElem.textContent = name;
+                    }
+                }
+            } catch (e) {
+                console.error('Error user session', e);
+            }
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+
+            const dateElem = document.getElementById('current-date-display');
+            const timeElem = document.getElementById('current-time-display');
+
+            if (dateElem) dateElem.textContent = getKhmerDate(now);
+            if (timeElem) timeElem.innerHTML = `<i class="fi fi-rr-clock me-1"></i> ${timeStr}`;
+        }
+
+        // Sidebar & Fullscreen Toggles
+        function toggleDesktopSidebar() {
+            document.body.classList.toggle('sidebar-collapsed');
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Update user name initially and slightly after load to ensure auth-check has run
+        updateWelcomeUser();
+        setTimeout(updateWelcomeUser, 1500);
+    </script>
+
+    <!-- System Updates Offcanvas (Side Panel) -->
+    <div class="offcanvas offcanvas-end border-0 shadow-lg" tabindex="-1" id="systemUpdatesOffcanvas" aria-labelledby="systemUpdatesLabel" style="width: 400px; border-radius: 30px 0 0 30px;">
+        <div class="offcanvas-header border-bottom-0 pt-4 px-4">
+            <h5 class="offcanvas-title fw-bold text-pink-dark" id="systemUpdatesLabel">
+                <i class="fi fi-rr-bell me-2"></i>អ្វីដែលបាន Update ថ្មីៗ
+            </h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-4" id="notificationList">
+            <!-- Updates will be loaded here -->
+        </div>
+        <div class="p-4 border-top-0 text-center">
+            <small class="text-muted">ប្រព័ន្ធត្រូវបានរក្សាសុវត្ថិភាព និងធ្វើបច្ចុប្បន្នភាពជានិច្ច</small>
+        </div>
+    </div>
+</body>
+
+</html>

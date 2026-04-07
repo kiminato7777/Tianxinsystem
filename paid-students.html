@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បញ្ជីសិស្សបង់ផ្ដាច់រួច</title>
+    <link rel="icon" type="image/jpeg" href="/img/1.jpg">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="preload" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"
+        as="style">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel="stylesheet" href="/css/loader.css">
+    <script src="/js/core/loader-init.js"></script>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.0/css/buttons.dataTables.min.css">
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <style>
+        * {
+            font-family: 'Kantumruy Pro', sans-serif;
+        }
+
+        :root {
+            --bs-pink-primary: #8a0e5b;
+            --bs-pink-dark: #8a0e5b;
+            --bs-pink-hover: #a3116e;
+            --bs-body-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Kantumruy Pro', sans-serif !important;
+            background-color: var(--bs-body-bg);
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        #sidebar {
+            width: 250px;
+            min-width: 250px;
+            background-color: var(--bs-pink-dark);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1030;
+        }
+
+        .sidebar-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 15px;
+            background: #8a0e5b;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        #sidebar-logo {
+            width: 70px;
+            height: 70px;
+            margin-right: 0;
+            margin-bottom: 10px;
+            object-fit: cover;
+            background: white;
+            padding: 0;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.95);
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            text-decoration: none;
+        }
+
+        #sidebar .nav-link i {
+            margin-right: 10px;
+            width: 25px;
+            text-align: center;
+        }
+
+        #sidebar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: #ff69b4;
+            padding-left: 25px;
+        }
+
+        #sidebar .nav-link.active {
+            background: linear-gradient(90deg, #ff69b4, rgba(255, 105, 180, 0.8));
+            border-left-color: white;
+        }
+
+        #main-content {
+            flex-grow: 1;
+            padding: 20px;
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+
+        .main-header {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            color: var(--bs-pink-dark);
+            font-weight: bold;
+            font-size: 1.8rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .card-header-pink {
+            background-color: var(--bs-pink-primary);
+            color: white;
+            padding: 15px;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+
+        .table thead th {
+            background-color: var(--bs-pink-primary);
+            color: white;
+            text-align: center;
+        }
+
+        .btn-back-home {
+            background: #8a0e5b;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .search-filter-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar"></div>
+    <script src="/js/core/sidebar.js"></script>
+
+    <div id="main-content">
+        <div class="main-header animate__animated animate__fadeInDown">
+            <div class="header-title">
+                <i class="fi fi-rr-checkbox text-pink-dark"></i> 
+                <span class="ms-2">បញ្ជីសិស្សបង់ផ្ដាច់រួច (Paid Off List)</span>
+            </div>
+            
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-primary rounded-pill px-4" onclick="exportPaidOffReport('range')" style="background: #8a0e5b; border:none;">
+                    <i class="fi fi-rr-print me-2"></i>របាយការណ៍
+                </button>
+                <a href="/index.html" class="btn-back-home"><i class="fi fi-rr-home me-2"></i>ត្រឡប់ទៅដើម</a>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="p-3 bg-success bg-opacity-10 text-success rounded-3 me-3">
+                            <i class="fi fi-rr-users fa-2x"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted">សរុបបង់ផ្ដាច់</small>
+                            <h4 class="mb-0 fw-bold" id="statTotalPaidOff">0 នាក់</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-3 me-3">
+                            <i class="fi fi-rr-man-head fa-2x"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted">ប្រុស (Male)</small>
+                            <h4 class="mb-0 fw-bold" id="statPaidOffMale">0</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-3 me-3">
+                            <i class="fi fi-rr-woman-head fa-2x"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted">ស្រី (Female)</small>
+                            <h4 class="mb-0 fw-bold" id="statPaidOffFemale">0</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-3 me-3">
+                            <i class="fi fi-rr-money-bill-wave fa-2x"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted">ចំណូលសរុប</small>
+                            <h4 class="mb-0 fw-bold" id="statPaidOffDebt">$0.00</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-filter-section">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="searchName" placeholder="ស្វែងរកតាមឈ្មោះ ឬអត្តលេខ...">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filterTime">
+                        <option value="all">ម៉ោងសិក្សាទាំងអស់</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filterLevel">
+                        <option value="all">កម្រិតសិក្សាទាំងអស់</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-secondary w-100" id="clearFiltersBtn">សម្អាត</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-header-pink">
+                <i class="fi fi-rr-list-check me-2"></i>តារាងសិស្សបង់ផ្ដាច់រួច
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="studentTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>អត្តលេខ</th>
+                                <th>ឈ្មោះសិស្ស</th>
+                                <th>ភេទ</th>
+                                <th>ថ្ងៃបង់ផ្ដាច់</th>
+                                <th>ម៉ោងសិក្សា</th>
+                                <th>កម្រិត</th>
+                                <th>គ្រូប្រចាំថ្នាក់</th>
+                                <th>កំណត់សម្គាល់</th>
+                                <th>សកម្មភាព</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentDataBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals (Reused from data-tracking-script) -->
+    <div class="modal fade" id="studentDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg">
+                <div class="modal-header bg-pink text-white">
+                    <h5 class="modal-title fw-bold">ព័ត៌មានលម្អិតសិស្ស</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0" id="modalBodyContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="/js/core/firebase-config.js"></script>
+    <script src="/js/core/auth-check.js"></script>
+    <script src="/js/core/receiver-utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="/js/utils/khmer-font.js"></script>
+    <script>window.SHOW_PAID_OFF = true;</script>
+    <script src="/js/pages/data-tracking.js"></script>
+</body>
+</html>

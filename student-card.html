@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បង្កើតកាតសិស្ស - ប្រព័ន្ធគ្រប់គ្រងសាលា</title>
+    <link rel="icon" type="image/jpeg" href="/img/1.jpg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <!-- Flaticon -->
+    <link rel="preload" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"
+        as="style">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+
+    <link rel="stylesheet" href="/css/loader.css">
+    <script src="/js/core/loader-init.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script type="module">
+        import { removeBackground as imglyRemoveBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/bundle.mjs';
+
+        // Assuming the original removeBackground function was defined globally or in another script.
+        // This is a placeholder for the updated function.
+        // You would integrate this into your existing JavaScript logic.
+        window.removeBackground = async (imageFile) => {
+            if (!imageFile) {
+                console.error("No image file provided for background removal.");
+                return null;
+            }
+
+            try {
+                const blob = await imglyRemoveBackground(imageFile);
+                return URL.createObjectURL(blob);
+            } catch (error) {
+                console.error("Error removing background:", error);
+                return null;
+            }
+        };
+    </script>
+
+    <style>
+        /* --- DASHBOARD FONTS & BASICS --- */
+        * {
+            font-family: 'Kantumruy Pro', sans-serif;
+        }
+
+        body {
+            font-family: 'Kantumruy Pro', sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- SIDEBAR STYLES --- */
+        #sidebar {
+            width: 250px;
+            min-width: 250px;
+            background: #8a0e5b;
+            color: white;
+            padding: 0;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 15px;
+            background: #8a0e5b;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        #sidebar-logo {
+            width: 70px;
+            height: 70px;
+            margin-right: 0;
+            margin-bottom: 10px;
+            object-fit: cover;
+            background: white;
+            padding: 0;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        #sidebar .nav {
+            padding-top: 10px;
+        }
+
+        #sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.95) !important;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+
+        #sidebar .nav-link i {
+            margin-right: 10px;
+            width: 25px;
+            text-align: center;
+        }
+
+        #sidebar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            border-left-color: #8a0e5b;
+            padding-left: 25px;
+        }
+
+        #sidebar .nav-link.active {
+            background: linear-gradient(90deg, #ff69b4, rgba(255, 105, 180, 0.8)) !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* --- MAIN CONTENT & ID CARD STYLES --- */
+        #main-content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #f8f9fa;
+            width: calc(100% - 250px);
+        }
+
+        :root {
+            --tis-pink: #ff1493;
+            --tis-dark-pink: #d81b60;
+            --tis-gradient: linear-gradient(135deg, #ff1493 0%, #ff85a1 100%);
+            --glass: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Form Container */
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #ff69b4;
+            box-shadow: 0 0 0 4px rgba(255, 105, 180, 0.15);
+        }
+
+        .section-title {
+            color: var(--tis-dark-pink);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 4px;
+            background: var(--tis-gradient);
+            border-radius: 2px;
+        }
+
+        .upload-area {
+            width: 140px;
+            height: 175px;
+            border: 2px dashed #e0e0e0;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: var(--tis-pink);
+            background: #fff0f5;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        #imgPrev {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            position: absolute;
+            z-index: 5;
+        }
+
+        /* ID Card Preview */
+        .tis-card {
+            width: 350px;
+            height: 550px;
+            background: white;
+            border-radius: 1px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+            margin: 0 auto;
+            /* No border for realism */
+            background-image: url('id.jpg');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            transition: transform 0.3s ease;
+        }
+
+        .tis-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .tis-photo-frame {
+            position: absolute;
+            top: 134px;
+            left: 116px;
+            width: 116px;
+            height: 152px;
+            background: #000;
+            border-radius: 0px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tis-photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .data-id {
+            position: absolute;
+            top: 284px;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            font-size: 19px;
+            color: #333;
+        }
+
+        .data-field {
+            position: absolute;
+            font-weight: bold;
+            color: #1a1a1a;
+            font-size: 14px;
+        }
+
+        .data-name-kh {
+            top: 314px;
+            left: 107px;
+            font-size: 23px;
+        }
+
+        .data-name-ch {
+            top: 342px;
+            left: 108px;
+            font-family: 'Kantumruy Pro', sans-serif;
+            font-size: 19px;
+        }
+
+        .data-gender-kh {
+            top: 372px;
+            left: 108px;
+            font-size: 20px;
+        }
+
+        .data-gender-ch {
+            top: 399px;
+            left: 108px;
+            font-family: 'Kantumruy Pro', sans-serif;
+            font-size: 19px;
+        }
+
+        .data-phone {
+            top: 426px;
+            left: 188px;
+            font-size: 19px;
+        }
+
+        .data-date {
+            top: 453px;
+            left: 150px;
+            font-size: 19px;
+        }
+
+        .chinese-font {
+            font-family: 'Kantumruy Pro', sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .preview-card-wrapper {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+            /* Sticky positioning for larger screens */
+            position: sticky;
+            top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            background: linear-gradient(145deg, #ffffff, #f5f7fa);
+        }
+
+        @media (max-width: 991px) {
+            .preview-card-wrapper {
+                position: static;
+                margin-top: 20px;
+            }
+        }
+
+        .preview-label {
+            color: #888;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .preview-label::before,
+        .preview-label::after {
+            content: '';
+            height: 1px;
+            width: 30px;
+            background: #ddd;
+        }
+
+        /* Student List Table */
+        .student-table-container {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .table thead th {
+            background: #f8f9fa;
+            border-bottom: 2px solid #eee;
+            color: #555;
+            font-weight: 700;
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+            font-size: 0.95rem;
+            color: #444;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .table-photo {
+            width: 45px;
+            height: 45px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #eee;
+        }
+
+        .btn-custom {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        /* Header Title */
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            border-left: 5px solid #ff1493;
+        }
+
+        .page-title {
+            color: #d81b60;
+            font-weight: bold;
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Remove Background Button */
+        #removeBgBtn {
+            display: none;
+            background: linear-gradient(135deg, #6d28d9, #a855f7);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 8px 20px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(109, 40, 217, 0.35);
+            margin-top: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        #removeBgBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(109, 40, 217, 0.5);
+        }
+
+        #removeBgBtn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #removeBgStatus {
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-top: 6px;
+            min-height: 20px;
+            display: block;
+        }
+
+        .bg-removed-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+    </div>
+
+    <script src="/js/core/sidebar.js"></script>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Page Header -->
+        <div class="page-header animate__animated animate__fadeInDown">
+            <h2 class="page-title">
+                <i class="fi fi-rr-id-badge"></i> មុខងារបង្កើតកាតសិស្ស (Student ID Card Generator)
+            </h2>
+        </div>
+
+        <div class="container-fluid p-0">
+            <div class="row g-4">
+                <div class="col-lg-5">
+                    <div class="form-container animate__animated animate__fadeInLeft">
+                        <h4 class="section-title">បញ្ចូលទិន្នន័យសិស្ស</h4>
+
+                        <div class="row g-3">
+                            <div class="col-12 text-center mb-4">
+                                <label for="fileInput" class="upload-area shadow-sm position-relative">
+                                    <div
+                                        class="d-flex flex-column align-items-center justify-content-center h-100 text-muted">
+                                        <i class="fi fi-rr-picture fs-1 mb-2"></i>
+                                        <span class="small fw-bold">Upload Photo</span>
+                                    </div>
+                                    <img id="imgPrev" class="position-absolute top-0 start-0 w-100 h-100 rounded-3"
+                                        style="object-fit: cover; display: none;">
+                                </label>
+                                <input type="file" id="fileInput" accept="image/*" onchange="previewFile(event)">
+                                <!-- Remove Background Button -->
+                                <button id="removeBgBtn" onclick="removeBackground()">
+                                    <i class="bi bi-magic me-1"></i> លុប Background
+                                </button>
+                                <span id="removeBgStatus"></span>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control rounded-4 shadow-sm" id="stuId"
+                                        placeholder="ID" oninput="updateLivePreview()">
+                                    <label for="stuId"><i class="fi fi-rr-id-badge me-2"></i>លេខសម្គាល់សិស្ស (Student
+                                        ID)</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control rounded-4 shadow-sm" id="nameKh"
+                                        placeholder="Name KH" oninput="updateLivePreview()">
+                                    <label for="nameKh">ឈ្មោះខ្មែរ (Khmer Name)</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control rounded-4 shadow-sm" id="nameCh"
+                                        placeholder="Name CH" oninput="updateLivePreview()">
+                                    <label for="nameCh">ឈ្មោះចិន (Chinese Name)</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <select class="form-select rounded-4 shadow-sm" id="genderKh"
+                                        onchange="updateLivePreview()">
+                                        <option value="ប្រុស">ប្រុស</option>
+                                        <option value="ស្រី">ស្រី</option>
+                                    </select>
+                                    <label for="genderKh">ភេទ (Gender)</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <select class="form-select rounded-4 shadow-sm" id="genderCh"
+                                        onchange="updateLivePreview()">
+                                        <option value="男">男 (Male)</option>
+                                        <option value="女">女 (Female)</option>
+                                    </select>
+                                    <label for="genderCh">ភេទចិន (Gender CH)</label>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control rounded-4 shadow-sm" id="phone"
+                                        placeholder="Phone" oninput="updateLivePreview()">
+                                    <label for="phone"><i class="fi fi-rr-phone-call me-2"></i>លេខទំនាក់ទំនង
+                                        (Phone)</label>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-4">
+                                <div class="form-floating">
+                                    <input type="date" class="form-control rounded-4 shadow-sm" id="joinDate"
+                                        placeholder="Date" onchange="updateLivePreview()">
+                                    <label for="joinDate"><i class="fi fi-rr-calendar me-2"></i>ថ្ងៃខែឆ្នាំចូលរៀន
+                                        (Date)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="saveBtn"
+                            class="btn btn-primary btn-custom w-100 py-3 fw-bold shadow-sm rounded-pill border-0"
+                            style="background: var(--tis-gradient);">
+                            <i class="bi bi-plus-circle-fill me-2"></i> បង្កើត និងរក្សាទុកកាត
+                        </button>
+                        <div id="status" class="mt-3 text-center small fw-bold"></div>
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="preview-card-wrapper animate__animated animate__fadeInRight">
+                        <h5 class="preview-label"><i class="fi fi-rr-eye me-2"></i>Live Preview (មើលកាតសាកល្បង)</h5>
+                        <div class="tis-card" id="liveCard">
+                            <div class="tis-photo-frame">
+                                <img id="livePhoto" crossOrigin="anonymous"
+                                    src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22122%22%20height%3D%22156%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23cccccc%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20font-family%3D%22Arial%22%20font-size%3D%2214%22%20text-anchor%3D%22middle%22%20fill%3D%22%23333333%22%3EPHOTO%3C%2Ftext%3E%3C%2Fsvg%3E">
+                            </div>
+                            <div id="liveId" class="data-id">ID: TX00</div>
+                            <div id="pNameKh" class="data-field data-name-kh">...</div>
+                            <div id="pNameCh" class="data-field data-name-ch">...</div>
+                            <div id="pGKh" class="data-field data-gender-kh">...</div>
+                            <div id="pGCh" class="data-field data-gender-ch">...</div>
+                            <div id="pPhone" class="data-field data-phone">...</div>
+                            <div id="pDate" class="data-field data-date">...</div>
+                        </div>
+                        <div class="mt-4 d-flex gap-3 justify-content-center flex-wrap">
+                            <button onclick="downloadCard()"
+                                class="btn btn-success btn-custom rounded-pill px-4 py-3 fw-bold shadow-sm border-0">
+                                <i class="bi bi-download me-2"></i> ទាញយក (Download)
+                            </button>
+                            <button onclick="copyCardToClipboard()"
+                                class="btn btn-secondary btn-custom rounded-pill px-4 py-3 fw-bold shadow-sm border-0"
+                                style="background: #6c757d;">
+                                <i class="bi bi-clipboard-check me-2"></i> ចម្លង (Copy)
+                            </button>
+                        </div>
+
+                        <!-- CORS Fix: Manual Template Upload -->
+                        <!-- CORS Fix: Manual Template Upload -->
+                        <div class="mt-3 text-center collapse" id="cors-fix-section">
+                            <div class="alert alert-warning border-0 shadow-sm rounded-4 p-3 mb-2"
+                                style="background: #fff3cd;">
+                                <p class="small fw-bold text-dark mb-2">
+                                    <i class="bi bi-shield-lock-fill me-1"></i>
+                                    ប្រព័ន្ធសុវត្ថិភាពតម្រូវអោយបញ្ជាក់ (Security Check)
+                                </p>
+                                <p class="small text-muted mb-2">ដើម្បីទាញយកកាតបាន សូមជួយជ្រើសរើសរូប <b>"id.jpg"</b>
+                                    ពីក្នុងកុំព្យូទ័ររបស់អ្នកម្តងទៀត។</p>
+
+                                <button class="btn btn-sm btn-warning fw-bold shadow-sm rounded-pill px-3"
+                                    onclick="document.getElementById('templateInput').click()">
+                                    <i class="bi bi-folder2-open me-2"></i> ជ្រើសរើសរូប id.jpg (Select File)
+                                </button>
+                            </div>
+                            <input type="file" id="templateInput" accept="image/*" style="display:none;"
+                                onchange="loadManualTemplate(event)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="student-table-container shadow-sm border animate__animated animate__fadeInUp">
+                <h4 class="section-title mb-4 ps-2"><i class="fi fi-rr-list me-2"></i>បញ្ជីឈ្មោះសិស្ស (Student List)
+                </h4>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 text-center">
+                        <thead>
+                            <tr>
+                                <th>រូបថត</th>
+                                <th>ID</th>
+                                <th>ឈ្មោះខ្មែរ</th>
+                                <th>ឈ្មោះចិន</th>
+                                <th>ភេទ</th>
+                                <th>លេខទូរស័ព្ទ</th>
+                                <th>ថ្ងៃចូលរៀន</th>
+                                <th>សកម្មភាព</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentList">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Footer -->
+        <footer class="app-footer mt-5 py-4 border-top bg-white text-center text-muted position-relative"
+            style="font-size: 0.9rem; z-index: 100;">
+            <div class="container">
+                <div class="mb-3">
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទីតាំងទី២ របស់សាលា:</span>
+                        ភូមិក្រាំង សង្កាត់ក្រាំងអំពិល ក្រុងកំពត ខេត្តកំពត
+                    </div>
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទំនាក់ទំនង:</span>
+                        <span class="me-2"><i class="fi fi-rr-smartphone me-1 text-primary"></i>093 835 678
+                            (Smart)</span>
+                        <a href="https://t.me/Tian093835678" target="_blank" class="text-decoration-none">
+                            <i class="fi fi-brands-telegram me-1 text-primary"></i>Telegram
+                        </a>
+                    </div>
+                </div>
+
+                <div class="w-75 mx-auto border-top my-3 opacity-25"></div>
+
+                <div class="footer-update-time mb-1">
+                    <i class="fi fi-rr-clock me-1"></i>កាលបរិច្ឆេទចុងក្រោយ: <span id="last-update-time">...</span>
+                </div>
+                <div class="footer-copyright">
+                    ©
+                    <script>document.write(new Date().getFullYear())</script> គ្រប់គ្រងសាលា. Developed by <span
+                        class="fw-bold text-pink-primary">មាស មករា</span>.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Bootstrap & Firebase Compat (Managed by Dashboard) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="/js/core/firebase-config.js"></script>
+    <script src="/js/core/auth-check.js"></script>
+    <script src="/js/core/offline-manager.js"></script>
+
+    <!-- Module Script for ID Card Logic (Scoped) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove, set, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import imglyRemoveBackground from "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/+esm";
+
+        // Separate instance for this module to ensure clean separate connection
+        const firebaseConfig = {
+            apiKey: "AIzaSyC1XqoJu8MTRInSSOd9BUttrXSOvugSwSk",
+            databaseURL: "https://fir-img-fb956-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "fir-img-fb956",
+            appId: "1:935219167492:web:33882156a5c97dceb51051"
+        };
+
+        const CLOUD_NAME = "dv3glc9it";
+        const UPLOAD_PRESET = "my_preset_123";
+        let manualTemplateDataUrl = localStorage.getItem('tis_card_template') || null; // Load from storage if available
+
+        const app = initializeApp(firebaseConfig, "IDCardApp"); // Named App to avoid conflict with global default app
+        const db = getDatabase(app);
+
+        // Auto-load template logic
+        if (manualTemplateDataUrl) {
+            // Apply immediately if cached
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelector('.tis-card').style.backgroundImage = `url('${manualTemplateDataUrl}')`;
+            });
+        }
+
+        // Manual Template Loader with Storage
+        window.loadManualTemplate = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    manualTemplateDataUrl = event.target.result;
+                    // Save to local storage for persistent access
+                    try {
+                        localStorage.setItem('tis_card_template', manualTemplateDataUrl);
+                    } catch (err) {
+                        console.warn("Storage full or error:", err);
+                    }
+
+                    document.querySelector('.tis-card').style.backgroundImage = `url('${manualTemplateDataUrl}')`;
+
+                    // Hide the fix section if it's visible
+                    const fixSection = document.getElementById('cors-fix-section');
+                    if (fixSection) {
+                        fixSection.classList.remove('show');
+                        fixSection.style.display = 'none';
+                    }
+
+                    alert("Template saved! You won't need to upload it again on this browser.");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Preview រូបភាព
+        window.previewFile = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const previewUrl = event.target.result;
+                    document.getElementById('imgPrev').src = previewUrl;
+                    document.getElementById('imgPrev').style.display = "block";
+                    document.getElementById('livePhoto').src = previewUrl;
+
+                    // Show remove background button
+                    const btn = document.getElementById('removeBgBtn');
+                    btn.style.display = 'inline-block';
+                    btn.innerHTML = '<i class="bi bi-magic me-1"></i> លុប Background';
+                    btn.disabled = false;
+                    document.getElementById('removeBgStatus').innerHTML = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Remove Background using @imgly/background-removal
+        window.removeBackground = async () => {
+            const btn = document.getElementById('removeBgBtn');
+            const statusEl = document.getElementById('removeBgStatus');
+            const imgPrev = document.getElementById('imgPrev');
+            const livePhoto = document.getElementById('livePhoto');
+
+            const currentSrc = livePhoto.src;
+            if (!currentSrc || currentSrc.includes('svg')) {
+                alert('សូម Upload រូបភាពសិស្សជាមុន!');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> កំពុងដំណើរការ...';
+            statusEl.innerHTML = '<span style="color:#6d28d9;">⏳ កំពុងលុប background... (អាចចំណាយពេល 10-30 វិនាទី)</span>';
+
+            try {
+                // Convert current image src to Blob
+                let imageBlob;
+                if (currentSrc.startsWith('data:')) {
+                    const res = await fetch(currentSrc);
+                    imageBlob = await res.blob();
+                } else {
+                    const res = await fetch(currentSrc);
+                    imageBlob = await res.blob();
+                }
+
+                // Use @imgly/background-removal
+                const resultBlob = await imglyRemoveBackground(imageBlob, {
+                    publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/',
+                    debug: false,
+                    progress: (key, current, total) => {
+                        if (total > 0) {
+                            const pct = Math.round((current / total) * 100);
+                            statusEl.innerHTML = `<span style="color:#6d28d9;">⏳ ${key}: ${pct}%</span>`;
+                        }
+                    }
+                });
+
+                const resultUrl = URL.createObjectURL(resultBlob);
+
+                // Update previews
+                imgPrev.src = resultUrl;
+                imgPrev.style.display = 'block';
+                livePhoto.src = resultUrl;
+
+                btn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> លុបហើយ! ចុចម្តងទៀតដើម្បីជ្រើសរូបថ្មី';
+                btn.disabled = false;
+                statusEl.innerHTML = '<span class="bg-removed-badge">✅ Background ត្រូវបានលុបដោយជោគជ័យ!</span>';
+            } catch (err) {
+                console.error('Background removal failed:', err);
+                btn.innerHTML = '<i class="bi bi-magic me-1"></i> លុប Background';
+                btn.disabled = false;
+                statusEl.innerHTML = `<span style="color:#dc2626;">❌ បរាជ័យ: ${err.message}</span>`;
+            }
+        }
+
+        const KH_MONTHS = ['មករា', 'កុម្ភៈ', 'មីនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្កដា', 'សីហា', 'កញ្ញា', 'តុលា', 'វិច្ឆិកា', 'ធ្នូ'];
+
+        function formatKhmerDate(dateStr) {
+            if (!dateStr) return "...";
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr;
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = KH_MONTHS[d.getMonth()];
+            const year = d.getFullYear();
+            return `${day} / ${month} / ${year}`;
+        }
+
+        async function getBase64Image(url) {
+            try {
+                if (url.startsWith('data:')) return url;
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.crossOrigin = 'Anonymous';
+
+                    img.onload = () => {
+                        try {
+                            const canvas = document.createElement('canvas');
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0);
+                            const dataURL = canvas.toDataURL('image/png');
+                            resolve(dataURL);
+                        } catch (e) {
+                            // If toDataURL fails here, it means the image is tainted (CORS/File protocol)
+                            console.warn("Cannot convert image to Base64 (likely CORS):", url);
+                            reject(new Error("CORS_BLOCK"));
+                        }
+                    };
+                    img.onerror = () => reject(new Error("Image load failed"));
+                    img.src = url;
+                });
+            } catch (err) {
+                return null; // Return null to signal failure
+            }
+        }
+
+        const getCarrierNameLocal = (phone) => {
+            if (!phone || phone === '...') return '';
+            const cleanPhone = phone.toString().replace(/\D/g, '');
+            if (!cleanPhone) return '';
+            let p = cleanPhone;
+            if (p.startsWith('855')) p = '0' + p.substring(3);
+            if (!p.startsWith('0')) p = '0' + p;
+            const prefix = p.substring(0, 3);
+            const carrierMapping = {
+                'Smart': ['010', '015', '016', '069', '070', '081', '086', '087', '093', '096', '098'],
+                'Cellcard': ['011', '012', '014', '017', '061', '076', '077', '078', '079', '085', '089', '092', '095', '099'],
+                'Metfone': ['031', '038', '060', '066', '067', '068', '071', '088', '090', '097'],
+                'Seatel': ['018'],
+                'Cootel': ['038']
+            };
+            for (const [name, prefixes] of Object.entries(carrierMapping)) {
+                if (prefixes.includes(prefix)) return name;
+            }
+            return '';
+        };
+
+        const updateCarrierDisplayLocal = (inputId) => {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            const label = document.querySelector(`label[for="${inputId}"]`);
+            if (!label) return;
+            let carrierDisplay = label.querySelector('.carrier-badge');
+            if (!carrierDisplay) {
+                carrierDisplay = document.createElement('span');
+                carrierDisplay.className = 'carrier-badge badge rounded-pill ms-2';
+                carrierDisplay.style.fontSize = '0.7rem';
+                carrierDisplay.style.padding = '2px 8px';
+                carrierDisplay.style.display = 'none';
+                label.appendChild(carrierDisplay);
+            }
+            const carrier = getCarrierNameLocal(input.value);
+            if (carrier) {
+                const carrierColors = {
+                    'Smart': '#a4cc39', 'Cellcard': '#f37021', 'Metfone': '#ed1c24', 'Seatel': '#00a0e9', 'Cootel': '#fbb03b'
+                };
+                carrierDisplay.textContent = carrier;
+                carrierDisplay.style.backgroundColor = carrierColors[carrier] || '#888';
+                carrierDisplay.style.color = 'white';
+                carrierDisplay.style.display = 'inline-block';
+            } else {
+                carrierDisplay.style.display = 'none';
+            }
+        };
+
+        window.updateLivePreview = () => {
+            updateCarrierDisplayLocal('phone');
+            let sid = document.getElementById('stuId').value || "00";
+            if (sid.length > 0 && !sid.toUpperCase().startsWith("TX")) sid = "TX" + sid;
+            else if (sid.length > 0) sid = sid.toUpperCase();
+            
+            const name = document.getElementById('nameKh').value || "...";
+            const rawDate = document.getElementById('joinDate').value;
+
+            document.getElementById('liveId').innerText = "ID: " + sid;
+            document.getElementById('pNameKh').innerText = name;
+            document.getElementById('pNameCh').innerText = document.getElementById('nameCh').value || "...";
+            document.getElementById('pGKh').innerText = document.getElementById('genderKh').value;
+            document.getElementById('pGCh').innerText = document.getElementById('genderCh').value;
+            document.getElementById('pPhone').innerText = document.getElementById('phone').value || "...";
+            document.getElementById('pDate').innerText = formatKhmerDate(rawDate);
+        }
+
+        let searchTimeout;
+        document.getElementById('stuId').addEventListener('input', (e) => {
+            window.updateLivePreview();
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const searchId = e.target.value.trim().replace(/^TX/i, '');
+                if (!searchId) return;
+                
+                document.getElementById('status').innerHTML = "<span class='text-primary'>⏳ កំពុងស្វែងរកទិន្នន័យសិស្ស... (Searching dynamic data)</span>";
+                const dbRef = ref(db);
+                get(child(dbRef, 'students')).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const students = snapshot.val();
+                        for (const key in students) {
+                            const s = students[key];
+                            if (s.displayId == searchId || s.displayId == 'TX' + searchId) {
+                                document.getElementById('nameKh').value = `${s.lastName || ''} ${s.firstName || ''}`.trim();
+                                document.getElementById('nameCh').value = `${s.chineseLastName || ''}${s.chineseFirstName || ''}`.trim();
+                                
+                                const gen = (s.gender || '').toLowerCase();
+                                if (gen === 'ប្រុស' || gen === 'male') {
+                                    document.getElementById('genderKh').value = 'ប្រុស';
+                                    document.getElementById('genderCh').value = '男';
+                                } else if (gen) {
+                                    document.getElementById('genderKh').value = 'ស្រី';
+                                    document.getElementById('genderCh').value = '女';
+                                }
+                                
+                                document.getElementById('phone').value = s.primaryPhone || s.phone || '';
+                                document.getElementById('joinDate').value = s.startDate || s.joinDate || '';
+                                
+                                const pUrl = s.photoUrl || s.photo;
+                                if (pUrl && pUrl.startsWith('http')) {
+                                    document.getElementById('livePhoto').crossOrigin = "anonymous";
+                                    document.getElementById('livePhoto').src = pUrl;
+                                    document.getElementById('imgPrev').src = pUrl;
+                                    document.getElementById('imgPrev').style.display = 'block';
+                                    
+                                    const btn = document.getElementById('removeBgBtn');
+                                    btn.style.display = 'inline-block';
+                                }
+                                
+                                window.updateLivePreview();
+                                document.getElementById('status').innerHTML = "<span class='text-success'>✅ រកឃើញ និងបានបញ្ចូលទិន្នន័យដោយស្វ័យប្រវត្តិបញ្ជាក់ស្តង់ដារ Dynamic!</span>";
+                                return;
+                            }
+                        }
+                        document.getElementById('status').innerHTML = "<span class='text-muted'>រកមិនឃើញសិស្សដែលមានលេខនេះទេពិតជាបញ្ចូលក្នុងបញ្ជីរឺនៅ?</span>";
+                    }
+                }).catch((error) => {
+                    console.error("Error fetching student:", error);
+                    document.getElementById('status').innerHTML = "";
+                });
+            }, 800);
+        });
+
+        window.downloadCard = async () => {
+            const status = document.getElementById('status');
+            const nameKh = document.getElementById('pNameKh').innerText.trim();
+            const photoUrl = document.getElementById('livePhoto').src;
+
+            if (nameKh === "...") return alert("សូមបញ្ចូលឈ្មោះសិស្ស!");
+
+            status.innerHTML = "<span class='text-primary'>⏳ កំពុងផ្តិតរូបភាពគុណភាពខ្ពស់...</span>";
+
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 350 * 4;
+                canvas.height = 550 * 4;
+                ctx.scale(4, 4);
+
+                let templateB64;
+                if (manualTemplateDataUrl) {
+                    templateB64 = manualTemplateDataUrl;
+                } else {
+                    try {
+                        templateB64 = await getBase64Image('id.jpg');
+                    } catch (e) {
+                        // Ignored
+                    }
+                }
+
+                if (!templateB64) {
+                    const fixSection = document.getElementById('cors-fix-section');
+                    if (fixSection) {
+                        fixSection.classList.add('show');
+                        fixSection.style.display = 'block';
+                    }
+                    window.scrollTo({ top: 300, behavior: 'smooth' });
+                    alert("សូមមេត្តាជ្រើសរើសរូប id.jpg ដើម្បីបន្តការទាញយក។ (Please select id.jpg to proceed)");
+                    throw new Error("Local File Security Block");
+                }
+
+                const templateImg = new Image();
+                templateImg.src = templateB64;
+                await new Promise((resolve) => {
+                    templateImg.onload = resolve;
+                });
+                ctx.drawImage(templateImg, 0, 0, 350, 550);
+
+                const studentImg = new Image();
+                studentImg.src = await getBase64Image(photoUrl);
+                await new Promise((resolve, reject) => {
+                    studentImg.onload = resolve;
+                    studentImg.onerror = () => reject(new Error("រកមិនឃើញរូបភាពសិស្ស"));
+                });
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.roundRect(116, 134, 116, 152, 8);
+                ctx.clip();
+                ctx.drawImage(studentImg, 116, 134, 116, 152);
+                ctx.restore();
+
+                ctx.fillStyle = "#1a1a1a";
+                ctx.textAlign = "center";
+                ctx.font = "bold 19px 'Kantumruy Pro'";
+                ctx.fillText(document.getElementById('liveId').innerText, 175, 303, 200);
+
+                ctx.textAlign = "left";
+                ctx.font = "bold 23px 'Kantumruy Pro'";
+                ctx.fillText(document.getElementById('pNameKh').innerText, 107, 340, 230);
+
+                ctx.font = "bold 19px 'Kantumruy Pro'";
+                ctx.fillText(document.getElementById('pNameCh').innerText, 108, 365, 230);
+
+                ctx.font = "bold 20px 'Kantumruy Pro'";
+                ctx.fillText(document.getElementById('pGKh').innerText, 108, 395, 230);
+
+                ctx.font = "bold 19px 'Kantumruy Pro'";
+                ctx.fillText(document.getElementById('pGCh').innerText, 108, 422, 230);
+
+                ctx.font = "bold 19px 'Kantumruy Pro'";
+                ctx.fillText(document.getElementById('pPhone').innerText, 188, 448, 150);
+
+                ctx.font = "bold 19px 'Kantumruy Pro'";
+                ctx.fillText(document.getElementById('pDate').innerText, 150, 475, 180);
+
+                const dataUrl = canvas.toDataURL("image/png");
+                const link = document.createElement('a');
+                link.download = `TX_${nameKh}.png`;
+                link.href = dataUrl;
+                link.click();
+
+                status.innerHTML = "<span class='text-success'>✅ ទាញយកបានសម្រេច!</span>";
+            } catch (err) {
+                console.error(err);
+                if (err.name === 'SecurityError' || err.message.includes('Security')) {
+                    document.getElementById('cors-message').style.display = 'block';
+                    alert("Security Error: Please use the 'Fix Download Error' button.");
+                } else {
+                    status.innerHTML = "<span class='text-danger'>❌ បរាជ័យ: " + err.message + "</span>";
+                }
+            }
+        }
+
+        window.copyCardToClipboard = () => {
+            const card = document.getElementById('liveCard');
+            const status = document.getElementById('status');
+            status.innerHTML = "<span class='text-primary'>⏳ កំពុងចម្លងរូបភាព...</span>";
+
+            html2canvas(card, {
+                useCORS: true,
+                allowTaint: true,
+                scale: 3,
+                backgroundColor: null
+            }).then(canvas => {
+                canvas.toBlob(blob => {
+                    const item = new ClipboardItem({ "image/png": blob });
+                    navigator.clipboard.write([item]).then(() => {
+                        status.innerHTML = "<span class='text-success'>✅ ចម្លងទៅ Clipboard បានសម្រេច!</span>";
+                    });
+                }, 'image/png');
+            }).catch(err => {
+                console.error(err);
+                status.innerHTML = "<span class='text-danger'>❌ បរាជ័យក្នុងការចម្លង!</span>";
+            });
+        }
+
+        // New helper function for direct download from table
+        window.downloadCardDirectly = async (stuId, nameKh, nameCh, gKh, gCh, phone, date, photo) => {
+            // Show ephemeral loading state
+            const originalText = document.activeElement.innerHTML;
+            document.activeElement.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 350 * 4;
+                canvas.height = 550 * 4;
+                ctx.scale(4, 4);
+
+                let templateB64;
+                if (manualTemplateDataUrl) {
+                    templateB64 = manualTemplateDataUrl;
+                } else {
+                    try {
+                        templateB64 = await getBase64Image('id.jpg');
+                    } catch (e) {
+                        // Ignored, will check below
+                    }
+                }
+
+                // Important: If we don't have a valid base64 template, we CANNOT proceed or canvas will be tainted.
+                if (!templateB64) {
+                    const fixSection = document.getElementById('cors-fix-section');
+                    fixSection.classList.add('show');
+                    fixSection.style.display = 'block';
+                    window.scrollTo({ top: 300, behavior: 'smooth' });
+                    alert("សូមមេត្តាជ្រើសរើសរូប id.jpg ដើម្បីបន្តការទាញយក។");
+                    throw new Error("Local File Security Block");
+                }
+
+                const templateImg = new Image();
+                templateImg.src = templateB64;
+                await new Promise((resolve) => {
+                    templateImg.onload = resolve;
+                });
+                // Since it's base64, this draw is safe
+                ctx.drawImage(templateImg, 0, 0, 350, 550);
+
+                let studentImgSrc = photo;
+                if (photo.startsWith('http')) {
+                    studentImgSrc = await getBase64Image(photo);
+                }
+
+                const studentImg = new Image();
+                studentImg.src = studentImgSrc;
+                await new Promise((resolve) => {
+                    studentImg.onload = resolve;
+                    studentImg.onerror = resolve;
+                });
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.roundRect(116, 134, 116, 152, 8);
+                ctx.clip();
+                ctx.drawImage(studentImg, 116, 134, 116, 152);
+                ctx.restore();
+
+                ctx.fillStyle = "#1a1a1a";
+                ctx.textAlign = "center";
+                ctx.font = "bold 19px 'Kantumruy Pro'";
+                // Make sure stuId has TX prefix if it should
+                let dispId = stuId;
+                if (!dispId.toUpperCase().startsWith("TX")) dispId = "TX" + dispId;
+                ctx.fillText("ID: " + dispId.toUpperCase(), 175, 303, 200);
+
+                ctx.textAlign = "left";
+                ctx.font = "bold 23px 'Kantumruy Pro'";
+                ctx.fillText(nameKh, 107, 340, 230);
+
+                ctx.font = "bold 19px 'Kantumruy Pro'";
+                ctx.fillText(nameCh, 108, 365, 230);
+
+                ctx.font = "bold 20px 'Kantumruy Pro'";
+                ctx.fillText(gKh, 108, 395, 230);
+
+                ctx.font = "bold 19px 'Kantumruy Pro'";
+                ctx.fillText(gCh, 108, 422, 230);
+
+                ctx.font = "bold 19px 'Kantumruy Pro'";
+                ctx.fillText(phone, 188, 448, 150);
+
+                ctx.font = "bold 19px 'Kantumruy Pro'";
+                ctx.fillText(formatKhmerDate(date), 150, 475, 180);
+
+                const dataUrl = canvas.toDataURL("image/png");
+                const link = document.createElement('a');
+                link.download = `TX_${nameKh}.png`;
+                link.href = dataUrl;
+                link.click();
+
+            } catch (err) {
+                console.error("Direct download failed:", err);
+                if (err.name === 'SecurityError') {
+                    document.getElementById('cors-message').style.display = 'block';
+                    alert("Security Error: Browser blocked the download.\n\nPlease click the 'Fix Download Error' button below the card preview and select your 'id.jpg' file.");
+                    window.scrollTo({ top: 300, behavior: 'smooth' });
+                } else {
+                    alert("បរាជ័យក្នុងការទាញយកកាត។ (" + err.message + ")");
+                }
+            } finally {
+                document.activeElement.innerHTML = originalText;
+            }
+        }
+
+        document.getElementById('saveBtn').onclick = async () => {
+            let stuId = document.getElementById('stuId').value;
+            if (!stuId.startsWith("TX")) stuId = "TX" + stuId;
+            const nameKh = document.getElementById('nameKh').value;
+            const nameCh = document.getElementById('nameCh').value;
+            const gKh = document.getElementById('genderKh').value;
+            const gCh = document.getElementById('genderCh').value;
+            const phone = document.getElementById('phone').value;
+            const date = document.getElementById('joinDate').value;
+            const file = document.getElementById('fileInput').files[0];
+
+            if (!nameKh || !stuId) return alert("សូមបំពេញលេខសម្គាល់ និងឈ្មោះ!");
+
+            document.getElementById('saveBtn').disabled = true;
+            document.getElementById('status').innerText = editingKey ? "⏳ កំពុងធ្វើបច្ចុប្បន្នភាព..." : "⏳ កំពុងបង្កើតកាត...";
+
+            try {
+                let photoUrl = document.getElementById('livePhoto').src;
+
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('upload_preset', UPLOAD_PRESET);
+                    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+                    const imgData = await res.json();
+                    photoUrl = imgData.secure_url;
+                }
+
+                const cardData = { nameKh, nameCh, gKh, gCh, phone, date, photo: photoUrl, stuId: stuId };
+
+                if (editingKey) {
+                    await set(ref(db, 'tis_cards/' + editingKey), cardData);
+                    document.getElementById('status').innerHTML = "<span class='text-success'>✅ កែប្រែបានជោគជ័យ!</span>";
+                } else {
+                    if (!photoUrl || photoUrl.includes('svg')) {
+                        document.getElementById('saveBtn').disabled = false;
+                        return alert("សូមជ្រើសរើសរូបថត ឬ Upload រូបថត!");
+                    }
+                    await push(ref(db, 'tis_cards'), cardData);
+                    document.getElementById('status').innerHTML = "<span class='text-success'>✅ កាតត្រូវបានបង្កើត!</span>";
+                }
+
+                if (photoUrl.startsWith('http')) {
+                    const b64 = await getBase64Image(photoUrl);
+                    document.getElementById('livePhoto').src = b64;
+                }
+                resetForm();
+            } catch (err) { alert(err.message); }
+            finally { document.getElementById('saveBtn').disabled = false; }
+        };
+
+        let editingKey = null;
+
+        onValue(ref(db, 'students'), (snapshot) => {
+            const list = document.getElementById('studentList');
+            list.innerHTML = "";
+            
+            const studentsArray = [];
+            snapshot.forEach((child) => {
+                const s = child.val();
+                if ((s.enrollmentStatus || '').toLowerCase() === 'dropout') return; // Skip dropouts
+                
+                studentsArray.push({
+                    key: child.key,
+                    stuId: s.displayId || s.studentId || '',
+                    nameKh: (`${s.lastName || ''} ${s.firstName || ''}`).trim() || '...',
+                    nameCh: (`${s.chineseLastName || ''}${s.chineseFirstName || ''}`).trim() || '...',
+                    gender: s.gender,
+                    phone: s.primaryPhone || s.phone || '...',
+                    date: s.startDate || s.joinDate || '...',
+                    photo: s.photoUrl || s.photo || "data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22122%22%20height%3D%22156%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23cccccc%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20font-family%3D%22Arial%22%20font-size%3D%2214%22%20text-anchor%3D%22middle%22%20fill%3D%22%23333333%22%3EPHOTO%3C%2Ftext%3E%3C%2Fsvg%3E"
+                });
+            });
+
+            // Sort by descending stuId length/value to show newest first generally
+            studentsArray.sort((a, b) => {
+                let idA = parseInt(a.stuId.replace(/\D/g, '') || 0);
+                let idB = parseInt(b.stuId.replace(/\D/g, '') || 0);
+                return idB - idA;
+            });
+
+            const getCarrierNameLocal = (phone) => {
+                if (!phone || phone === '...') return '';
+                const cleanPhone = phone.toString().replace(/\D/g, '');
+                if (!cleanPhone) return '';
+                let p = cleanPhone;
+                if (p.startsWith('855')) p = '0' + p.substring(3);
+                if (!p.startsWith('0')) p = '0' + p;
+                const prefix = p.substring(0, 3);
+                const carrierMapping = {
+                    'Smart': ['010', '015', '016', '069', '070', '081', '086', '087', '093', '096', '098'],
+                    'Cellcard': ['011', '012', '014', '017', '061', '076', '077', '078', '079', '085', '089', '092', '095', '099'],
+                    'Metfone': ['031', '038', '060', '066', '067', '068', '071', '088', '090', '097'],
+                    'Seatel': ['018'],
+                    'Cootel': ['038']
+                };
+                for (const [name, prefixes] of Object.entries(carrierMapping)) {
+                    if (prefixes.includes(prefix)) return name;
+                }
+                return '';
+            };
+
+            const formatPhoneWithCarrierLocal = (phone) => {
+                const carrier = getCarrierNameLocal(phone);
+                if (!carrier) return phone;
+                const carrierColors = {
+                    'Smart': '#a4cc39', 'Cellcard': '#f37021', 'Metfone': '#ed1c24', 'Seatel': '#00a0e9', 'Cootel': '#fbb03b'
+                };
+                const color = carrierColors[carrier] || '#888';
+                return `${phone} <span class="badge rounded-pill ms-1" style="background-color: ${color}; font-size: 0.65rem; padding: 2px 8px; vertical-align: middle; color: white;">${carrier}</span>`;
+            };
+
+            studentsArray.forEach((v) => {
+                const gKh = (v.gender === 'ប្រុស' || v.gender === 'Male') ? 'ប្រុស' : 'ស្រី';
+                const gCh = (v.gender === 'ប្រុស' || v.gender === 'Male') ? '男' : '女';
+
+                list.innerHTML += `
+                <tr>
+                    <td><img src="${v.photo}" class="table-photo" crossorigin="anonymous"></td>
+                    <td class="fw-bold text-primary">TX${v.stuId.replace(/^TX/i, '')}</td>
+                    <td>${v.nameKh}</td>
+                    <td class="chinese-font">${v.nameCh}</td>
+                    <td>${gKh} / ${gCh}</td>
+                    <td>${formatPhoneWithCarrierLocal(v.phone)}</td>
+                    <td>${formatKhmerDate(v.date)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-success text-white rounded-pill px-3 me-1 shadow-sm" onclick="downloadCardDirectly('${v.stuId}', '${v.nameKh}', '${v.nameCh}', '${gKh}', '${gCh}', '${v.phone}', '${v.date}', '${v.photo}')">
+                            <i class="bi bi-download"></i> DL
+                        </button>
+                        <button class="btn btn-sm btn-info text-white rounded-pill px-3 me-1 shadow-sm" onclick="previewExistingCard('${v.stuId}', '${v.nameKh}', '${v.nameCh}', '${gKh}', '${gCh}', '${v.phone}', '${v.date}', '${v.photo}')">
+                            <i class="bi bi-eye-fill"></i> លម្អិត (View)
+                        </button>
+                    </td>
+                </tr>`;
+            });
+        });
+
+        window.editCard = (key, id, nKh, nCh, gKh, gCh, phone, date, photo) => {
+            editingKey = key;
+            document.getElementById('status').innerHTML = "";
+            document.getElementById('saveBtn').innerHTML = '<i class="bi bi-check-circle-fill me-2"></i> រក្សារទុកការកែប្រែ (Save Changes)';
+            document.getElementById('saveBtn').className = 'btn btn-warning btn-custom w-100 py-3 fw-bold shadow-sm rounded-pill text-white border-0';
+            document.getElementById('saveBtn').style.background = 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)';
+
+            document.getElementById('stuId').value = id.replace("TX", "");
+            document.getElementById('nameKh').value = nKh;
+            document.getElementById('nameCh').value = nCh;
+            document.getElementById('genderKh').value = gKh;
+            document.getElementById('genderCh').value = gCh;
+            document.getElementById('phone').value = phone;
+            document.getElementById('joinDate').value = date;
+            document.getElementById('livePhoto').src = photo;
+            document.getElementById('imgPrev').src = photo;
+            document.getElementById('imgPrev').style.display = 'block';
+            window.updateLivePreview();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.previewExistingCard = async (id, nKh, nCh, gKh, gCh, phone, date, photo) => {
+            const status = document.getElementById('status');
+            status.innerHTML = "⏳ កំពុងទាញយកទិន្នន័យរូបភាព...";
+
+            // Highlight Preview Section
+            document.querySelector('.preview-card-wrapper').style.background = '#e3f2fd';
+            setTimeout(() => document.querySelector('.preview-card-wrapper').style.background = 'linear-gradient(145deg, #ffffff, #f5f7fa)', 1000);
+
+            document.getElementById('stuId').value = id.replace("TX", "");
+            document.getElementById('nameKh').value = nKh;
+            document.getElementById('nameCh').value = nCh;
+            document.getElementById('genderKh').value = gKh;
+            document.getElementById('genderCh').value = gCh;
+            document.getElementById('phone').value = phone;
+            document.getElementById('joinDate').value = date;
+
+            if (photo.startsWith('http')) {
+                const b64 = await getBase64Image(photo);
+                document.getElementById('livePhoto').src = b64;
+            } else {
+                document.getElementById('livePhoto').src = photo;
+            }
+
+            window.updateLivePreview();
+            status.innerHTML = "";
+            window.scrollTo({ top: 300, behavior: 'smooth' }); // Scroll to View
+        }
+
+        window.deleteCard = (key) => confirm("តើអ្នកចង់លុបកាតនេះមែនទេ?") && remove(ref(db, 'tis_cards/' + key));
+
+        function resetForm() {
+            editingKey = null;
+            document.getElementById('saveBtn').innerHTML = '<i class="bi bi-plus-circle-fill me-2"></i> បង្កើត និងរក្សាទុកកាត';
+            document.getElementById('saveBtn').className = 'btn btn-primary btn-custom w-100 py-3 fw-bold shadow-sm rounded-pill border-0';
+            document.getElementById('saveBtn').style.background = 'var(--tis-gradient)';
+
+            document.getElementById('stuId').value = "";
+            document.getElementById('nameKh').value = "";
+            document.getElementById('nameCh').value = "";
+            document.getElementById('phone').value = "";
+            document.getElementById('fileInput').value = "";
+            document.getElementById('livePhoto').src = "data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22122%22%20height%3D%22156%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23cccccc%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20font-family%3D%22Arial%22%20font-size%3D%2214%22%20text-anchor%3D%22middle%22%20fill%3D%22%23333333%22%3EPHOTO%3C%2Ftext%3E%3C%2Fsvg%3E";
+
+            const imgPrev = document.getElementById('imgPrev');
+            imgPrev.src = "";
+            imgPrev.style.display = "none";
+            document.getElementById('status').innerHTML = "";
+
+            updateLivePreview();
+        }
+    </script>
+</body>
+
+</html>
