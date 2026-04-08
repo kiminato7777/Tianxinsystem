@@ -10,7 +10,8 @@ let allStudentsData = {};
 let allTeachersData = {};
 let allSettingsData = {};
 const studentsRef = firebase.database().ref('students');
-const storage = firebase.storage();
+// Firebase Storage is migrated to Cloudflare R2
+const storage = null; // Replaced by uploadImageToR2 utility
 let studentDetailsModal = null;
 let additionalPaymentModal = null;
 window.availableTeachers = [];
@@ -901,7 +902,7 @@ const calculateTotalAmount = (student) => {
     const staticBoarding = parseCurrency(student.boardingFee); // Static fee from registration
     const services = parseCurrency(student.adminServicesFee);
     const discount = parseCurrency(student.discount);
-    
+
     let totalOwed = tuition + admin + material + staticBoarding + services - discount;
 
     if (student.installments) {
@@ -935,7 +936,7 @@ const calculateTotalPaid = (student) => {
         installments.forEach(inst => {
             // Safety: Skip installments that are likely duplicates of the initialPayment field
             if (initialAmount > 0 && (inst.stage == 1 || inst.stage == '1' || inst.isInitial)) return;
-            
+
             // Count any amount explicitly paid, regardless of status
             const paidAmt = parseCurrency(inst.paidAmount || inst.actualPaid || (inst.paid ? inst.amount : 0));
             totalPaid += paidAmt;
@@ -972,7 +973,7 @@ async function syncStudentFinancials(key) {
     const total = calculateTotalAmount(s);
     const paid = calculateTotalPaid(s);
     const balance = calculateRemainingAmount(s);
-    
+
     let status = 'Pending';
     if ((parseInt(s.paymentMonths) || 0) === 48) status = 'Paid Full';
     else if (balance <= 0.01 && paid > 0) status = 'Paid';
@@ -988,10 +989,10 @@ async function syncStudentFinancials(key) {
         paymentStatus: status,
         updatedAt: new Date().toISOString()
     };
-    
+
     // Update local data
     Object.assign(s, updates);
-    
+
     return studentsRef.child(key).update(updates);
 }
 window.syncStudentFinancials = syncStudentFinancials;
@@ -1096,13 +1097,13 @@ const convertToEnglishDate = (dateStr) => {
 
     // Try finding month in parts[1] (Standard DD-MM-YYYY or DD-MMM-YYYY)
     let mIdx = -1;
-    
+
     // Check Part 1 (Middle)
     mIdx = KHMER_MONTHS_LOCAL.findIndex(m => parts[1].includes(m));
     if (mIdx === -1) {
         mIdx = ENG_MONTHS_LOCAL.findIndex(m => parts[1].toLowerCase().includes(m.toLowerCase()));
     }
-    
+
     if (mIdx !== -1) {
         day = parseInt(parts[0]);
         month = mIdx + 1;
@@ -1113,7 +1114,7 @@ const convertToEnglishDate = (dateStr) => {
         if (mIdx === -1) {
             mIdx = ENG_MONTHS_LOCAL.findIndex(m => parts[0].toLowerCase().includes(m.toLowerCase()));
         }
-        
+
         if (mIdx !== -1) {
             month = mIdx + 1;
             day = parseInt(parts[1]);
@@ -2153,11 +2154,11 @@ function getStudentHeaderHTML(s, status, remaining) {
                         <div class="position-relative d-inline-block group" style="width: 100px;">
                             <div style="cursor: pointer;" onclick="document.getElementById('profileImgUpload_${s.key}').click()">
                                 ${(s.imageUrl && s.imageUrl.length > 5 && (s.imageUrl.startsWith('http') || s.imageUrl.startsWith('data:image'))) ?
-                                    `<img id="mainProfileImg_${s.key}" src="${s.imageUrl}" class="rounded-circle shadow-sm border border-4 border-white" style="width: 100px; height: 100px; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(s.englishLastName || s.lastName || 'User')}'">` :
-                                    `<div id="mainProfilePlaceholder_${s.key}" class="rounded-circle shadow-sm border border-4 border-white bg-light d-flex align-items-center justify-content-center text-secondary" style="width: 100px; height: 100px;">
-                                        <i class="fi fi-rr-user fa-3x"></i>
+            `<img id="mainProfileImg_${s.key}" src="${s.imageUrl}" class="rounded-circle shadow-sm border border-4 border-white animate__animated animate__fadeIn" style="width: 100px; height: 100px; object-fit: cover;">` :
+            `<div id="mainProfilePlaceholder_${s.key}" class="rounded-circle shadow-sm border border-4 border-white bg-light d-flex align-items-center justify-content-center text-muted" style="width: 100px; height: 100px;">
+                                        <i class="fi fi-rr-user" style="font-size: 40px;"></i>
                                     </div>`
-                                }
+        }
                                 <div class="position-absolute bottom-0 end-0">
                                     <span class="badge rounded-circle bg-primary border border-2 border-white p-2 shadow-sm" title="ប្តូររូបថត">
                                         <i class="fi fi-rr-camera text-white" style="font-size: 10px;"></i>
@@ -2169,6 +2170,12 @@ function getStudentHeaderHTML(s, status, remaining) {
                                 <div class="position-absolute top-0 end-0 mt-n1 me-n1" style="z-index: 5;">
                                     <span class="badge rounded-circle bg-danger border border-2 border-white p-2 shadow-sm" style="cursor: pointer;" title="លុបរូបថត" onclick="removeStudentProfileImage('${s.key}', event)">
                                         <i class="fi fi-rr-trash text-white" style="font-size: 10px;"></i>
+                                    </span>
+                                </div>
+                                <!-- Download Button -->
+                                <div class="position-absolute top-0 start-0 mt-n1 ms-n1" style="z-index: 5;">
+                                    <span class="badge rounded-circle bg-success border border-2 border-white p-2 shadow-sm" style="cursor: pointer;" title="ទាញយករូបថត" onclick="downloadStudentImage('${s.imageUrl}', '${s.lastName}_${s.firstName}')">
+                                        <i class="fi fi-rr-download text-white" style="font-size: 10px;"></i>
                                     </span>
                                 </div>
                             ` : ''}
@@ -2409,15 +2416,15 @@ function getGeneralInfoTabHTML(s, status, total, paid, remaining) {
                 <div class="card-body bg-light bg-opacity-30 p-4">
                     <div id="attachmentGallery_${s.key}" class="row g-3">
                         ${(() => {
-                            const attachments = s.attachments ? (Array.isArray(s.attachments) ? s.attachments : Object.values(s.attachments)) : [];
-                            if (attachments.length === 0) {
-                                return `
+            const attachments = s.attachments ? (Array.isArray(s.attachments) ? s.attachments : Object.values(s.attachments)) : [];
+            if (attachments.length === 0) {
+                return `
                                     <div class="col-12 text-center py-4 opacity-50">
                                         <i class="fi fi-rr-inbox fs-1 d-block mb-2"></i>
                                         <p class="small mb-0">មិនទាន់មានឯកសារភ្ជាប់</p>
                                     </div>`;
-                            }
-                            return attachments.map((url, idx) => `
+            }
+            return attachments.map((url, idx) => `
                                 <div class="col-md-3 col-6">
                                     <div class="position-relative group shadow-sm rounded-3 overflow-hidden bg-white border" style="height: 120px;">
                                         <img src="${url}" class="w-100 h-100 object-fit-cover cursor-pointer" onclick="window.open('${url}', '_blank')">
@@ -2429,7 +2436,7 @@ function getGeneralInfoTabHTML(s, status, total, paid, remaining) {
                                     </div>
                                 </div>
                             `).join('');
-                        })()}
+        })()}
                     </div>
                     <div class="mt-3 small text-muted text-center">
                         <i class="fi fi-rr-info me-2"></i>រូបថតត្រូវមានទំហំមិនលើសពី <span class="fw-bold">2MB</span> ។ បន្ទាប់ពី Upload រួច វានឹងបង្ហាញនៅទីនេះ។
@@ -2707,7 +2714,7 @@ function viewStudentDetails(key) {
     const boarding = parseCurrency(s.boardingFee);
     const services = parseCurrency(s.adminServicesFee);
     const discount = parseCurrency(s.discount);
-    
+
     // Core totals from central functions
     const total = calculateTotalAmount(s);
     const paid = calculateTotalPaid(s);
@@ -2850,7 +2857,7 @@ function viewStudentDetails(key) {
 // STUDENT ATTACHMENTS (DOCS/PHOTOS)
 // ==========================================
 
-window.uploadStudentAttachment = async function(key, input) {
+window.uploadStudentAttachment = async function (key, input) {
     if (!input.files || !input.files[0]) return;
     const file = input.files[0];
 
@@ -2863,7 +2870,7 @@ window.uploadStudentAttachment = async function(key, input) {
 
     const originalBtn = document.querySelector(`button[onclick*="attachUpload_${key}"]`);
     const originalText = originalBtn ? originalBtn.innerHTML : '';
-    
+
     try {
         if (originalBtn) {
             originalBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>កំពុងបង្ហោះ...';
@@ -2879,10 +2886,10 @@ window.uploadStudentAttachment = async function(key, input) {
         attachments.push(url);
 
         await firebase.database().ref(`students/${key}/attachments`).set(attachments);
-        
+
         // Update local state
         s.attachments = attachments;
-        
+
         // Refresh gallery UI
         refreshAttachmentGallery(key);
         showAlert('ឯកសារត្រូវបានបង្ហោះជោគជ័យ!', 'success');
@@ -2899,20 +2906,20 @@ window.uploadStudentAttachment = async function(key, input) {
     }
 };
 
-window.deleteStudentAttachment = async function(key, index) {
+window.deleteStudentAttachment = async function (key, index) {
     if (!confirm('តើអ្នកប្រាកដថាចង់លុបឯកសារនេះមែនទេ?')) return;
 
     try {
         const s = allStudentsData[key];
         const attachments = s.attachments ? (Array.isArray(s.attachments) ? [...s.attachments] : Object.values(s.attachments)) : [];
-        
+
         attachments.splice(index, 1);
 
         await firebase.database().ref(`students/${key}/attachments`).set(attachments);
-        
+
         // Update local state
         s.attachments = attachments;
-        
+
         // Refresh gallery UI
         refreshAttachmentGallery(key);
         showAlert('ឯកសារត្រូវបានលុបចេញជោគជ័យ!', 'success');
@@ -2929,7 +2936,7 @@ function refreshAttachmentGallery(key) {
     if (!gallery) return;
 
     const attachments = s.attachments ? (Array.isArray(s.attachments) ? s.attachments : Object.values(s.attachments)) : [];
-    
+
     if (attachments.length === 0) {
         gallery.innerHTML = `
             <div class="col-12 text-center py-4 opacity-50">
@@ -2953,7 +2960,7 @@ function refreshAttachmentGallery(key) {
     `).join('');
 }
 
-window.updateStudentProfileImage = async function(key, input) {
+window.updateStudentProfileImage = async function (key, input) {
     if (!input.files || !input.files[0]) return;
     const file = input.files[0];
 
@@ -2965,35 +2972,62 @@ window.updateStudentProfileImage = async function(key, input) {
     }
 
     try {
-        // Show Global Status
-        showR2UploadStatus('កំពុងប្តូររូបថតសិស្ស... (Updating Avatar)');
-
-        const url = await uploadImageToR2(file);
+        const localUrl = URL.createObjectURL(file);
         
-        // Hide Global Status
-        hideR2UploadStatus();
+        // Instant Real-Time Preview (Show image immediately before upload)
+        const allTargetImgs = document.querySelectorAll(`[id^="mainProfileImg_${key}"], [id^="profileImgHeader_${key}"], [id*="cardProfileImg_${key}"]`);
+        allTargetImgs.forEach(img => {
+            img.src = localUrl;
+            img.classList.remove('d-none');
+        });
+
+        // Show Mini Status Overlay
+        let mainImg = document.getElementById(`mainProfileImg_${key}`);
+        let placeholder = document.getElementById(`mainProfilePlaceholder_${key}`);
+        let target = mainImg || placeholder;
+        
+        if (target && target.parentElement) {
+            const container = target.parentElement;
+            container.classList.add('position-relative');
+            const miniStatus = document.createElement('div');
+            miniStatus.id = `miniStatus_${key}`;
+            miniStatus.className = 'r2-mini-status';
+            miniStatus.innerHTML = '<div class="r2-mini-spinner"></div><span>កំពុងរក្សាទុក...</span>';
+            container.appendChild(miniStatus);
+        }
+
+        const student = allStudentsData[key] || {};
+        const studentName = `${student.lastName || ''}_${student.firstName || ''}_${student.displayId || ''}`;
+        const url = await uploadImageToR2(file, studentName);
+
+        // Remove Mini Status
+        const miniStatus = document.getElementById(`miniStatus_${key}`);
+        if (miniStatus) miniStatus.remove();
 
         if (!url) throw new Error("Upload failed");
 
         // Find existing image or placeholder for instant UI update
-        let mainImg = document.getElementById(`mainProfileImg_${key}`);
-        let placeholder = document.getElementById(`mainProfilePlaceholder_${key}`);
+        mainImg = document.getElementById(`mainProfileImg_${key}`);
+        placeholder = document.getElementById(`mainProfilePlaceholder_${key}`);
 
         // Update Firebase
         await firebase.database().ref(`students/${key}/imageUrl`).set(url);
-        
+
         // Update local data
         if (allStudentsData[key]) allStudentsData[key].imageUrl = url;
 
-        // Update UI instantly in Details Modal
-        mainImg = document.getElementById(`mainProfileImg_${key}`);
+        // Update UI globally - only update if the returned URL is not a data/blob url
+        if (url && !url.startsWith('data:') && !url.startsWith('blob:')) {
+             allTargetImgs.forEach(img => {
+                img.src = url; 
+            });
+        }
+        // Update UI globally
         if (mainImg) {
-            mainImg.src = url;
             mainImg.classList.remove('d-none');
-            // Show delete button
             const headerContainer = mainImg.closest('.position-relative');
             if (headerContainer && !headerContainer.querySelector('.bg-danger')) {
-                 const delBtnHtml = `
+                const delBtnHtml = `
                     <div class="position-absolute top-0 end-0 mt-n1 me-n1" style="z-index: 5;">
                         <span class="badge rounded-circle bg-danger border border-2 border-white p-2 shadow-sm" style="cursor: pointer;" title="លុបរូបថត" onclick="removeStudentProfileImage('${key}', event)">
                             <i class="fi fi-rr-trash text-white" style="font-size: 10px;"></i>
@@ -3003,7 +3037,7 @@ window.updateStudentProfileImage = async function(key, input) {
                 headerContainer.insertAdjacentHTML('beforeend', delBtnHtml);
             }
         }
-        
+
         // Handle transformation from placeholder if needed
         placeholder = document.getElementById(`mainProfilePlaceholder_${key}`);
         if (placeholder) {
@@ -3032,20 +3066,25 @@ window.updateStudentProfileImage = async function(key, input) {
 /**
  * Global function to remove student profile image with confirmation
  */
-window.removeStudentProfileImage = async function(studentKey, event) {
+window.removeStudentProfileImage = async function (studentKey, event) {
     if (event) event.stopPropagation();
-    
+
     if (!confirm("តើអ្នកពិតជាចង់លុបរូបថតនេះមែនទេ?")) return;
-    
+
     try {
-        console.log("🗑️ Removing profile image for:", studentKey);
-        
-        // Update Firebase
+        // 1. Delete from Cloudflare R2 if it's an R2 URL
+        const student = allStudentsData[studentKey] || {};
+        const oldUrl = student.imageUrl;
+        if (oldUrl && typeof deleteImageFromR2 === 'function') {
+            await deleteImageFromR2(oldUrl);
+        }
+
+        // 2. Update Firebase
         await firebase.database().ref(`students/${studentKey}/imageUrl`).set(null);
-        
-        // Update local data
+
+        // 3. Update local data
         if (allStudentsData[studentKey]) allStudentsData[studentKey].imageUrl = null;
-        
+
         // Update UI instantly
         const img = document.getElementById(`mainProfileImg_${studentKey}`);
         if (img) {
@@ -3058,14 +3097,14 @@ window.removeStudentProfileImage = async function(studentKey, event) {
             newPlaceholder.innerHTML = '<i class="fi fi-rr-user fa-3x"></i>';
             parent.replaceChild(newPlaceholder, img);
         }
-        
+
         // Hide delete button container
         const target = event.currentTarget || event.target;
         const delBtnContainer = target.closest('.position-absolute.top-0.end-0');
         if (delBtnContainer) delBtnContainer.remove();
-        
+
         showAlert("បានលុបរូបថតដោយជោគជ័យ!", "success");
-        
+
     } catch (error) {
         console.error("❌ Profile removal failed:", error);
         showAlert("ការលុបរូបថតបរាជ័យ!", "danger");
@@ -3078,7 +3117,7 @@ window.removeStudentProfileImage = async function(studentKey, event) {
 function openEditFromDetails() {
     const modalEl = document.getElementById('studentDetailsModal');
     if (!modalEl) return;
-    
+
     const key = modalEl.dataset.studentKey;
     if (!key) return;
 
@@ -3568,12 +3607,12 @@ function renderStudentCard(s, designId) {
     const studentNameCh = s._overrideNameCh || s.chineseName || '';
     const studentId = s._overrideId || s.displayId || s.id || 'ST-0000';
     const photoUrl = s.imageUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(studentNameEn || studentNameKh)}&backgroundColor=0d6efd,764ba2,4f46e5&fontFamily=Arial&fontWeight=bold`;
-    const joinDate = s._overrideDate || (s.startDate ? (() => { 
-        const d = getDateObject(s.startDate); 
-        return d ? d.toLocaleDateString('en-GB') : ''; 
+    const joinDate = s._overrideDate || (s.startDate ? (() => {
+        const d = getDateObject(s.startDate);
+        return d ? d.toLocaleDateString('en-GB') : '';
     })() : '');
     const phone = s._overridePhone || s.parentPhone || s.phone || '0xx xxx xxx';
-    
+
     // Dynamic Font Sizes
     const khSize = s._overrideNameKhSize || s._overrideFontSizeGlobal || '';
     const enSize = s._overrideFontSizeGlobal || '';
@@ -3609,7 +3648,7 @@ function renderStudentCard(s, designId) {
                 <div class="bg-primary text-white text-center py-2 position-absolute w-100 bottom-0 font-poppins very-small ls-1">EXCELLENCE IN EDUCATION</div>
             `;
             break;
-            
+
         case 2: // Modern Purple
             cardInner = `
                 <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 160px; color: white; text-align: center; padding-top: 25px; border-radius: 0 0 50% 50%;">
@@ -4356,10 +4395,10 @@ function getStudentCardTabHTML(s) {
                                 <div class="col-8">
                                     <div class="form-floating">
                                         <input type="date" class="form-control border-0 shadow-sm rounded-3" id="cardEditDate" 
-                                            value="${(s.startDate || s.dob) ? (() => { 
-                                                const d = getDateObject(s.startDate || s.dob); 
-                                                return d ? d.toISOString().split('T')[0] : ''; 
-                                            })() : ''}" 
+                                            value="${(s.startDate || s.dob) ? (() => {
+            const d = getDateObject(s.startDate || s.dob);
+            return d ? d.toISOString().split('T')[0] : '';
+        })() : ''}" 
                                             oninput="updateCardPreview('${s.key}')">
                                         <label for="cardEditDate" class="text-muted small"><i class="fi fi-rr-calendar me-1"></i> ថ្ងៃចូលរៀន (Date)</label>
                                     </div>
@@ -4528,7 +4567,7 @@ window.handleCardPhotoUpload = async function (input, key) {
         const file = input.files[0];
 
         // 2MB Limit for student cards (Updated 2026)
-        if (file.size > 2097152) { 
+        if (file.size > 2097152) {
             const msg = 'ទំហំរូបភាពធំពេក! សូមជ្រើសរើសរូបភាពមិនឲ្យលើសពី 2MB។';
             if (typeof showAlert === 'function') showAlert(msg, 'danger');
             else alert(msg);
@@ -4541,20 +4580,24 @@ window.handleCardPhotoUpload = async function (input, key) {
             const previewArea = document.getElementById('cardPreviewArea');
             const originalContent = previewArea ? previewArea.innerHTML : null;
             if (previewArea) {
+                previewArea.classList.add('position-relative');
                 previewArea.innerHTML = `
                     <div class="d-flex flex-column align-items-center justify-content-center h-100 py-5">
-                        <div class="spinner-border text-primary mb-3"></div>
-                        <div class="fw-bold">កំពុងបង្ហោះរូបភាព...</div>
+                        <div class="r2-mini-status">
+                            <div class="r2-mini-spinner"></div>
+                            <span>កំពុងបង្ហោះ...(Uploading)</span>
+                        </div>
+                        <div class="spinner-border text-pink-primary" style="width: 3rem; height: 3rem;"></div>
                     </div>`;
             }
 
             // Upload directly to Cloudflare R2
             const url = await uploadImageToR2(file);
-            
+
             if (url) {
                 allStudentsData[key].imageUrl = url;
                 updateCardPreview(key);
-                
+
                 if (typeof showAlert === 'function') {
                     showAlert('រូបភាពត្រូវបានបង្ហោះគោលដៅ Cloudflare រួចរាល់!', 'success');
                 }
@@ -4567,7 +4610,7 @@ window.handleCardPhotoUpload = async function (input, key) {
             const msg = 'បរាជ័យក្នុងការបង្ហោះរូបភាពទៅ Cloudflare! ' + error.message;
             if (typeof showAlert === 'function') showAlert(msg, 'danger');
             else alert(msg);
-            
+
             // Revert preview if it failed
             updateCardPreview(key);
         }
@@ -5745,7 +5788,7 @@ function createEditModal(key) {
                                                             <div class="col-12 mt-4 pt-2 border-top border-light">
                                                                 <div class="d-flex justify-content-between align-items-center">
                                                                     <span class="small fw-bold text-muted moul-font very-small">តម្លៃសិក្សាសរុប (NET FEE):</span>
-                                                                    <span class="h4 mb-0 fw-black text-primary font-poppins" id="edit_subtotalTuition">$${Math.max(0, (student.tuitionFee||0) - (student.discount||0)).toFixed(2)}</span>
+                                                                    <span class="h4 mb-0 fw-black text-primary font-poppins" id="edit_subtotalTuition">$${Math.max(0, (student.tuitionFee || 0) - (student.discount || 0)).toFixed(2)}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -6012,7 +6055,7 @@ function createEditModal(key) {
     // Initial population and reactive attachment
     setTimeout(() => {
         let installments = student.installments ? (Array.isArray(student.installments) ? student.installments : Object.values(student.installments)) : [];
-        installments.sort((a,b) => (parseInt(a.stage)||0) - (parseInt(b.stage)||0));
+        installments.sort((a, b) => (parseInt(a.stage) || 0) - (parseInt(b.stage) || 0));
         const instBody = document.getElementById('editInstallmentBody');
         if (instBody) {
             instBody.innerHTML = '';
@@ -6023,21 +6066,21 @@ function createEditModal(key) {
             }
         }
         calculateEditFormTotals();
-        
+
         // --- Added Sync & Translation Logic ---
-        
+
         // 1. Sync Classroom Select with Manual Input
         const crSelect = document.getElementById('edit_classroom_select');
         const crInput = document.getElementById('edit_classroom');
         if (crSelect && crInput) {
-            crSelect.addEventListener('change', function() { if (this.value) crInput.value = this.value; });
+            crSelect.addEventListener('change', function () { if (this.value) crInput.value = this.value; });
         }
 
         // 2. Sync Study Time Select with Manual Input
         const stSelect = document.getElementById('edit_studyTime_select');
         const stInput = document.getElementById('edit_studyTime');
         if (stSelect && stInput) {
-            stSelect.addEventListener('change', function() { if (this.value) stInput.value = this.value; });
+            stSelect.addEventListener('change', function () { if (this.value) stInput.value = this.value; });
         }
 
         // 3. Auto-translate Study Program based on Course Type
@@ -6053,7 +6096,7 @@ function createEditModal(key) {
                 'cFullTime': 'ថ្នាក់ភាសាចិនពេញម៉ោង',
                 'cPartTime': 'ថ្នាក់ភាសាចិនក្រៅម៉ោង'
             };
-            ctSelect.addEventListener('change', function() {
+            ctSelect.addEventListener('change', function () {
                 const translated = translationMap[this.value];
                 if (translated) spInput.value = translated;
             });
@@ -6064,7 +6107,8 @@ function createEditModal(key) {
         }
 
         // Real-time Status Badge Update based on Manual Select with Auto Fallback
-        const statusSelect = form.paymentStatus;
+        const form = document.getElementById('editStudentForm');
+        const statusSelect = form ? form.paymentStatus : null;
         const badgeEl = document.getElementById('editStatusBadge');
         if (statusSelect && badgeEl) {
             calculateEditFormTotals(); // Trigger check
@@ -6076,10 +6120,10 @@ function createEditModal(key) {
     modal.show();
 }
 
-window.handleDateLogicChange = function() {
+window.handleDateLogicChange = function () {
     const f = document.getElementById('editStudentForm');
     if (!f || !f.startDate.value || !f.paymentMonths.value) return;
-    
+
     // Auto calculate Next Payment Date
     if (typeof addMonthsToKhmerDate === 'function') {
         const nextDate = addMonthsToKhmerDate(f.startDate.value, parseFloat(f.paymentMonths.value) || 0);
@@ -6092,28 +6136,28 @@ window.handleDateLogicChange = function() {
 
 
 
-window.syncMaterialFees = function() {
+window.syncMaterialFees = function () {
     const f = document.getElementById('editStudentForm');
     if (!f) return;
-    
+
     const reg = parseFloat(f.registrationFee.value) || 0;
     const uniform = parseFloat(f.uniformFee.value) || 0;
     const idCard = parseFloat(f.idCardFee.value) || 0;
     const book = parseFloat(f.bookFee.value) || 0;
     const fulltime = parseFloat(f.fulltimeBookFee.value) || 0;
-    
+
     const total = reg + uniform + idCard + book + fulltime;
     if (f.materialFee) {
         f.materialFee.value = total.toFixed(2);
     }
-    
+
     calculateEditFormTotals();
 };
 
-window.handleDiscountChange = function(type) {
+window.handleDiscountChange = function (type) {
     const form = document.getElementById('editStudentForm');
     if (!form) return;
-    
+
     const tuition = parseFloat(form.tuitionFee.value) || 0;
     const discountPerc = parseFloat(form.discountPercent.value) || 0;
     const discountDol = parseFloat(form.discount.value) || 0;
@@ -6138,10 +6182,10 @@ window.handleDiscountChange = function(type) {
     calculateEditFormTotals();
 };
 
-window.previewEditImage = function(input) {
+window.previewEditImage = function (input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             const preview = document.getElementById('editImagePreview');
             if (preview) preview.src = e.target.result;
         };
@@ -6156,7 +6200,7 @@ function addInstallmentRow(data = {}) {
     const form = document.getElementById('editStudentForm');
     const initialPaid = form ? parseFloat(form.initialPayment?.value) || 0 : 0;
     const baseCount = initialPaid > 0 ? 1 : 0;
-    
+
     // Find the highest stage currently in the table
     let maxStage = baseCount;
     tbody.querySelectorAll('.inst-stage').forEach(input => {
@@ -6168,12 +6212,12 @@ function addInstallmentRow(data = {}) {
     const tr = document.createElement('tr');
     tr.className = 'installment-row animate__animated animate__fadeIn border-0';
     tr.style.fontSize = '0.75rem'; // Global shrink for the row
-    
+
     // Use very small sizing for the receiver select/input
-    const receiverHtml = typeof getReceiverSelectHtml === 'function' 
+    const receiverHtml = typeof getReceiverSelectHtml === 'function'
         ? getReceiverSelectHtml(data.receiver || '', '', 'form-select form-select-sm border-0 bg-white shadow-sm fw-bold inst-receiver rounded-3 px-2 py-1 very-small', 'style="font-size: 0.75rem;"', '')
         : `<input type="text" class="form-control form-control-sm inst-receiver border-0 bg-white shadow-sm px-2 py-1 rounded-3 very-small" style="font-size: 0.75rem;" value="${data.receiver || ''}" placeholder="អ្នកទទួល">`;
-    
+
     const paidAmount = parseFloat(data.paidAmount) || parseFloat(data.amount) || 0;
     const targetAmount = parseFloat(data.amount) || 0;
     const method = data.paymentMethod || 'Cash';
@@ -6263,7 +6307,7 @@ function calculateEditFormTotals() {
     const initialPaid = parseFloat(form.initialPayment?.value) || 0;
 
     const totalFee = Math.max(0, tuition - discount) + material + admin + boarding + adminServices;
-    
+
     let installmentPaid = 0;
     document.querySelectorAll('.installment-row').forEach(row => {
         const paidAmt = parseFloat(row.querySelector('.inst-paid-amount')?.value) || 0;
@@ -6282,7 +6326,7 @@ function calculateEditFormTotals() {
 
     if (totalFeeEl) totalFeeEl.textContent = `$${totalFee.toFixed(2)}`;
     if (paidEl) paidEl.textContent = `$${totalPaid.toFixed(2)}`;
-    
+
     // Add summary paid total in the dark footer area if ID exists or update grandTotal area
     const summaryPaidArea = document.getElementById('summary_paidArea');
     if (summaryPaidArea) summaryPaidArea.textContent = `$${totalPaid.toFixed(2)}`;
@@ -6304,7 +6348,7 @@ function calculateEditFormTotals() {
     // Real-time Status Badge Update based on Manual Select with Auto Fallback
     const statusSelect = form.paymentStatus;
     const badgeEl = document.getElementById('editStatusBadge');
-    
+
     if (statusSelect && badgeEl) {
         const val = statusSelect.value;
         const config = {
@@ -6323,7 +6367,7 @@ function calculateEditFormTotals() {
 
 // --- Score History Implementation for Edit Modal ---
 
-window.loadStudentScoreHistory = function(key) {
+window.loadStudentScoreHistory = function (key) {
     const container = document.getElementById('edit-scores-container');
     if (!container) return;
 
@@ -6355,7 +6399,7 @@ window.loadStudentScoreHistory = function(key) {
     // Subject Mapping (Dynamic Labels)
     const prog = (s.studyType || s.courseType || '').toLowerCase();
     const isChineseFullTime = prog.includes('chinese-fulltime') || prog.includes('cfulltime') || prog.includes('ចិនពេញម៉ោង');
-    
+
     // Header labels based on curriculum
     const chineseLabels = ["សប្តាហ៍១", "សប្តាហ៍២", "ប្រចាំខែ", "ស្តាប់", "និយាយ", "អាន", "សុជីវធម៌", "អវត្តមាន", "កិច្ចការ", "ច្រៀង", "HSK"];
     const generalLabels = ["ភាសាខ្មែរ", "គណិតវិទ្យា", "វិទ្យាសាស្ត្រ", "ភូមិវិទ្យា", "ប្រវត្តិវិទ្យា", "សីសធម៌ពលរដ្ឋ", "អប់រំសិស្បៈ", "បំណិនជីវិត", "អប់រំកាយ", "-", "-"];
@@ -6383,7 +6427,7 @@ window.loadStudentScoreHistory = function(key) {
         const avg = Number(r.averageScore || 0).toFixed(2);
         const total = Number(r.totalScore || 0).toFixed(2);
         const monthKh = khmerMonths[parseInt(r.month) - 1] || r.month;
-        
+
         let gradeColor = 'text-danger';
         if (r.grade === 'A' || r.grade === 'B') gradeColor = 'text-success';
         else if (r.grade === 'C' || r.grade === 'D') gradeColor = 'text-primary';
@@ -6417,7 +6461,7 @@ window.loadStudentScoreHistory = function(key) {
     container.innerHTML = html;
 };
 
-window.showScoreDetails = function(key, month, year) {
+window.showScoreDetails = function (key, month, year) {
     const s = allStudentsData[key];
     const r = (s.academicRecords || []).find(rec => rec.month == month && rec.year == year);
     if (!r) return;
@@ -6427,14 +6471,14 @@ window.showScoreDetails = function(key, month, year) {
     const chineseLabels = ["សប្តាហ៍១", "សប្តាហ៍២", "ប្រចាំខែ", "ស្តាប់", "និយាយ", "អាន", "សុជីវធម៌", "អវត្តមាន", "កិច្ចការ", "ច្រៀង", "HSK"];
     const generalLabels = ["ភាសាខ្មែរ", "គណិតវិទ្យា", "វិទ្យាសាស្ត្រ", "ភូមិវិទ្យា", "ប្រវត្តិវិទ្យា", "សីសធម៌ពលរដ្ឋ", "អប់រំសិស្បៈ", "បំណិនជីវិត", "អប់រំកាយ", "-", "-"];
     const labels = isCh ? chineseLabels : generalLabels;
-    
+
     let scoresHtml = '<div class="row g-2">';
     const subjectKeys = ["week01", "week02", "monthly", "listening", "speaking", "reading", "ethics", "attendance", "homework", "singing", "hsk"];
-    
+
     subjectKeys.forEach((k, i) => {
         const label = labels[i];
         if (label === '-') return; // Skip non-existent subjects for General
-        
+
         scoresHtml += `
             <div class="col-4">
                 <div class="p-2 rounded bg-light border text-center">
@@ -6447,7 +6491,7 @@ window.showScoreDetails = function(key, month, year) {
     scoresHtml += '</div>';
 
     Swal.fire({
-        title: `លម្អិតពិន្ទុខែ ${khmerMonthNames[month-1]} - ${year}`,
+        title: `លម្អិតពិន្ទុខែ ${khmerMonthNames[month - 1]} - ${year}`,
         html: `
             <div class="text-start">
                 <div class="mb-3 d-flex justify-content-between">
@@ -6462,7 +6506,7 @@ window.showScoreDetails = function(key, month, year) {
     });
 };
 
-window.openAddScoreModal = function(key) {
+window.openAddScoreModal = function (key) {
     const s = allStudentsData[key];
     if (!s) return;
 
@@ -6475,7 +6519,7 @@ window.openAddScoreModal = function(key) {
     // 2. Clear & Setup Basic Info
     const form = document.getElementById('addScoreForm');
     if (form) form.reset();
-    
+
     document.getElementById('scoreStudentKey').value = key;
     document.getElementById('scoreStudentNameDisplay').innerText = `${s.lastName || ''} ${s.firstName || ''}`;
     document.getElementById('scoreStudentIDDisplay').innerText = `ID: ${s.displayId || '---'}`;
@@ -6510,7 +6554,7 @@ window.openAddScoreModal = function(key) {
 
     const container = document.getElementById('subjectInputsContainer');
     container.innerHTML = '';
-    
+
     subjects.forEach(sub => {
         const div = document.createElement('div');
         div.className = 'col-md-4 col-6 animate__animated animate__fadeIn';
@@ -6531,7 +6575,7 @@ window.openAddScoreModal = function(key) {
 
     // Reset Rank Display
     document.getElementById('scoreRank').value = '';
-    
+
     // Refresh calculations
     updateAdminScoreCalculation();
 
@@ -6541,7 +6585,7 @@ window.openAddScoreModal = function(key) {
     modal.show();
 };
 
-window.updateAdminScoreCalculation = function() {
+window.updateAdminScoreCalculation = function () {
     const key = document.getElementById('scoreStudentKey').value;
     const s = allStudentsData[key];
     if (!s) return;
@@ -6553,7 +6597,7 @@ window.updateAdminScoreCalculation = function() {
 
     const keys = ["week01", "week02", "monthly", "listening", "speaking", "reading", "ethics", "attendance", "homework", "singing", "hsk"];
     let total = 0;
-    
+
     keys.forEach(k => {
         const el = document.getElementById('s_' + k);
         if (el) {
@@ -6577,7 +6621,7 @@ window.updateAdminScoreCalculation = function() {
     document.getElementById('displayScoreTotal').innerText = total.toFixed(2);
     document.getElementById('displayScoreAverage').innerText = avg.toFixed(2);
     document.getElementById('displayScoreGrade').innerText = grade;
-    
+
     document.getElementById('scoreTotal').value = total;
     document.getElementById('scoreAverage').value = avg;
     document.getElementById('scoreGrade').value = grade;
@@ -6589,7 +6633,7 @@ window.updateAdminScoreCalculation = function() {
     }
 };
 
-window.saveAdminScore = function() {
+window.saveAdminScore = function () {
     const key = document.getElementById('scoreStudentKey').value;
     const s = allStudentsData[key];
     if (!key || !s) return;
@@ -6619,7 +6663,7 @@ window.saveAdminScore = function() {
 
     const records = s.academicRecords || [];
     const existingIdx = records.findIndex(r => r.month == record.month && r.year == record.year);
-    
+
     if (existingIdx >= 0) {
         records[existingIdx] = { ...records[existingIdx], ...record };
     } else {
@@ -6627,14 +6671,14 @@ window.saveAdminScore = function() {
     }
 
     // Direct Update to Firebase
-    studentsRef.child(key).update({ 
+    studentsRef.child(key).update({
         academicRecords: records,
         lastAverageScore: record.averageScore,
         lastGrade: record.grade,
         lastScoreUpdate: new Date().toISOString()
     }).then(() => {
         allStudentsData[key].academicRecords = records;
-        
+
         // Refresh score history table if viewing details modal
         if (typeof loadStudentScoreHistory === 'function') {
             loadStudentScoreHistory(key);
@@ -6660,7 +6704,7 @@ window.saveAdminScore = function() {
 async function saveStudentChanges(key) {
     const form = document.getElementById('editStudentForm');
     if (!form) return;
-    
+
     if (!form.lastName.value.trim() || !form.firstName.value.trim() || !form.displayId.value.trim()) {
         return showAlert('សូមបំពេញព័ត៌មានចាំបាច់ (ឈ្មោះ និងអត្តលេខ)', 'warning');
     }
@@ -6683,9 +6727,9 @@ async function saveStudentChanges(key) {
         const months = parseFloat(row.querySelector('.inst-months')?.value) || 0;
         const period = row.querySelector('.inst-period')?.value || '';
         const forMonth = row.querySelector('.inst-for-month')?.value || '';
-        
+
         const isPaid = (receiver !== '' && receiver !== 'null' && paidAmt >= amt && amt > 0);
-        
+
         installments.push({
             stage: nextStageNum.toString(),
             date: row.querySelector('.inst-date').value,
@@ -6704,9 +6748,9 @@ async function saveStudentChanges(key) {
     });
 
     data.installments = installments;
-    
+
     const numericFields = [
-        'tuitionFee', 'materialFee', 'adminFee', 'adminServicesFee', 'boardingFee', 'discount', 
+        'tuitionFee', 'materialFee', 'adminFee', 'adminServicesFee', 'boardingFee', 'discount',
         'discountPercent', 'initialPayment', 'paymentMonths', 'fatherAge', 'motherAge',
         'registrationFee', 'uniformFee', 'idCardFee', 'bookFee', 'fulltimeBookFee'
     ];
@@ -6720,7 +6764,7 @@ async function saveStudentChanges(key) {
     data.khmerName = `${data.lastName || ''} ${data.firstName || ''}`.trim();
     data.englishName = `${data.englishLastName || ''} ${data.englishFirstName || ''}`.trim();
     data.chineseName = `${data.chineseLastName || ''} ${data.chineseFirstName || ''}`.trim();
-    
+
     // Data Consistency Sync
     data.studyType = data.courseType; // Sync keys
     data.paymentDueDate = data.nextPaymentDate;
@@ -6742,16 +6786,30 @@ async function saveStudentChanges(key) {
     const imageInput = document.getElementById('editImageInput');
     if (imageInput && imageInput.files && imageInput.files[0]) {
         try {
-            const storageRef = firebase.storage().ref(`student_images/${key}_${Date.now()}.jpg`);
-            const snapshot = await storageRef.put(imageInput.files[0]);
-            data.imageUrl = await snapshot.ref.getDownloadURL();
-        } catch (e) { 
-            console.error("Upload error:", e); 
+            console.log("📤 Uploading student edit image to Cloudflare R2...");
+            const preview = document.getElementById('editImagePreview');
+            if (preview && preview.parentElement) {
+                const miniStatus = document.createElement('div');
+                miniStatus.id = 'editMiniStatus';
+                miniStatus.className = 'r2-mini-status';
+                miniStatus.innerHTML = '<div class="r2-mini-spinner"></div><span>ប្តូររូបថត...</span>';
+                preview.parentElement.classList.add('position-relative');
+                preview.parentElement.appendChild(miniStatus);
+            }
+            const url = await uploadImageToR2(imageInput.files[0]);
+            const miniStatus = document.getElementById('editMiniStatus');
+            if (miniStatus) miniStatus.remove();
+            if (url) {
+                data.imageUrl = url;
+                console.log("✅ Student edit image R2 URL:", url);
+            }
+        } catch (e) {
+            console.error("❌ Student edit image R2 upload error:", e);
         }
     }
 
     data.updatedAt = new Date().toISOString();
-    
+
     studentsRef.child(key).update(data)
         .then(() => {
             Swal.fire({
@@ -7717,11 +7775,11 @@ function exportToExcel(data = null, filename = 'Student_Data') {
         const status = getPaymentStatus(s);
         // Use homeroomTeacher if available, fallback to teacherName or empty
         const teacher = s.homeroomTeacher || s.teacherName || '';
-        
+
         const joinDate = convertToKhmerDate(s.startDate);
         const expiryDate = convertToKhmerDate(s.nextPaymentDate);
         const postponeDate = convertToKhmerDate(s.postponedDate);
-        
+
         csv += `${i + 1},${s.displayId},"${s.lastName} ${s.firstName}",${(s.gender === 'Male' || s.gender === 'ប្រុស') ? 'ប្រុស' : 'ស្រី'},${s.studyLevel || ''},${s.studyTime || ''},${joinDate || ''},${expiryDate || ''},${postponeDate || ''},"${(s.postponedReason || '').replace(/"/g, '""')}",${s.paymentMonths || ''},"${teacher}","${(s.remark || '').replace(/"/g, '""')}",$${calculateTotalAmount(s).toFixed(2)},$${calculateRemainingAmount(s).toFixed(2)},${status.text}\n`;
     });
 
@@ -13185,6 +13243,24 @@ window.printLeaveRequest = function () {
         printWindow.print();
         printWindow.close();
     }, 800);
+};
+
+window.downloadStudentImage = async function(url, name) {
+    try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = `student_${name}.jpg`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+        console.error("Download Error:", error);
+        window.open(url, '_blank');
+    }
 };
 
 // End of data-tracking-script.js

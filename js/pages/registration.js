@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // 1. INITIALIZE FIREBASE AND DOM ELEMENTS
     // ============================================
     const database = firebase.database();
-    const storage = firebase.storage();
 
     // DOM Elements
     const studentForm = document.getElementById('studentRegistrationForm');
@@ -1571,14 +1570,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         try {
-            // 2. Show Vibrant Global Loading Status
-            showR2UploadStatus('កំពុងបង្ហោះរូបភាពសិស្ស... (Uploading Profile)');
+            // 2. Show Small Status Near Profile
+            if (imagePreview) {
+                imagePreview.innerHTML = `
+                    <div class="position-relative h-100 d-flex flex-column align-items-center justify-content-center">
+                        <div class="r2-mini-status">
+                            <div class="r2-mini-spinner"></div>
+                            <span>កំពុងបង្ហោះ...(Uploading)</span>
+                        </div>
+                        <div class="spinner-border text-pink-primary" style="width: 3rem; height: 3rem;"></div>
+                    </div>`;
+            }
 
             // 3. Perform Upload to Cloudflare R2
-            const url = await uploadImageToR2(file);
-            
-            // Hide global status
-            hideR2UploadStatus();
+            const familyName = document.getElementById('lastName')?.value || '';
+            const firstName = document.getElementById('firstName')?.value || '';
+            const studentId = document.getElementById('reg_displayId')?.innerText || document.getElementById('reg_displayId')?.value || '';
+            const url = await uploadImageToR2(file, `${familyName}_${firstName}_${studentId}`);
             
             if (!url) throw new Error("Upload failed to return URL");
 
@@ -2493,11 +2501,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log("✅ R2 URL:", url);
                 return url;
             } else {
-                console.warn("⚠️ uploadImageToR2 not found, falling back to Firebase Storage");
-                const storageRef = storage.ref();
-                const imageRef = storageRef.child(`student_images/${Date.now()}_${file.name}`);
-                await imageRef.put(file);
-                return await imageRef.getDownloadURL();
+                console.error("❌ uploadImageToR2 utility not available!");
+                return null;
             }
         } catch (error) {
             console.error("❌ Upload error:", error);

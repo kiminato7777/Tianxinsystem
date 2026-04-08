@@ -7,6 +7,11 @@ const usersRef = firebase.database().ref('users');
 
 let currentViewedPassword = '';
 
+// Global Image State
+let newUserImageFile = null;
+let editUserImageFile = null;
+let currentEditUserImageUrl = '';
+
 // Store the currently logged-in creator name globally
 window._currentCreatorName = 'Unknown';
 window._currentCreatorEmail = '';
@@ -75,7 +80,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (editUserForm) {
         editUserForm.addEventListener('submit', handleUpdateUser);
     }
+
+    // Image Upload Listeners
+    setupImageUpload('newUserImageInput', 'newUserImagePreview', (file) => newUserImageFile = file);
+    setupImageUpload('editUserImageInput', 'editUserImagePreview', (file) => editUserImageFile = file);
 });
+
+function setupImageUpload(inputId, previewId, callback) {
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById(previewId);
+    if (!input || !preview) return;
+
+    input.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            callback(file);
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.innerHTML = `<img src="${e.target.result}" class="w-100 h-100" style="object-fit: cover;">`;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
 
 /**
  * Dynamically renders permission cards into a container
@@ -241,10 +268,14 @@ function loadUsers() {
             if (isTargetAdmin) tr.className = 'table-light-primary';
 
             // Allow Edit only if not Super Admin and not virtual
-            const editButton = (!isTargetAdmin && !user.isVirtual) ? `
+            // UPDATE: Allow Edit for everyone now to support Image Upload for Admin too
+            const editButton = (!user.isVirtual) ? `
                 <button class="btn btn-sm btn-outline-warning me-2 shadow-sm" onclick='openEditModal("${key}", "${userName}", "${userEmail}", ${permsJson}, "${userRole}")'>
                     <i class="fi fi-rr-edit"></i> កែប្រែ
-                </button>` : `<span class="badge bg-light text-muted border me-2"><i class="fi fi-rr-lock me-1"></i>System Locked</span>`;
+                </button>` : `
+                <button class="btn btn-sm btn-outline-warning me-2 shadow-sm" onclick='createRealAdminFromVirtual("${userEmail}")'>
+                    <i class="fi fi-rr-user-add"></i> បង្កើតគណនីពិត
+                </button>`;
 
             const resetPassButton = (!isTargetAdmin && !user.isVirtual && userEmail !== 'N/A') ? `
                 <button class="btn btn-sm btn-outline-primary me-2 shadow-sm" onclick="sendResetPasswordEmail('${userEmail}')" title="Send Password Reset Email">
@@ -279,9 +310,21 @@ function loadUsers() {
                     : '<span class="text-muted fst-italic small">—</span>');
 
             tr.innerHTML = `
-                <td class="ps-4 fw-bold text-dark">
-                    ${userName}
-                    ${user.isVirtual ? '<i class="fi fi-rr-info text-warning ms-1" title="Not in Database"></i>' : ''}
+                <td class="ps-4">
+                    <div class="d-flex align-items-center gap-3">
+                        ${user.imageUrl ? 
+                            `<div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm border" style="width: 50px; height: 50px; min-width: 50px; overflow: hidden;">
+                                <img src="${user.imageUrl}" class="w-100 h-100" style="object-fit: cover;">
+                             </div>` : 
+                            `<div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2 shadow-sm" style="width: 50px; height: 50px;">
+                                <i class="fi fi-rr-user-circle text-primary fa-2x"></i>
+                             </div>`
+                        }
+                        <div>
+                            <div class="fw-bold text-dark">${userName}</div>
+                            ${user.isVirtual ? '<span class="badge bg-warning-subtle text-warning font-size-xs px-2 py-1">Virtual</span>' : ''}
+                        </div>
+                    </div>
                 </td>
                 <td>
                     <div class="text-primary fw-bold">${userEmail}</div>
@@ -459,6 +502,21 @@ function openEditModal(uid, name, email, perms, role) {
     document.getElementById('editUserEmail').value = email || '';
     document.getElementById('editUserRole').value = role || 'staff';
     document.getElementById('editUserPassword').value = ''; // Reset password field
+    
+    // Reset image state
+    editUserImageFile = null;
+    currentEditUserImageUrl = '';
+    const preview = document.getElementById('editUserImagePreview');
+    
+    firebase.database().ref(`users/${uid}/imageUrl`).once('value').then(snap => {
+        const url = snap.val();
+        currentEditUserImageUrl = url || '';
+        if (url) {
+            preview.innerHTML = `<img src="${url}" class="w-100 h-100" style="object-fit: cover;">`;
+        } else {
+            preview.innerHTML = `<i class="fi fi-rr-user-circle text-primary" style="font-size: 5rem;"></i>`;
+        }
+    });
 
     // Set checkboxes dynamically
     const p = (perms && typeof perms === 'string') ? JSON.parse(perms) : (perms || {});
@@ -484,6 +542,16 @@ function openViewModal(uid, user) {
     // Populate Modal
     document.getElementById('viewUserName').textContent = user.name || 'Unknown Name';
     document.getElementById('viewUserEmail').textContent = user.email || 'N/A';
+
+    // Show Image
+    const imgContainer = document.getElementById('viewUserImageContainer');
+    if (imgContainer) {
+        if (user.imageUrl) {
+            imgContainer.innerHTML = `<img src="${user.imageUrl}" class="w-100 h-100" style="object-fit: cover;">`;
+        } else {
+            imgContainer.innerHTML = `<i class="fi fi-rr-user text-secondary" style="font-size: 3rem;"></i>`;
+        }
+    }
 
     // Setup Password View
     currentViewedPassword = (user.password && user.password !== 'undefined') ? user.password : '******';
@@ -574,24 +642,33 @@ function handleUpdateUser(e) {
         permissions: permissions
     };
 
+    const handleActualSave = async () => {
+        try {
+            // Upload image if selected
+            if (editUserImageFile) {
+                const url = await uploadImageToR2(editUserImageFile, `user_${name}`, "Teacher");
+                if (url) updateData.imageUrl = url;
+            }
+
+            await usersRef.child(uid).update(updateData);
+            showAlertPremium("✅ ទិន្នន័យត្រូវបានកែប្រែជោគជ័យ!", 'success');
+            const modal = getModalInstance('editUserModal');
+            if (modal) modal.hide();
+        } catch (error) {
+            showAlertPremium("❌ បរាជ័យ: " + error.message, 'error');
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    };
+
     // Also update password if provided
     if (newPassword) {
         updateData.password = newPassword;
     }
 
-    usersRef.child(uid).update(updateData)
-        .then(() => {
-            alert("✅ ទិន្នន័យត្រូវបានកែប្រែជោគជ័យ!");
-            const modal = getModalInstance('editUserModal');
-            if (modal) modal.hide();
-        })
-        .catch((error) => {
-            alert("❌ បរាជ័យ: " + error.message);
-        })
-        .finally(() => {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        });
+    handleActualSave();
+    return; // Stop the old .then logic
 }
 
 /**
@@ -611,7 +688,7 @@ function handleCreateUser(e) {
         permissions[config.key] = el ? el.checked : false;
     });
 
-    if (!name || !email || !password) return alert("សូមបញ្ចូលឈ្មោះ អ៊ីមែល និងពាក្យសម្ងាត់!");
+    if (!name || !email || !password) return showAlertPremium("សូមបញ្ចូលឈ្មោះ អ៊ីមែល និងពាក្យសម្ងាត់!", 'error');
 
     const btn = e.target.querySelector('button[type="submit"]');
     const originalText = btn.innerHTML;
@@ -627,13 +704,20 @@ function handleCreateUser(e) {
     }
 
     secondaryApp.auth().createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
+        .then(async (userCredential) => {
             const uid = userCredential.user.uid;
+            
+            let imageUrl = '';
+            if (newUserImageFile) {
+                imageUrl = await uploadImageToR2(newUserImageFile, `user_${name}`, "Teacher");
+            }
+
             return usersRef.child(uid).set({
                 name: name,
                 email: email,
                 password: password, // Store password to allow admin viewing
                 role: role,
+                imageUrl: imageUrl,
                 permissions: permissions,
                 createdAt: new Date().toISOString(),
                 createdBy: window._currentCreatorName || 'Unknown',
@@ -641,7 +725,7 @@ function handleCreateUser(e) {
             });
         })
         .then(() => {
-            alert("✅ បង្កើតអ្នកប្រើប្រាស់ជោគជ័យ!");
+            showAlertPremium("✅ បង្កើតអ្នកប្រើប្រាស់ជោគជ័យ!", 'success');
             document.getElementById('createUserForm').reset();
 
             // Reset checkboxes
@@ -656,7 +740,7 @@ function handleCreateUser(e) {
         })
         .catch((error) => {
             console.error(error);
-            alert("❌ បរាជ័យ: " + error.message);
+            showAlertPremium("❌ បរាជ័យ: " + error.message, 'error');
             secondaryApp.delete();
         })
         .finally(() => {
@@ -669,13 +753,13 @@ function deleteUser(uid, email) {
     const superAdminEmails = window.SUPER_ADMIN_EMAILS || [window.ADMIN_EMAIL || 'admin@school.com'];
     
     if (superAdminEmails.includes(email)) {
-        return alert("❌ កំហុស៖ អ្នកមិនអាចលុបគណនី Super Admin (IT-DEV) បានទេ!");
+        return showAlertPremium("❌ កំហុស៖ អ្នកមិនអាចលុបគណនី Super Admin (IT-DEV) បានទេ!", 'error');
     }
     
     if (confirm(`តើអ្នកពិតជាចង់លុបអ្នកប្រើប្រាស់ ${email} ពីប្រព័ន្ធមែនទេ? \n(ចំណាំ៖ វានឹងលុបតែទិន្នន័យពី Database ហើយគណនីនេះនឹងមិនអាចចូលប្រើប្រាស់បានទៀតទេ ដោយសារប្រព័ន្ធនឹង Block ដោយស្វ័យប្រវត្តិ)`)) {
         usersRef.child(uid).remove()
-            .then(() => alert("✅ បានលុបនិងបិទគណនីជោគជ័យ។"))
-            .catch(err => alert("កំហុស៖ " + err.message));
+            .then(() => showAlertPremium("✅ បានលុបនិងបិទគណនីជោគជ័យ。", 'success'))
+            .catch(err => showAlertPremium("កំហុស៖ " + err.message, 'error'));
     }
 }
 
@@ -683,11 +767,11 @@ function sendResetPasswordEmail(email) {
     if (confirm(`តើអ្នកចង់ផ្ញើអ៊ីមែលសម្រាប់កំណត់ពាក្យសម្ងាត់ថ្មីទៅកាន់ ${email} មែនទេ?`)) {
         firebase.auth().sendPasswordResetEmail(email)
             .then(() => {
-                alert("✅ អ៊ីមែលត្រូវបានផ្ញើជោគជ័យ! សូមពិនិត្យមើលប្រអប់សំបុត្រ។");
+                showAlertPremium("✅ អ៊ីមែលត្រូវបានផ្ញើជោគជ័យ! សូមពិនិត្យមើលប្រអប់សំបុត្រ។", 'success');
             })
             .catch((error) => {
                 console.error(error);
-                alert("❌ បរាជ័យ: " + error.message);
+                showAlertPremium("❌ បរាជ័យ: " + error.message, 'error');
             });
     }
 }
@@ -720,7 +804,7 @@ function toggleTablePassword(key, btn) {
 function copyToClipboard(text) {
     if (!text) return;
     navigator.clipboard.writeText(text).then(() => {
-        alert("✅ បានចម្លងពាក្យសម្ងាត់រួចរាល់!");
+        showAlertPremium("✅ បានចម្លងពាក្យសម្ងាត់រួចរាល់!", 'success');
     });
 }
 

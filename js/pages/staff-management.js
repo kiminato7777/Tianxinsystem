@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
     populateStaffSelects(); // Load Levels & Classes for form
     setupSearchFunctionality();
     setupFormSubmit();
+    setupImageHelper(); // New: setup image preview logic
 
     const staffPhone = document.getElementById('staff-phone');
     if (staffPhone) {
@@ -388,10 +389,16 @@ window.filterDashboardList = (filterType) => {
         <tr class="align-middle animate__animated animate__fadeIn">
             <td class="ps-4">
                 <div class="d-flex align-items-center" onclick="selectStaff('${t.id}')" style="cursor: pointer;">
-                    <div class="rounded-circle ${hasHomeroom ? 'bg-gradient-warning' : 'bg-pink-primary'} text-white d-flex align-items-center justify-content-center me-3 shadow-sm" 
-                         style="width: 40px; height: 40px; font-size: 0.9rem; border: 2px solid white; ${hasHomeroom ? 'background: linear-gradient(135deg, #ffc107, #fd7e14);' : ''}">
-                         ${initials}
-                    </div>
+                    ${t.imageUrl ? 
+                        `<div class="rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm overflow-hidden" 
+                             style="width: 40px; height: 40px; border: 2px solid white;">
+                             <img src="${t.imageUrl}" class="w-100 h-100" style="object-fit: cover;">
+                         </div>` : 
+                        `<div class="rounded-circle ${hasHomeroom ? 'bg-gradient-warning' : 'bg-pink-primary'} text-white d-flex align-items-center justify-content-center me-3 shadow-sm" 
+                             style="width: 40px; height: 40px; font-size: 0.9rem; border: 2px solid white; ${hasHomeroom ? 'background: linear-gradient(135deg, #ffc107, #fd7e14);' : ''}">
+                             ${initials}
+                         </div>`
+                    }
                     <div>
                         <div class="fw-bold text-dark text-nowrap hover-text-primary">${t.nameKhmer || 'N/A'}</div>
                         <div class="small text-muted" style="font-size: 0.8rem;">${t.nameChinese || ''}</div>
@@ -534,7 +541,12 @@ async function displayStaffDetails(staff, staffId) {
     detailsContent.innerHTML = `
         <div class="staff-details-card animate__animated animate__fadeIn">
             <div class="staff-details-header">
-                <div class="staff-details-avatar">${initials}</div>
+                ${staff.imageUrl ? 
+                    `<div class="staff-details-avatar overflow-hidden border">
+                        <img src="${staff.imageUrl}" class="w-100 h-100" style="object-fit: cover;">
+                     </div>` : 
+                    `<div class="staff-details-avatar">${initials}</div>`
+                }
                 <div class="staff-details-info flex-grow-1">
                     <h3 class="mb-1">${staff.nameKhmer || 'មិនមាន'}</h3>
                     <p class="mb-1"><strong>${staff.position || 'មិនមាន'}</strong></p>
@@ -937,8 +949,17 @@ function editStaff(staffId) {
     document.getElementById('staff-phone').value = staff.phone || '';
     document.getElementById('staff-level').value = staff.level || '';
     document.getElementById('staff-study-type').value = staff.studyType || '';
-    document.getElementById('staff-homeroom').value = staff.homeroomClass || '';
     document.getElementById('staff-notes').value = staff.notes || '';
+    
+    // Load image preview
+    const imgContainer = document.getElementById('staffImagePreviewContainer');
+    if (staff.imageUrl) {
+        imgContainer.innerHTML = `<img src="${staff.imageUrl}" class="w-100 h-100" style="object-fit: cover;">`;
+    } else {
+        imgContainer.innerHTML = `<i class="fi fi-rr-user-circle text-primary" style="font-size: 4rem;"></i>`;
+    }
+    // Clear the file input
+    document.getElementById('staff-image-input').value = '';
 
     // Handle teaching hours checkboxes
     renderTeachingHoursCheckboxes(staff.teachingHours || '');
@@ -1006,6 +1027,27 @@ async function saveStaff() {
         notes: document.getElementById('staff-notes').value.trim(),
         updatedAt: new Date().toISOString()
     };
+
+    // Handle Image Upload
+    const imageInput = document.getElementById('staff-image-input');
+    if (imageInput.files && imageInput.files[0]) {
+        try {
+            // Show loading status for R2
+            const staffName = dataToSave.nameKhmer || "staff";
+            const uploadedUrl = await uploadImageToR2(imageInput.files[0], staffName, "Teacher");
+            if (uploadedUrl) {
+                dataToSave.imageUrl = uploadedUrl;
+            }
+        } catch (uploadErr) {
+            console.error("R2 Teacher Upload Error:", uploadErr);
+        }
+    } else if (isEdit) {
+        // Keep old image if no new file is selected
+        const existingStaff = staffData[staffId] || {};
+        if (existingStaff.imageUrl) {
+            dataToSave.imageUrl = existingStaff.imageUrl;
+        }
+    }
 
     if (isEdit) {
         // Preserve fields that are not in the form but exist in DB
@@ -2686,5 +2728,44 @@ window.markAsGraduated = async (key) => {
     }
 };
 
+/**
+ * Setup image preview logic for staff modal
+ */
+function setupImageHelper() {
+    const input = document.getElementById('staff-image-input');
+    if (!input) return;
+}
+
+window.previewStaffImage = function(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const container = document.getElementById('staffImagePreviewContainer');
+            if (container) {
+                container.innerHTML = `<img src="${e.target.result}" class="w-100 h-100" style="object-fit: cover;">`;
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function resetStaffImagePreview() {
+    const container = document.getElementById('staffImagePreviewContainer');
+    if (container) {
+        container.innerHTML = `<i class="fi fi-rr-user-circle text-primary" style="font-size: 4rem;"></i>`;
+    }
+}
+
+// Ensure reset on "Add Staff"
+window.openAddStaffModal = function() {
+    document.getElementById('staffForm').reset();
+    document.getElementById('staff-id').value = '';
+    document.getElementById('staffModalTitle').innerHTML = '<i class="fi fi-rr-user-add"></i> បន្ថែមបុគ្គលិកថ្មី';
+    
+    resetStaffImagePreview();
+    
+    const modal = new bootstrap.Modal(document.getElementById('staffModal'));
+    modal.show();
+};
 
 

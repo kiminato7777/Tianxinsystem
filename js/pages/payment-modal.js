@@ -1273,9 +1273,14 @@ window.handleReceiptUpload = async function (input) {
     if (!container) return;
 
     try {
+        container.classList.add('position-relative');
         container.innerHTML = `
             <div class="w-100 p-4 text-center">
-                <span class="spinner-border text-primary spinner-border-sm me-2"></span>កំពុងបង្ហោះរូបភាព...
+                <div class="r2-mini-status">
+                    <div class="r2-mini-spinner"></div>
+                    <span>កំពុងបង្ហោះរូបភាព...</span>
+                </div>
+                <span class="spinner-border text-primary spinner-border-sm me-2"></span>
             </div>`;
 
         // Upload to R2

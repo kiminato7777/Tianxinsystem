@@ -36,7 +36,7 @@ if (typeof firebase !== 'undefined') {
         console.warn("Persistence could not be enabled:", err);
     }
 
-    window.storage = (typeof firebase.storage !== 'undefined') ? firebase.storage() : null;
+    window.storage = null; // Replaced by Cloudflare R2 Utility
 
     // Keep 'database' as a global constant if expected by other scripts
     if (typeof window.database === 'undefined') {
@@ -70,15 +70,13 @@ if (typeof firebase !== 'undefined') {
      * Centralized storage for images and documents
      */
     window.CLOUDFLARE_R2_CONFIG = {
-        endpoint: "https://5f330001920db1560f79adb1d2c5e43b.r2.cloudflarestorage.com",
-        accessKeyId: "7a47d0126c4605ba4fbc40d93607db17",
-        secretAccessKey: "1712a242c86d0019b688c070490a57c23ccbf31dabc06de8f6b750fa4946dc33",
-        apiToken: "cfut_EWV3SA01cwDqQsUzKLlvqiNNj7kkHsYvtjQVxElE3aceee53",
-        accountId: "5f330001920db1560f79adb1d2c5e43b",
-        bucketUrl: "https://5f330001920db1560f79adb1d2c5e43b.r2.cloudflarestorage.com/tianxinschool",
-        // FOR DISPLAY: This is the public URL where images can be viewed. 
-        // User needs to enable 'Public Bucket' in Cloudflare R2 dashboard and update this if different.
-        publicBaseUrl: "https://pub-5f330001920db1560f79adb1d2c5e43b.r2.dev/tianxinschool" 
+        endpoint: "https://de112fdcf86cca83a566898b7ee4f55d.r2.cloudflarestorage.com",
+        accessKeyId: "ee6c159e8d801a58e961802eb88bf6d6",
+        secretAccessKey: "38930c514deb4b76764c1cfa7efd1a35d90746823340f8cd6f61df0ed7020e0d",
+        accountId: "de112fdcf86cca83a566898b7ee4f55d",
+        bucketName: "tianxinschool",
+        publicBaseUrl: "https://pub-9f07e56bcd7b4303ae324ce2bd2c6941.r2.dev",
+        region: "auto"
     };
     window.CLOUDFLARE_R2_BUCKET_URL = window.CLOUDFLARE_R2_CONFIG.publicBaseUrl;
 
@@ -106,3 +104,43 @@ if (typeof firebase !== 'undefined') {
 } else {
     console.error("❌ Firebase SDK not found. Please ensure Firebase scripts are loaded before firebase-config.js");
 }
+/**
+ * Global Premium Alert/Toast Notification System
+ * type: 'success' | 'error' | 'info'
+ */
+window.showAlertPremium = function(message, type = 'success', title = '') {
+    // Remove existing if any
+    const existing = document.querySelector('.premium-toast');
+    if (existing) existing.remove();
+
+    if (!title) {
+        title = type === 'success' ? 'ជោគជ័យ!' : (type === 'error' ? 'មានកំហុស!' : 'ព័ត៌មាន');
+    }
+
+    const icon = type === 'success' ? 'fi-rr-check' : (type === 'error' ? 'fi-rr-cross-circle' : 'fi-rr-info');
+    
+    const toastHtml = `
+        <div class="premium-toast ${type}">
+            <div class="toast-icon"><i class="fi ${icon}"></i></div>
+            <div class="toast-content">
+                <div class="toast-title">${title}</div>
+                <div class="toast-message">${message}</div>
+            </div>
+            <div class="toast-progress">
+                <div class="toast-progress-bar" style="animation: progressBarAnim 3s linear forwards;"></div>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', toastHtml);
+    const toast = document.querySelector('.premium-toast');
+    
+    // Animate in
+    setTimeout(() => toast.classList.add('show'), 100);
+
+    // Auto remove
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 500);
+    }, 3000);
+};

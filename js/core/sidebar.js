@@ -51,9 +51,9 @@ function injectSidebar() {
         <div class="px-3 py-3 text-white border-top border-bottom border-white-10 sidebar-user-profile"
             style="background: rgba(0,0,0,0.05);">
             <div class="text-center">
-                <div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2 shadow-sm"
-                    style="width: 50px; height: 50px;">
-                    <i class="fi fi-rr-user-circle text-primary fa-2x"></i>
+                <div id="user-display-image-container" class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2 shadow-sm overflow-hidden"
+                    style="width: 60px; height: 60px; min-width: 60px;">
+                    <i class="fi fi-rr-user-circle text-primary fa-2x" id="user-display-placeholder"></i>
                 </div>
                 <div style="font-size: 0.85rem;">
                     <div class="fw-bold text-truncate mb-1" id="user-display-name" style="font-size: 1rem;">...</div>

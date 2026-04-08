@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const nameEl = document.getElementById('user-display-name');
             const emailEl = document.getElementById('user-display-email');
             const roleEl = document.getElementById('user-role-badge');
+            const imgContainer = document.getElementById('user-display-image-container');
 
             const adminEmail = window.ADMIN_EMAIL || 'admin@school.com';
             // Support multiple super admin emails (centralized in firebase-config.js)
@@ -125,11 +126,19 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
             // Function to set profile UI
-            const setProfileUI = (name, email) => {
+            const setProfileUI = (name, email, imageUrl) => {
                 if (nameEl) nameEl.textContent = name;
                 if (emailEl) {
                     emailEl.textContent = email;
                     emailEl.title = email;
+                }
+                
+                if (imgContainer) {
+                    if (imageUrl && imageUrl !== 'undefined' && imageUrl !== 'null') {
+                        imgContainer.innerHTML = `<img src="${imageUrl}" class="w-100 h-100" style="object-fit: cover;" onerror="this.src='/img/1.jpg'">`;
+                    } else {
+                        imgContainer.innerHTML = `<i class="fi fi-rr-user-circle text-primary fa-2x" id="user-display-placeholder"></i>`;
+                    }
                 }
             };
 
@@ -150,97 +159,46 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
             // Logic Flow
-            if (isSuperAdmin) {
-                setProfileUI('Admin (អ្នកគ្រប់គ្រង)', user.email);
+            // Logic Flow: Always fetch from database to sync profile info (name, image)
+            // But permissions are still determined by isSuperAdmin
+            firebase.database().ref('users/' + user.uid).on('value', snapshot => {
+                const userData = snapshot.val() || {};
+
+                // 1. Sync Profile UI
+                const userRole = (userData.role || (isSuperAdmin ? 'admin' : 'staff')).toLowerCase();
+                const isAdmin = userRole === 'admin' || isSuperAdmin;
+                
+                // Name Priority: DB Name > isSuperAdmin Hardcoded > Email Prefix
+                const displayName = userData.name || (isSuperAdmin ? 'Admin (អ្នកគ្រប់គ្រង)' : user.email.split('@')[0]);
+                setProfileUI(displayName, user.email, userData.imageUrl);
+
+                // 2. Sync Role Badge
                 if (roleEl) {
-                    roleEl.textContent = 'Admin (អ្នកគ្រប់គ្រង)';
-                    roleEl.className = 'badge bg-dark border border-warning text-warning mt-1 fw-normal shadow-sm';
+                    if (isAdmin) {
+                        roleEl.textContent = 'Admin (អ្នកគ្រប់គ្រង)';
+                        roleEl.className = 'badge bg-warning text-dark mt-1 fw-normal shadow-sm';
+                    } else {
+                        roleEl.textContent = 'Staff (បុគ្លិក)';
+                        roleEl.className = 'badge bg-info mt-1 fw-normal';
+                    }
                 }
-                // Admin gets everything
-                applyPermissions({}, 'admin');
-            } else {
-                firebase.database().ref('users/' + user.uid).on('value', snapshot => {
-                    const userData = snapshot.val();
 
-                    if (!userData) {
-                        // User exists in Auth but NOT in Database
-                        // This happens when: (1) user just created but DB write failed
-                        // or (2) user was deleted from DB by admin
-                        // Strategy: give them BASIC staff access to dashboard only,
-                        // so they are not permanently locked out from a rules issue
-                        console.warn("⚠️ User exists in Auth but NOT in Database. Granting basic fallback access.");
-                        setProfileUI(user.email.split('@')[0], user.email);
-                        if (roleEl) {
-                            roleEl.textContent = 'Staff (Limited)';
-                            roleEl.className = 'badge bg-secondary mt-1 fw-normal';
-                        }
-                        // Give basic dashboard access as fallback
-                        applyPermissions({ dashboard: true, registration: true, data: true }, 'staff');
-                        return;
-                    }
+                // 3. Cache and Apply Permissions
+                localStorage.setItem('userPermissionsCache', JSON.stringify({
+                    permissions: userData.permissions || {},
+                    role: userRole
+                }));
 
-                    // Cache permissions for sidebar refresh
-                    localStorage.setItem('userPermissionsCache', JSON.stringify({
-                        permissions: userData.permissions,
-                        role: userData.role
-                    }));
+                applyPermissions(userData.permissions, userRole);
 
-                    const userRole = (userData.role || 'staff').toLowerCase();
-                    const isAdmin = userRole === 'admin';
-                    const displayName = isAdmin ? 'Admin (អ្នកគ្រប់គ្រង)' : (userData.name ? userData.name : user.email.split('@')[0]);
-                    setProfileUI(displayName, user.email);
-
-                    // Dynamic Role Badge
-                    if (roleEl) {
-                        const userRole = (userData.role || 'staff').toLowerCase();
-                        if (userRole === 'admin') {
-                            roleEl.textContent = 'Admin (អ្នកគ្រប់គ្រង)';
-                            roleEl.className = 'badge bg-warning text-dark mt-1 fw-normal';
-                        } else {
-                            roleEl.textContent = 'Staff (បុគ្គលិក)';
-                            roleEl.className = 'badge bg-info mt-1 fw-normal';
-                        }
-                    }
-
-                    applyPermissions(userData.permissions, userData.role);
-                }, err => {
-                    console.error("Error fetching user data:", err);
-                    
-                    // IF PERMISSION DENIED -> The rules are blocking this user from reading their own profile
-                    // Instead of signing them out, give basic fallback access and log the issue
-                    if (err.message && err.message.includes("permission_denied")) {
-                        console.warn("🚨 Firebase Rules blocked profile read. Attempting graceful fallback...");
-                        // Try localStorage cache first
-                        const cached = localStorage.getItem('userPermissionsCache');
-                        if (cached) {
-                            try {
-                                const { permissions, role } = JSON.parse(cached);
-                                console.log("✅ Using cached permissions as fallback.");
-                                setProfileUI(user.email.split('@')[0], user.email);
-                                if (roleEl) {
-                                    roleEl.textContent = role === 'admin' ? 'Admin' : 'Staff';
-                                    roleEl.className = role === 'admin' 
-                                        ? 'badge bg-warning text-dark mt-1 fw-normal'
-                                        : 'badge bg-info mt-1 fw-normal';
-                                }
-                                applyPermissions(permissions, role);
-                                return;
-                            } catch(e) {
-                                console.warn("Cache parse failed:", e);
-                            }
-                        }
-                        // Final fallback: give basic access so user is not permanently locked
-                        console.warn("⚠️ No cache found. Giving minimal fallback access.");
-                        setProfileUI(user.email.split('@')[0], user.email);
-                        if (roleEl) {
-                            roleEl.textContent = 'Staff (Limited)';
-                            roleEl.className = 'badge bg-secondary mt-1 fw-normal';
-                        }
-                        applyPermissions({ dashboard: true, registration: true, data: true }, 'staff');
-                    }
-                });
-            }
-
+            }, err => {
+                console.error("Error fetching user data:", err);
+                // Fallback for permission denied
+                if (isSuperAdmin) {
+                    setProfileUI('Admin (អ្នកគ្រប់គ្រង)', user.email, null);
+                    applyPermissions({}, 'admin');
+                }
+            });
         } else {
             console.log("Auth state initialized: No user found.");
             if (!isLoginPage) {

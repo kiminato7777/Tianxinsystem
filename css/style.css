@@ -1115,3 +1115,83 @@ body.sidebar-collapsed #main-content {
 [data-theme="dark"] .theme-toggle-btn i {
     color: #ffd700 !important; /* Golden sun in dark mode */
 }
+/* --- MODERN DYNAMIC TOAST/POPUP --- */
+.premium-toast {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+    z-index: 10000;
+    min-width: 320px;
+    transform: translateX(120%);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    border-left: 6px solid #8a0e5b;
+}
+
+.premium-toast.show {
+    transform: translateX(0);
+}
+
+.premium-toast .toast-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.premium-toast.success { border-left-color: #00b894; }
+.premium-toast.success .toast-icon { background: rgba(0, 184, 148, 0.1); color: #00b894; }
+
+.premium-toast.error { border-left-color: #d63031; }
+.premium-toast.error .toast-icon { background: rgba(214, 48, 49, 0.1); color: #d63031; }
+
+.premium-toast .toast-content {
+    flex-grow: 1;
+}
+
+.premium-toast .toast-title {
+    font-weight: 800;
+    font-size: 1rem;
+    color: #2d3436;
+    margin-bottom: 2px;
+}
+
+.premium-toast .toast-message {
+    color: #636e72;
+    font-size: 0.85rem;
+}
+
+.premium-toast .toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.05);
+    width: 100%;
+    border-radius: 0 0 16px 16px;
+    overflow: hidden;
+}
+
+.premium-toast .toast-progress-bar {
+    height: 100%;
+    width: 100%;
+    background: #8a0e5b;
+}
+
+.premium-toast.success .toast-progress-bar { background: #00b894; }
+.premium-toast.error .toast-progress-bar { background: #d63031; }
+
+@keyframes progressBarAnim {
+    from { width: 100%; }
+    to { width: 0%; }
+}
