@@ -618,10 +618,7 @@
                             <div id="pDate" class="data-field data-date">...</div>
                         </div>
                         <div class="mt-4 d-flex gap-3 justify-content-center flex-wrap">
-                            <button onclick="downloadCard()"
-                                class="btn btn-success btn-custom rounded-pill px-4 py-3 fw-bold shadow-sm border-0">
-                                <i class="bi bi-download me-2"></i> ទាញយក (Download)
-                            </button>
+
                             <button onclick="copyCardToClipboard()"
                                 class="btn btn-secondary btn-custom rounded-pill px-4 py-3 fw-bold shadow-sm border-0"
                                 style="background: #6c757d;">
@@ -1380,9 +1377,7 @@
                     <td>${formatPhoneWithCarrierLocal(v.phone)}</td>
                     <td>${formatKhmerDate(v.date)}</td>
                     <td>
-                        <button class="btn btn-sm btn-success text-white rounded-pill px-3 me-1 shadow-sm" onclick="downloadCardDirectly('${v.stuId}', '${v.nameKh}', '${v.nameCh}', '${gKh}', '${gCh}', '${v.phone}', '${v.date}', '${v.photo}')">
-                            <i class="bi bi-download"></i> DL
-                        </button>
+
                         <button class="btn btn-sm btn-info text-white rounded-pill px-3 me-1 shadow-sm" onclick="previewExistingCard('${v.stuId}', '${v.nameKh}', '${v.nameCh}', '${gKh}', '${gCh}', '${v.phone}', '${v.date}', '${v.photo}')">
                             <i class="bi bi-eye-fill"></i> លម្អិត (View)
                         </button>

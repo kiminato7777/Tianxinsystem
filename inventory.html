@@ -373,47 +373,7 @@
             </div>
         </div>
 
-        <!-- EXPORT & CONTROLS -->
         <div class="card mb-4">
-            <div class="card-body p-4 border-bottom">
-                <div class="row align-items-center g-3">
-                    <div class="col-md-auto">
-                        <h5 class="mb-0 fw-bold"><i class="fi fi-rr-print text-secondary me-2"></i>របាយការណ៍</h5>
-                    </div>
-                    <div class="col-md-auto">
-                        <select class="form-select form-select-sm" id="reportCategory">
-                            <option value="inventory">ស្តុកបច្ចុប្បន្ន (Current Stock)</option>
-                            <option value="stockIn">ស្តុកចូល (Stock In)</option>
-                            <option value="stockOut" selected>ស្តុកចេញ (Stock Out)</option>
-                        </select>
-                    </div>
-                    <div class="col-md-auto">
-                        <select class="form-select form-select-sm" id="exportType">
-                            <option value="all">ទាំងអស់ (All Time)</option>
-                            <option value="daily" selected>ប្រចាំថ្ងៃ (Daily)</option>
-                            <option value="monthly">ប្រចាំខែ (Monthly)</option>
-                        </select>
-                    </div>
-                    <div class="col-md-auto">
-                        <div class="input-group input-group-sm report-date-wrapper">
-                            <span class="input-group-text">
-                                <i class="fi fi-rr-calendar"></i>
-                            </span>
-                            <input type="text" id="reportDate" class="form-control fw-bold" placeholder="ជ្រើសរើសថ្ងៃខែ" style="width: 200px;">
-                        </div>
-                    </div>
-                    <div class="col-md-auto">
-                        <button class="btn btn-outline-danger btn-sm" onclick="exportToPDF()">
-                            <i class="fi fi-rr-file-pdf me-1"></i> Export PDF
-                        </button>
-                    </div>
-                    <div class="col-md-auto">
-                        <button class="btn btn-outline-success btn-sm" onclick="exportToExcel()">
-                            <i class="fi fi-rr-file-excel me-1"></i> Export Excel
-                        </button>
-                    </div>
-                </div>
-            </div>
 
             <div class="card-body p-4">
                 <style>

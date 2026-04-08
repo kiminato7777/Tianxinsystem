@@ -11,6 +11,40 @@
     --bs-orange-alert: #fff3cd;
     --bs-red-alert: #f8d7da;
     --bs-green-success: #d1e7dd;
+    --bs-preview-border: #8a0e5b;
+}
+
+/* --- IMAGE HOVER PREVIEW --- */
+.img-hover-preview {
+    position: fixed;
+    z-index: 999999;
+    pointer-events: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    background: white;
+    padding: 6px;
+    display: none;
+    min-width: 100px;
+    min-height: 100px;
+    max-width: 320px;
+    max-height: 400px;
+    overflow: hidden;
+    border: 3px solid var(--bs-preview-border);
+    animation: previewFadeIn 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transform: translate(15px, 15px);
+}
+
+.img-hover-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 6px;
+    display: block;
+}
+
+@keyframes previewFadeIn {
+    from { opacity: 0; transform: translate(15px, 15px) scale(0.9); }
+    to { opacity: 1; transform: translate(15px, 15px) scale(1); }
 }
 
 @font-face {

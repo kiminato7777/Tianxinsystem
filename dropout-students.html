@@ -856,51 +856,7 @@
                     (Dropout List)</span>
             </div>
 
-            <!-- Date Range Report Controls (New) -->
-            <div class="d-flex gap-2 align-items-center bg-white p-2 rounded-pill shadow-sm border me-3"
-                style="border-color: rgba(255, 105, 180, 0.2) !important;">
-                <div class="input-group input-group-sm" style="width: 140px;">
-                    <span class="input-group-text bg-transparent border-0 ps-3"><i
-                            class="fi fi-rr-calendar text-pink-dark"></i></span>
-                    <input type="date" class="form-control border-0 bg-transparent fw-bold text-secondary p-0 small"
-                        id="dropoutReportStartDate" title="ចាប់ពីថ្ងៃ (Start Date)">
-                </div>
-                <span class="text-muted fw-bold">|</span>
-                <div class="input-group input-group-sm" style="width: 140px;">
-                    <span class="input-group-text bg-transparent border-0 ps-3"><i
-                            class="fi fi-rr-calendar-check text-pink-dark"></i></span>
-                    <input type="date" class="form-control border-0 bg-transparent fw-bold text-secondary p-0 small"
-                        id="dropoutReportEndDate" title="ដល់ថ្ងៃ (End Date)">
-                </div>
-                <div class="vr mx-1"></div>
-                <button class="btn btn-primary rounded-pill fw-bold px-3 py-1 shadow-sm"
-                    onclick="exportDropoutReport('range')" title="ទាញយករបាយការណ៍ (Pull Report)"
-                    style="background: linear-gradient(135deg, #ff69b4, #c71585); border:none; font-size: 0.85rem;">
-                    <i class="fi fi-rr-print me-2"></i>របាយការណ៍
-                </button>
-                <div class="vr mx-1"></div>
-                <div class="dropdown">
-                    <button class="btn btn-outline-secondary rounded-pill fw-bold px-3 py-1 border-0 dropdown-toggle"
-                        type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.85rem;">
-                        <i class="fi fi-rr-menu-dots-vertical"></i> ជម្រើស
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 mt-2">
-                        <li><a class="dropdown-item py-2" href="#" onclick="exportDropoutReport('monthly')"><i
-                                    class="fi fi-rr-calendar me-2 text-info"></i> ប្រចាំខែ (Monthly)</a></li>
-                        <li><a class="dropdown-item py-2" href="#" onclick="exportDropoutReport('yearly')"><i
-                                    class="fi fi-rr-calendar-lines me-2 text-warning"></i> ប្រចាំឆ្នាំ (Yearly)</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item py-2" href="#"
-                                onclick="generateStudentListPDF(filterStudents(rawStudentsArray), 'របាយការណ៍សិស្សបោះបង់ការសិក្សា (Dropout List)')"><i
-                                    class="fi fi-rr-file-pdf me-2 text-danger"></i> នាំចេញ PDF</a></li>
-                        <li><a class="dropdown-item py-2" href="#"
-                                onclick="exportToExcel(filterStudents(rawStudentsArray), 'Dropout_Student_List')"><i
-                                    class="fi fi-rr-file-excel me-2 text-success"></i> នាំចេញ Excel</a></li>
-                    </ul>
-                </div>
-            </div>
+
 
             <!-- Back Home Button -->
             <a href="/index.html" class="btn-back-home shadow-sm">
