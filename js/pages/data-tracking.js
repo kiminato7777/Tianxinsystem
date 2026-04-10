@@ -2172,6 +2172,12 @@ function getStudentHeaderHTML(s, status, remaining) {
                                         <i class="fi fi-rr-trash text-white" style="font-size: 10px;"></i>
                                     </span>
                                 </div>
+                                <!-- Download Button -->
+                                <div class="position-absolute top-0 start-0 mt-n1 ms-n1" style="z-index: 5;">
+                                    <span class="badge rounded-circle bg-success border border-2 border-white p-2 shadow-sm" style="cursor: pointer;" title="ទាញយករូបថត" onclick="downloadStudentImage('${s.imageUrl}', '${s.lastName}_${s.firstName}')">
+                                        <i class="fi fi-rr-download text-white" style="font-size: 10px;"></i>
+                                    </span>
+                                </div>
                             ` : ''}
                             <!-- Hidden File Input -->
                             <input type="file" id="profileImgUpload_${s.key}" class="d-none" accept="image/*" onchange="updateStudentProfileImage('${s.key}', this)">
@@ -4530,7 +4536,7 @@ function getStudentCardTabHTML(s) {
 
                     <!-- Actions -->
                     <button class="btn btn-primary w-100 py-3 fw-bold rounded-4 shadow-sm mb-2" onclick="printStudentCard('${s.key}')" style="transition: all 0.2s ease;">
-                        <i class="fi fi-rr-print me-2"></i> បោះពុម្ព (Print)
+                        <i class="fi fi-rr-print me-2"></i> បោះពុម្ព / ទាញយក (Print/Download)
                     </button>
                     <div class="text-center small text-muted mb-2">
                         * សូមជ្រើសរើសទំហំក្រដាសឱ្យបានត្រឹមត្រូវនៅពេលបោះពុម្ព
