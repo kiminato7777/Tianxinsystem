@@ -752,7 +752,7 @@
                         <span class="fw-bold text-pink-primary">ទំនាក់ទំនង:</span>
                         <span class="me-2"><i class="fi fi-rr-smartphone me-1 text-primary"></i>093 835 678
                             (Smart)</span>
-                        <a href="https://t.me/Tian093835678" target="_blank" class="text-decoration-none">
+                        <a href="https://t.me/m_makara_m" target="_blank" class="text-decoration-none">
                             <i class="fi fi-brands-telegram me-1 text-primary"></i>Telegram
                         </a>
                     </div>
@@ -767,176 +767,239 @@
     </div>
 
 
-    <!-- Refined Premium Transaction Modal Styling -->
+    <!-- 100% Modern Premium Transaction Modal Styling -->
     <style>
         :root {
             --income-color: #059669;
-            /* Sophisticated Emerald */
-            --income-bg: #ecfdf5;
+            --income-bg: rgba(5, 150, 105, 0.05);
             --expense-color: #e11d48;
-            /* Premium Rose */
-            --expense-bg: #fff1f2;
-            --modal-grad-income: linear-gradient(135deg, #059669 0%, #10b981 100%);
-            --modal-grad-expense: linear-gradient(135deg, #be123b 0%, #fb7185 100%);
-            --ui-border: #e2e8f0;
-            --ui-text-main: #1e293b;
+            --expense-bg: rgba(225, 29, 72, 0.05);
+            --modal-grad-income: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --modal-grad-expense: linear-gradient(135deg, #fb7185 0%, #e11d48 100%);
+            --ui-border: rgba(226, 232, 240, 0.8);
+            --ui-text-main: #0f172a;
             --ui-text-muted: #64748b;
+            --card-radius: 1.5rem;
+            --input-radius: 1rem;
         }
 
         #transactionModal .modal-content {
-            background: #ffffff;
-            border: none;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border-radius: 2rem;
+            overflow: hidden;
         }
 
-        /* Thematic Headers - Softer & More Professional */
+        /* Thematic Headers - Soft & Floating */
         #transactionModal.income-theme .modal-header {
             background: var(--modal-grad-income) !important;
+            border-bottom: none;
+            padding: 1.5rem 2rem;
         }
 
         #transactionModal.expense-theme .modal-header {
             background: var(--modal-grad-expense) !important;
+            border-bottom: none;
+            padding: 1.5rem 2rem;
         }
 
         #transactionModal.income-theme .btn-primary.bg-pink-primary {
-            background: var(--income-color) !important;
+            background: var(--modal-grad-income) !important;
             border: none !important;
-            box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3) !important;
+            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4) !important;
+            transition: all 0.3s;
         }
 
         #transactionModal.expense-theme .btn-primary.bg-pink-primary {
-            background: var(--expense-color) !important;
+            background: var(--modal-grad-expense) !important;
             border: none !important;
-            box-shadow: 0 4px 14px rgba(225, 29, 72, 0.3) !important;
+            box-shadow: 0 8px 20px rgba(225, 29, 72, 0.4) !important;
+            transition: all 0.3s;
+        }
+
+        #transactionModal .btn-primary.bg-pink-primary:hover {
+            transform: translateY(-2px) scale(1.02);
         }
 
         #transactionModal .card {
             border: 1px solid var(--ui-border) !important;
             background: #ffffff;
-            border-radius: 1.25rem !important;
+            border-radius: var(--card-radius) !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
             transition: all 0.3s ease;
+        }
+        
+        #transactionModal .card:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            transform: translateY(-2px);
         }
 
         #transactionModal .card-header {
             background: transparent !important;
-            padding-top: 1.25rem;
-            padding-bottom: 0.5rem;
+            padding: 1.5rem 1.5rem 0.5rem 1.5rem;
             border-bottom: none !important;
         }
 
         #transactionModal .form-label {
             color: var(--ui-text-muted);
             font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.025em;
+            letter-spacing: 0.05em;
             margin-bottom: 0.5rem;
         }
 
-        #transactionModal .form-control {
+        #transactionModal .form-control, #transactionModal .form-select {
             background-color: #f8fafc;
-            border: 1px solid var(--ui-border) !important;
+            border: 2px solid transparent !important;
             color: var(--ui-text-main);
             font-weight: 600;
-            border-radius: 0.75rem !important;
-            padding: 0.65rem 1rem;
-            transition: all 0.2s ease;
+            border-radius: var(--input-radius) !important;
+            padding: 0.75rem 1.25rem;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
 
-        #transactionModal .form-control:focus {
+        #transactionModal .form-control:focus, #transactionModal .form-select:focus {
             background-color: #ffffff;
             border-color: #3b82f6 !important;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), inset 0 1px 2px rgba(0,0,0,0.01) !important;
         }
 
-        /* Money Block Styling - More Legible Icons */
+        /* Money Block Styling - Modern Floating look */
         .money-block {
-            border-radius: 1rem;
-            padding: 1rem;
+            border-radius: 1.2rem;
+            padding: 1.2rem;
             margin-bottom: 1rem;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+        }
+        
+        .money-block:hover {
+            transform: scale(1.01);
         }
 
         .income-theme .money-block-cash {
             background-color: var(--income-bg);
-            border-color: rgba(5, 150, 105, 0.1);
+            border-left: 4px solid var(--income-color);
         }
 
         .expense-theme .money-block-cash {
             background-color: var(--expense-bg);
-            border-color: rgba(225, 29, 72, 0.1);
+            border-left: 4px solid var(--expense-color);
         }
 
-        /* Summary Card - High Contrast & Thematic Background */
+        .money-block .input-group-text {
+            background: transparent !important;
+        }
+        
+        .money-block .form-control {
+            background: transparent;
+            box-shadow: none;
+            padding: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Summary Card - 3D Glass Effect */
         .summary-card-premium {
             border-radius: 1.5rem !important;
             overflow: hidden;
             border: none !important;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+        }
+        
+        .summary-card-premium::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
         }
 
         #transactionModal.income-theme .summary-card-premium {
-            background: linear-gradient(135deg, #064e3b 0%, #065f46 100%) !important;
-            border-bottom: 6px solid #10b981 !important;
-            box-shadow: 0 10px 30px rgba(6, 78, 59, 0.4) !important;
+            background: linear-gradient(135deg, #047857 0%, #064e3b 100%) !important;
+            box-shadow: 0 15px 35px rgba(6, 78, 59, 0.4), inset 0 2px 0 rgba(255,255,255,0.2) !important;
         }
 
         #transactionModal.expense-theme .summary-card-premium {
-            background: linear-gradient(135deg, #4c0519 0%, #881337 100%) !important;
-            border-bottom: 6px solid #f43f5e !important;
-            box-shadow: 0 10px 30px rgba(76, 5, 25, 0.4) !important;
+            background: linear-gradient(135deg, #be123b 0%, #881337 100%) !important;
+            box-shadow: 0 15px 35px rgba(136, 19, 55, 0.4), inset 0 2px 0 rgba(255,255,255,0.2) !important;
         }
 
         /* High Legibility on Summary Card */
         .summary-card-premium .text-white-50 {
-            color: rgba(255, 255, 255, 0.7) !important;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
         }
 
         #transactionModal.income-theme #transTotalKHR {
-            color: #a7f3d0 !important;
+            color: #6ee7b7 !important;
         }
 
         #transactionModal.expense-theme #transTotalKHR {
-            color: #fecdd3 !important;
+            color: #fda4af !important;
         }
 
-        /* Custom Toggle Buttons */
+        /* Custom Toggle Buttons - Pill shape with fluid animation */
         .type-toggle-btn {
-            border: 1px solid var(--ui-border) !important;
-            background: #f8fafc;
+            border: none !important;
+            background: transparent;
             color: var(--ui-text-muted);
             font-weight: 700;
+            border-radius: 1rem !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .btn-check:checked+.type-toggle-btn.income-choice {
             background: var(--income-color) !important;
-            border-color: var(--income-color) !important;
             color: white;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+            transform: scale(1.05);
         }
 
         .btn-check:checked+.type-toggle-btn.expense-choice {
             background: var(--expense-color) !important;
-            border-color: var(--expense-color) !important;
             color: white;
+            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .btn-check:checked+.type-toggle-btn {
+            background: #3b82f6 !important;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transform: scale(1.05);
         }
 
         @keyframes fadeInScale {
-            from {
+            0% {
                 opacity: 0;
-                transform: scale(0.95);
+                transform: scale(0.9) translateY(20px);
             }
-
-            to {
+            100% {
                 opacity: 1;
-                transform: scale(1);
+                transform: scale(1) translateY(0);
             }
         }
 
         .modal.show .modal-dialog {
-            animation: fadeInScale 0.3s ease-out;
+            animation: fadeInScale 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        .input-group-text.bg-white {
+            border-radius: var(--input-radius) 0 0 var(--input-radius) !important;
+            border: 2px solid transparent !important;
+            background-color: #f8fafc !important;
+        }
+        
+        .input-group:focus-within .input-group-text.bg-white {
+            background-color: #ffffff !important;
+            border-color: #3b82f6 !important;
+            border-right: none !important;
         }
     </style>
     <div class="modal fade income-theme" id="transactionModal" tabindex="-1" 
@@ -1270,16 +1333,21 @@
                         </div>
 
                         <!-- Action Bar -->
-                        <div class="mt-4 pt-3 d-flex justify-content-end gap-2">
-                            <div class="text-muted small d-none d-md-block me-auto">
-                                <i class="fi fi-rr-info me-1"></i> បំពេញទាំងរូបិយប័ណ្ណដុល្លារ និងរៀល។
+                        <div class="mt-4 pt-4 border-top d-flex justify-content-between align-items-center" style="border-color: rgba(0,0,0,0.05) !important;">
+                            <div class="text-muted small d-none d-md-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-1 me-2 d-flex">
+                                    <i class="fi fi-rr-info" style="font-size: 0.8rem;"></i>
+                                </div>
+                                <span class="fw-medium">បំពេញទាំងរូបិយប័ណ្ណដុល្លារ និងរៀល។</span>
                             </div>
-                            <button type="button" class="btn btn-light px-4 fw-bold rounded-pill border py-2"
-                                data-bs-dismiss="modal">បោះបង់</button>
-                            <button type="submit"
-                                class="btn btn-primary px-5 fw-bold text-white shadow bg-pink-primary border-0 rounded-pill py-2">
-                                <i class="fi fi-rr-check me-2"></i>រក្សាទុក
-                            </button>
+                            <div class="d-flex gap-3">
+                                <button type="button" class="btn btn-light px-4 fw-bold rounded-pill border-0 py-2 shadow-sm" style="background: #f1f5f9; color: #64748b; transition: all 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'" data-bs-dismiss="modal">
+                                    បោះបង់
+                                </button>
+                                <button type="submit" class="btn btn-primary bg-pink-primary px-5 fw-bold text-white border-0 rounded-pill py-2 d-flex align-items-center justify-content-center">
+                                    <i class="fi fi-rr-check-circle me-2"></i>រក្សាទុកប្រតិបត្តិការ
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>

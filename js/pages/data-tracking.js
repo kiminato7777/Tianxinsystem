@@ -2507,6 +2507,19 @@ function getGeneralInfoTabHTML(s, status, total, paid, remaining) {
     <span class="fw-bold">${convertToKhmerDate(s.dob)}</span>
 </li>
 <li class="list-group-item px-0 d-flex justify-content-between">
+    <span class="text-muted">អាយុ (Age)</span>
+    <span class="fw-bold text-danger">${
+        (function() {
+            if (!s.dob || s.dob === 'មិនមាន') return 'មិនមាន';
+            const dob = typeof getDateObject === 'function' ? getDateObject(s.dob) : new Date(s.dob);
+            if (!dob || isNaN(dob.getTime())) return 'មិនមាន';
+            const ageDifMs = Date.now() - dob.getTime();
+            const ageDate = new Date(ageDifMs);
+            return Math.abs(ageDate.getUTCFullYear() - 1970) + ' ឆ្នាំ';
+        })()
+    }</span>
+</li>
+<li class="list-group-item px-0 d-flex justify-content-between">
     <span class="text-muted">សញ្ជាតិ</span>
     <span class="fw-bold">${s.nationality || 'ខ្មែរ'}</span>
 </li>
@@ -8090,7 +8103,9 @@ function addInstallmentRow(data = {}) {
             </div>
         </td>
         <td class="text-center py-1">
-            ${statusBadge}
+            <div class="inst-status-badge-container">
+                ${statusBadge}
+            </div>
         </td>
         <td class="text-center pe-4 py-1">
             <button type="button" class="btn btn-sm btn-light btn-delete-row border-0 rounded-circle p-1 shadow-sm" onclick="this.closest('tr').remove(); calculateEditFormTotals();">
@@ -8118,10 +8133,30 @@ function calculateEditFormTotals() {
 
     let installmentPaid = 0;
     let sumOfInstallmentAmounts = 0;
+
+    // 100% Dynamic: Update each row's status badge while typing
     document.querySelectorAll('.installment-row').forEach(row => {
         const amt = parseFloat(row.querySelector('.inst-amount')?.value) || 0;
         const paidAmt = parseFloat(row.querySelector('.inst-paid-amount')?.value) || 0;
         const receiver = row.querySelector('.inst-receiver')?.value;
+        
+        // Update Row Status Badge Dynamically
+        const badgeContainer = row.querySelector('.inst-status-badge-container');
+        if (badgeContainer) {
+            const badgeClasses = "badge px-2 py-1 rounded-pill font-poppins fw-bold very-small";
+            if (amt > 0) {
+                if (paidAmt >= amt) {
+                    badgeContainer.innerHTML = `<span class="${badgeClasses} bg-success bg-opacity-10 text-success"><i class="fi fi-rr-checkbox me-1"></i>PAID</span>`;
+                } else if (paidAmt > 0) {
+                    badgeContainer.innerHTML = `<span class="${badgeClasses} bg-warning bg-opacity-10 text-warning"><i class="fi fi-rr-info me-1"></i>PARTIAL</span>`;
+                } else {
+                    badgeContainer.innerHTML = `<span class="${badgeClasses} bg-light text-muted"><i class="fi fi-rr-time-past me-1 text-danger"></i>PENDING</span>`;
+                }
+            } else {
+                badgeContainer.innerHTML = `<span class="badge bg-light text-muted px-2 py-1 rounded-pill font-poppins fw-bold very-small">DUE</span>`;
+            }
+        }
+
         if (receiver && receiver !== '' && receiver !== 'null') {
             installmentPaid += paidAmt;
             sumOfInstallmentAmounts += amt;
@@ -8136,13 +8171,12 @@ function calculateEditFormTotals() {
     const balance = Math.max(0, totalFee - totalPaid);
 
     const totalFeeEl = document.getElementById('summary_grandTotal');
-    const paidEl = document.getElementById('summary_paid'); // Note: ensure this ID exists in the HTML part
+    const paidEl = document.getElementById('summary_paid'); 
     const balanceEl = document.getElementById('editBalanceDisplay');
 
     if (totalFeeEl) totalFeeEl.textContent = `$${totalFee.toFixed(2)}`;
     if (paidEl) paidEl.textContent = `$${totalPaid.toFixed(2)}`;
 
-    // Add summary paid total in the dark footer area if ID exists or update grandTotal area
     const summaryPaidArea = document.getElementById('summary_paidArea');
     if (summaryPaidArea) summaryPaidArea.textContent = `$${totalPaid.toFixed(2)}`;
 
@@ -8160,10 +8194,30 @@ function calculateEditFormTotals() {
     if (summaryPaidBar) summaryPaidBar.textContent = `$${totalPaid.toFixed(2)}`;
     if (summaryRemainingBar) summaryRemainingBar.textContent = `$${balance.toFixed(2)}`;
 
-    // Real-time Status Badge Update based on Manual Select with Auto Fallback
+    // Auto-Select Overall Payment Status based on calculation
     const statusSelect = form.paymentStatus;
-    const badgeEl = document.getElementById('editStatusBadge');
+    if (statusSelect) {
+        let suggestedStatus = statusSelect.value;
+        if (balance <= 0.01) {
+            suggestedStatus = 'Paid';
+        } else if (totalPaid > 0 && balance > 0) {
+            suggestedStatus = 'Installment';
+        } else if (totalPaid === 0 && balance > 0 && suggestedStatus !== 'Delay') {
+            suggestedStatus = 'Pending';
+        }
+        
+        if (statusSelect.value !== suggestedStatus && suggestedStatus !== 'Delay') {
+             statusSelect.value = suggestedStatus;
+             // Trigger postponed logic UI hide/show if it exists
+             const pd = document.getElementById('postponedDateContainer');
+             if (pd) {
+                 pd.style.display = (suggestedStatus === 'Delay' || suggestedStatus === 'Installment') ? 'block' : 'none';
+             }
+        }
+    }
 
+    // Real-time Status Badge Update based on Manual Select with Auto Fallback
+    const badgeEl = document.getElementById('editStatusBadge');
     if (statusSelect && badgeEl) {
         const val = statusSelect.value;
         const config = {
@@ -8592,11 +8646,18 @@ async function saveStudentChanges(key) {
     // Strictly focus on the user's manual choice for 100% Dynamic Status as requested
     // data.paymentStatus is already populated from the <select name="paymentStatus"> via FormData
 
-    // Capture postponed date if provided
-    if (data.postponedDate) {
-        data.nextPaymentDate = data.postponedDate; // Sync for tracking
+    // Keep nextPaymentDate as the absolute source of truth since the user explicitly edits it.
+    if (['Delay', 'Installment'].includes(data.paymentStatus)) {
+        // If they provided a specific postponed date, keep it, but don't overwrite nextPaymentDate automatically unless nextPaymentDate is empty.
+        if (!data.nextPaymentDate && data.postponedDate) {
+            data.nextPaymentDate = data.postponedDate;
+        } else if (!data.postponedDate && data.nextPaymentDate) {
+            data.postponedDate = data.nextPaymentDate;
+        }
+    } else {
+        data.postponedDate = '';
+        data.postponedReason = '';
     }
-    // postponedReason is already in data via FormData
 
     const imageInput = document.getElementById('editImageInput');
     if (imageInput && imageInput.files && imageInput.files[0]) {
