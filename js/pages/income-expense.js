@@ -722,7 +722,7 @@ function renderTable(resetPage = false) {
         const amountPrefix = item.type === 'income' ? '+' : '-';
         let payerName = item.payer || '<span class="text-muted">-</span>';
         if (parseFloat(item.debtUSD) > 0 || parseFloat(item.debtKHR) > 0) {
-            payerName += ` <br><span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-50 mt-1" style="font-size: 0.65rem;"><i class="fi fi-rr-time-past me-1"></i>ជំពាក់ Debt</span>`;
+            payerName += ` <br><span class="badge bg-warning text-dark border border-warning mt-1 shadow-sm" style="font-size: 14px !important;"><i class="fi fi-rr-time-past me-1"></i>ជំពាក់ Debt</span>`;
         }
         const receiverName = item.receiver || '<span class="text-muted">-</span>';
 
@@ -750,16 +750,16 @@ function renderTable(resetPage = false) {
         if (cashTotal === 0 && abaTotal === 0 && debtTotal === 0) {
             // Fallback for older transactions
             if (item.paymentMethod === 'aba') {
-                pmHtml = `<span class="badge rounded-pill bg-info bg-opacity-10 text-info px-2 py-1 fw-bold" style="font-size: 0.7rem;"><i class="fi fi-rr-bank me-1"></i>ABA</span>`;
+                pmHtml = `<span class="badge rounded-pill bg-info text-white px-2 py-1 fw-bold shadow-sm" style="font-size: 14px !important;"><i class="fi fi-rr-bank me-1"></i>ABA</span>`;
             } else {
-                pmHtml = `<span class="badge rounded-pill bg-primary bg-opacity-10 text-primary px-2 py-1 fw-bold" style="font-size: 0.7rem;"><i class="fi fi-rr-money-bill-wave me-1"></i>សាច់ប្រាក់</span>`;
+                pmHtml = `<span class="badge rounded-pill bg-primary text-white px-2 py-1 fw-bold shadow-sm" style="font-size: 14px !important;"><i class="fi fi-rr-money-bill-wave me-1"></i>សាច់ប្រាក់</span>`;
             }
         } else {
             let pms = [];
-            if (cashTotal > 0) pms.push(`<span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1"><i class="fi fi-rr-money-bill-wave me-1"></i>Cash</span>`);
-            if (abaTotal > 0) pms.push(`<span class="badge bg-info bg-opacity-10 text-info px-2 py-1"><i class="fi fi-rr-bank me-1"></i>ABA</span>`);
-            if (debtTotal > 0) pms.push(`<span class="badge bg-warning bg-opacity-10 text-warning px-2 py-1"><i class="fi fi-rr-time-past me-1"></i>Debt</span>`);
-            pmHtml = `<div class="d-flex flex-column gap-1 align-items-center" style="font-size: 0.65rem;">${pms.join('')}</div>`;
+            if (cashTotal > 0) pms.push(`<span class="badge bg-primary text-white px-2 py-1 shadow-sm" style="font-size: 14px !important;"><i class="fi fi-rr-money-bill-wave me-1"></i>Cash</span>`);
+            if (abaTotal > 0) pms.push(`<span class="badge bg-info text-white px-2 py-1 shadow-sm" style="font-size: 14px !important;"><i class="fi fi-rr-bank me-1"></i>ABA</span>`);
+            if (debtTotal > 0) pms.push(`<span class="badge bg-warning text-dark px-2 py-1 shadow-sm" style="font-size: 14px !important;"><i class="fi fi-rr-time-past me-1"></i>Debt</span>`);
+            pmHtml = `<div class="d-flex flex-column gap-1 align-items-center">${pms.join('')}</div>`;
         }
 
         // Calculate consolidated total for this row
@@ -807,6 +807,13 @@ function renderTable(resetPage = false) {
                 <span class="${amountClass} fw-bold fs-6">
                     ${(item.amountKHR > 0 || (item.originalCurrency === 'KHR' && item.originalAmount > 0))
                 ? `${amountPrefix}${(item.amountKHR !== undefined ? item.amountKHR : item.originalAmount).toLocaleString()} ៛`
+                : '-'}
+                </span>
+            </td>
+            <td class="text-end text-warning">
+                <span class="fw-bold fs-6">
+                    ${(parseFloat(item.debtUSD) > 0 || parseFloat(item.debtKHR) > 0)
+                ? `${parseFloat(item.debtUSD) > 0 ? `$${parseFloat(item.debtUSD).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}<br>` : ''}${parseFloat(item.debtKHR) > 0 ? `${parseFloat(item.debtKHR).toLocaleString()} ៛` : ''}`
                 : '-'}
                 </span>
             </td>
@@ -894,13 +901,17 @@ function renderTable(resetPage = false) {
                     <div style="font-weight: bold; font-size: 14px; color: #38bdf8; margin-bottom: 4px;">
                         ${sumUSD < 0 ? '-' : ''}$${Math.abs(sumUSD).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
-                    ${debtBadgeUSD}
                 </td>
                 <td class="text-end" style="padding: 15px; vertical-align: middle; background-color: #0f172a;">
                     <div style="font-weight: bold; font-size: 14px; color: #38bdf8; margin-bottom: 4px;">
                         ${sumKHR < 0 ? '-' : ''}${Math.abs(sumKHR).toLocaleString()} ៛
                     </div>
-                    ${debtBadgeKHR}
+                </td>
+                <td class="text-end" style="padding: 15px; vertical-align: middle; background-color: #0f172a;">
+                    <div style="font-weight: bold; font-size: 14px; color: #fbbf24; margin-bottom: 4px;">
+                        ${totalDebtUSD > 0 ? `$${Math.abs(totalDebtUSD).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}<br>` : ''}
+                        ${totalDebtKHR > 0 ? `${Math.abs(totalDebtKHR).toLocaleString()} ៛` : ''}
+                    </div>
                 </td>
                 <td class="text-end pe-4" style="padding: 15px; vertical-align: middle; background-color: #1e293b; color: white;">
                     <div style="font-weight: 900; font-size: 22px; color: ${textColorUSD}; letter-spacing: 0.5px;" title="បូកបញ្ចូលលុយរៀលប្តូរជាដុល្លារ">
@@ -2118,7 +2129,7 @@ function executeExportReport(type, reporterName, signDateValue) {
         
         let payerDisplay = payerName;
         if (i_debtUSD > 0 || i_debtKHR > 0) {
-            payerDisplay += ` <br><span style="font-size:10px; color:#b45309; background:#fef3c7; padding:2px 4px; border-radius:4px; font-weight:bold;"><i class="fa-solid fa-clock-rotate-left"></i> ជំពាក់ Debt</span>`;
+            payerDisplay += ` <br><span class="badge bg-warning text-dark border border-warning mt-1 shadow-sm" style="font-size: 14px !important;"><i class="fi fi-rr-time-past me-1"></i> ជំពាក់ Debt</span>`;
         }
 
         let displayDebt = '-';
