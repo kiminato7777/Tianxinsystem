@@ -11934,7 +11934,7 @@ margin: 0;
     </div>
     <div class="modal-footer bg-light border-top-0">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">បិទ (Close)</button>
-        <button type="button" class="btn btn-primary px-4 fw-bold" onclick="document.getElementById('reportPreviewIframe').contentWindow.print()">
+        <button type="button" class="btn btn-primary px-4 fw-bold" onclick="window.printReportPreviewIframe()">
             <i class="fi fi-rr-print me-2"></i>បោះពុម្ព (Print / Save PDF)
         </button>
     </div>
@@ -11944,6 +11944,23 @@ margin: 0;
             `;
             document.body.insertAdjacentHTML('beforeend', modalHtml);
             modalEl = document.getElementById('reportPreviewModal');
+            
+            // Define the global print function
+            if (!window.printReportPreviewIframe) {
+                window.printReportPreviewIframe = function() {
+                    const iframe = document.getElementById('reportPreviewIframe');
+                    if (iframe && iframe.contentWindow) {
+                        const origTitle = document.title;
+                        const docTitle = iframe.contentDocument.title || 'Report';
+                        const now = new Date();
+                        const dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+                        document.title = docTitle.replace(/[<>:"/\\\\|?*]+/g, '_') + '_' + dateStr;
+                        iframe.contentWindow.focus();
+                        iframe.contentWindow.print();
+                        setTimeout(() => { document.title = origTitle; }, 500);
+                    }
+                };
+            }
         }
 
         const iframe = document.getElementById('reportPreviewIframe');
