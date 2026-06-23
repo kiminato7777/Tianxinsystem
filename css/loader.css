@@ -1,0 +1,238 @@
+/* loader.css — Premium Unified Loader System v4.0
+ * Provides beautiful, modern layouts and smooth animations for:
+ *   1. Full-page universal-loader (mesh background, orbiting rings, logo)
+ *   2. Popup loader card
+ *   3. Button loader spinners
+ */
+
+/* ── Khmer Font ─────────────────────────────────────────── */
+@font-face {
+    font-family: 'Kantumruy Pro';
+    src: url('../fonts/Kantumruy-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Kantumruy Pro';
+    src: url('../fonts/Kantumruy-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Kantumruy Pro';
+    src: url('../fonts/Kantumruy-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   1. FULL-PAGE DYNAMIC LOADER
+   window.showUniversalLoader() / window.hideUniversalLoader()
+   ═══════════════════════════════════════════════════════════ */
+
+#universal-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 10, 30, 0.52);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100000;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.4s;
+}
+
+#universal-loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+#universal-loader .popup-loader-card {
+    transform: scale(0.85);
+    transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#universal-loader:not(.hidden) .popup-loader-card {
+    transform: scale(1);
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   2. POPUP OVERLAY LOADER
+   window.showPopupLoader('msg') / window.hidePopupLoader()
+   ═══════════════════════════════════════════════════════════ */
+
+#popup-loader-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 10, 30, 0.52);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity  0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        visibility 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#popup-loader-overlay.plo-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+#popup-loader-overlay.plo-hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Glass Card */
+.popup-loader-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 36px 48px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(138, 14, 91, 0.12);
+    border-radius: 24px;
+    box-shadow:
+        0 20px 60px rgba(138, 14, 91, 0.18),
+        0 4px 20px rgba(0, 0, 0, 0.08);
+    transform: scale(0.85);
+    transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+    min-width: 200px;
+}
+
+#popup-loader-overlay.plo-visible .popup-loader-card {
+    transform: scale(1);
+}
+
+/* SVG Arc Spinner */
+.popup-loader-spinner {
+    position: relative;
+    width: 64px;
+    height: 64px;
+}
+
+.pls-svg {
+    width: 100%;
+    height: 100%;
+    animation: pls-rotate 1.6s linear infinite;
+}
+
+.pls-track {
+    stroke: rgba(138, 14, 91, 0.12);
+}
+
+.pls-fill {
+    stroke: #8a0e5b;
+    stroke-linecap: round;
+    animation: pls-dash 1.6s ease-in-out infinite;
+    transform-origin: center;
+}
+
+@keyframes pls-rotate {
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pls-dash {
+    0%   { stroke-dashoffset: 126; stroke-dasharray: 1, 125; }
+    50%  { stroke-dashoffset: 32;  stroke-dasharray: 94, 32; }
+    100% { stroke-dashoffset: 126; stroke-dasharray: 1, 125; }
+}
+
+/* Center Logo Wrapper in Popup Loader */
+.popup-loader-logo-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 38px;
+    height: 38px;
+    margin: -19px 0 0 -19px;
+    border-radius: 50%;
+    background: #ffffff;
+    padding: 2px;
+    box-shadow: 0 3px 10px rgba(138, 14, 91, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(138, 14, 91, 0.08);
+    overflow: hidden;
+    z-index: 5;
+    animation: popup-logo-pulse 1.6s ease-in-out infinite;
+}
+
+.popup-loader-logo {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+@keyframes popup-logo-pulse {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.06); }
+}
+
+/* Message text */
+.popup-loader-msg {
+    font-family: 'Kantumruy Pro', 'Moul', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #8a0e5b;
+    letter-spacing: 0.4px;
+    text-align: center;
+    animation: plo-fadein 0.4s ease both;
+}
+
+@keyframes plo-fadein {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   3. BUTTON LOADING STATE
+   window.setButtonLoading(btn, true/false, label?)
+   ═══════════════════════════════════════════════════════════ */
+
+.btn-loading {
+    pointer-events: none;
+    opacity: 0.82;
+    position: relative;
+}
+
+/* Tiny inline spinner inside buttons */
+.btn-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: btn-spin 0.65s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+/* For light/outlined buttons */
+.btn-light .btn-spinner,
+.btn-outline-secondary .btn-spinner,
+.btn-secondary .btn-spinner {
+    border-color: rgba(100, 100, 100, 0.3);
+    border-top-color: #444;
+}
+
+@keyframes btn-spin {
+    to { transform: rotate(360deg); }
+}

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ប្រព័ន្ធគ្រប់គ្រងសាលាអន្តរជាតិ (Dashboard)</title>
+    <link rel="icon" type="image/jpeg" href="/img/1.jpg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preload" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"
+        as="style">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel="stylesheet" href="/css/loader.css">
+
+    <script src="/js/core/loader-init.js"></script>
+    <script src="/js/core/system-core-standard.js"></script>
+    <script src="/js/core/theme-mode.js"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+    <style>
+        * {
+            font-family: 'Kantumruy Pro', sans-serif;
+        }
+    </style>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+
+<body>
+
+    <!-- Animated Butterflies -->
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+
+    <!-- Enhanced Notification Button -->
+
+
+    <div id="sidebar">
+        <!-- Dashboard Sidebar injected by sidebar.js -->
+    </div>
+
+    <div id="main-content">
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 animate-up" style="position: relative; z-index: 1050;">
+            <div class="mb-3 mb-md-0 d-flex align-items-center gap-4">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" onclick="toggleDesktopSidebar()" title="បង្រួម/ពង្រីក Sidebar (Toggle Sidebar)" style="width: 48px; height: 48px; border: 1px solid #f8fafc; background: white;">
+                        <i class="fi fi-rr-menu-burger" style="font-size: 1.1rem; color: #8a0e5b;"></i>
+                    </button>
+                    <button class="btn btn-light rounded-circle shadow-sm d-none d-lg-flex align-items-center justify-content-center" onclick="toggleFullScreen()" title="ពេញអេក្រង់ (Full Screen)" style="width: 48px; height: 48px; border: 1px solid #f8fafc; background: white;">
+                        <i class="fi fi-rr-expand" style="font-size: 1.1rem; color: #8a0e5b;"></i>
+                    </button>
+                    <button class="btn btn-light rounded-circle shadow-sm d-none d-lg-flex align-items-center justify-content-center theme-toggle-btn" onclick="toggleTheme()" title="ប្តូររចនាប័ទ្ម (Change Theme)" style="width: 48px; height: 48px; border: 1px solid #f8fafc; background: white;">
+                        <i class="fi fi-rr-moon" style="font-size: 1.1rem; color: #8a0e5b;"></i>
+                    </button>
+                </div>
+                <div>
+                    <h4 class="fw-bold mb-1 d-flex align-items-center" style="color: #8a0e5b; font-size: 1.6rem; letter-spacing: 0.5px;">
+                        <i class="fi fi-rr-school me-2"></i>ប្រព័ន្ធគ្រប់គ្រងសាលាអន្តរជាតិ បានស៊ិន
+                    </h4>
+                    <p class="mb-0" style="font-size: 0.95rem; color: #64748b;">
+                        សួស្ដី! លោកគ្រូ <span id="welcome-user-name" class="fw-bold" style="color: #8a0e5b;">User</span> សូមស្វាគមន៍មកកាន់ផ្ទាំងគ្រប់គ្រងទិន្នន័យ។
+                    </p>
+                </div>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <!-- Pink Decorative Blob -->
+                <div class="butterfly-blob d-none d-md-block"></div>
+
+                <!-- Theme Toggle -->
+                <button class="theme-toggle-pill" onclick="toggleTheme()" title="ប្តូររចនាប័ទ្ម (Change Theme)" style="width: 50px; height: 30px;">
+                    <div class="theme-toggle-circle">
+                        <i class="fi fi-rr-settings-sliders"></i>
+                    </div>
+                </button>
+
+                <!-- Notification -->
+                <button class="header-icon-btn d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: #f1f5f9; border-radius: 50%; border: none;">
+                    <i class="fi fi-rr-bell" style="font-size: 1.1rem; color: #64748b;"></i>
+                </button>
+
+                <!-- Messages -->
+                <button class="header-icon-btn position-relative d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: #f1f5f9; border-radius: 50%; border: none;">
+                    <i class="fi fi-rr-comment-alt" style="font-size: 1.1rem; color: #64748b;"></i>
+                    <div class="header-icon-dot" style="top: 8px; right: 8px; border-color: #f1f5f9;"></div>
+                </button>
+
+                <!-- Profile Dropdown -->
+                <div class="dropdown ms-3">
+                    <button class="profile-trigger border-0 bg-transparent text-start p-0 m-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="display: flex; align-items: center; gap: 12px;">
+                        <div class="profile-info text-end d-none d-md-block">
+                            <div class="profile-name" id="user-display-name" style="font-weight: 700; color: #1e293b; font-size: 0.95rem; margin-bottom: 2px;">...</div>
+                            <div class="profile-role badge bg-warning text-dark rounded-pill" id="user-role-badge" style="font-size: 0.75rem; padding: 4px 10px; font-weight: 700;">...</div>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" id="user-display-image" class="profile-avatar" alt="Profile" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                        <i class="fi fi-rr-angle-small-down profile-caret" style="color: #64748b;"></i>
+                    </button>
+
+                    <!-- Custom Dropdown Menu -->
+                    <div class="dropdown-menu dropdown-menu-end custom-profile-menu">
+                        <div class="dropdown-layout">
+                            <!-- Left Panel -->
+                            <div class="dropdown-left-panel">
+                                <div class="panel-icon-wrapper">
+                                    <i class="fi fi-rr-users"></i>
+                                </div>
+                                <div class="panel-stat-value" id="header-total-users">0</div>
+                                <div class="panel-stat-label">Total Users</div>
+                            </div>
+                            
+                            <!-- Right Panel (Menu) -->
+                            <div class="dropdown-right-panel">
+                                <a class="dropdown-item" href="#">
+                                    <i class="fi fi-rr-user"></i> My Profile
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fi fi-rr-address-book"></i> My Contacts
+                                </a>
+                                <a class="dropdown-item" href="/settings.html">
+                                    <i class="fi fi-rr-settings"></i> Account Settings
+                                </a>
+                                <div class="dropdown-divider-custom"></div>
+                                <a class="dropdown-item" href="#" onclick="handleLogout(event)">
+                                    <i class="fi fi-rr-sign-out-alt"></i> Log Out
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile UI -->
+        <div class="profile-container p-4 animate-up" style="animation-delay: 0.1s;">
+            <div class="d-flex justify-content-between align-items-center mb-4" style="max-width: 800px; margin: 0 auto;">
+                <h2 class="text-dark fw-bold m-0" style="font-size: 1.8rem; letter-spacing: 0.5px;">គណនីរបស់អ្នក <span class="fw-normal" style="font-size: 1.2rem; color: #64748b;">(Profile)</span></h2>
+                <div class="text-muted fw-bold" style="font-size: 0.9rem;">
+                    <a href="/index.html" class="text-decoration-none" style="color: #64748b;"><i class="fi fi-rr-apps me-1"></i>ផ្ទាំងគ្រប់គ្រង</a> <span class="mx-2 text-secondary">/</span> <span style="color: #3b82f6;">គណនី</span>
+                </div>
+            </div>
+
+            <div class="profile-card mx-auto">
+                <!-- Cover Image -->
+                <div class="profile-cover">
+                    <button class="btn btn-sm btn-primary profile-edit-cover-btn">
+                        <i class="fi fi-rr-camera me-1"></i> កែប្រែ
+                    </button>
+                </div>
+
+                <!-- Avatar -->
+                <div class="profile-avatar-wrapper">
+                    <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" id="profilePageImage" alt="Profile Avatar">
+                    <button class="profile-avatar-edit-btn">
+                        <i class="fi fi-rr-camera"></i>
+                    </button>
+                </div>
+
+                <!-- Profile Info -->
+                <div class="profile-info-section text-center">
+                    <h3 class="profile-name" id="profilePageName">កំពុងទាញយក...</h3>
+                    <div class="profile-role text-muted mb-4" id="profilePageRole">តួនាទីអ្នកប្រើប្រាស់</div>
+
+                    <!-- Stats -->
+                    <div class="profile-stats mb-4">
+                        <div class="stat-item">
+                            <div class="stat-value text-primary" id="statUsageCount">15</div>
+                            <div class="stat-label">ចំនួនប្រើប្រាស់</div>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <div class="stat-value text-dark" id="statRoleText">Admin</div>
+                            <div class="stat-label">តួនាទី</div>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item" style="position: relative;">
+                            <div class="stat-value text-dark" id="statDobText" style="font-size: 1.1rem; line-height: 1.6rem; margin-top: 5px;">-</div>
+                            <div class="stat-label">ថ្ងៃខែឆ្នាំកំណើត</div>
+                        </div>
+                    </div>
+
+                    <!-- About Me -->
+                    <div class="profile-about px-4 mx-auto mb-4" style="max-width: 600px;">
+                        <h6 class="fw-bold mb-3">អំពីខ្ញុំ (About Me)</h6>
+                        <p class="text-muted small lh-lg" id="profilePageBio">
+                            សូមស្វាគមន៍មកកាន់ប្រវត្តិរូបរបស់ខ្ញុំ។ ព័ត៌មានលម្អិតបន្ថែមនឹងត្រូវបានបង្ហាញនៅទីនេះ យោងទៅតាមការបញ្ចូលទិន្នន័យពីទំព័រការកំណត់។
+                        </p>
+                    </div>
+
+                    <!-- Social Links -->
+                    <div class="profile-social mb-2">
+                        <h6 class="fw-bold mb-3 text-muted" style="font-size: 0.85rem;">តាមដានខ្ញុំនៅលើ (Follow me on)</h6>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="#" class="social-icon"><i class="fi fi-brands-facebook"></i></a>
+                            <a href="#" class="social-icon"><i class="fi fi-brands-twitter"></i></a>
+                            <a href="#" class="social-icon"><i class="fi fi-brands-linkedin"></i></a>
+                            <a href="#" class="social-icon"><i class="fi fi-rr-globe"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .profile-container {
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+            .profile-card {
+                background: #ffffff;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+                border: 1px solid #f1f5f9;
+                max-width: 800px; /* Moderate size */
+                overflow: hidden;
+                position: relative;
+                padding-bottom: 2rem;
+            }
+            .profile-cover {
+                height: 200px;
+                background: url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat;
+                position: relative;
+            }
+            .profile-edit-cover-btn {
+                position: absolute;
+                bottom: 16px;
+                right: 16px;
+                background: rgba(59, 130, 246, 0.9);
+                border: none;
+                backdrop-filter: blur(4px);
+            }
+            .profile-edit-cover-btn:hover {
+                background: rgba(37, 99, 235, 1);
+            }
+            .profile-avatar-wrapper {
+                width: 120px;
+                height: 120px;
+                margin: -60px auto 16px;
+                position: relative;
+                z-index: 2;
+            }
+            .profile-avatar-wrapper img {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                border: 4px solid #ffffff;
+                object-fit: cover;
+                background: #fff;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            }
+            .profile-avatar-edit-btn {
+                position: absolute;
+                bottom: 5px;
+                right: 5px;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: #3b82f6;
+                color: white;
+                border: 2px solid #ffffff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .profile-avatar-edit-btn:hover {
+                background: #2563eb;
+                transform: scale(1.05);
+            }
+            .profile-name {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #1e293b;
+                margin-bottom: 4px;
+            }
+            .profile-role {
+                font-size: 0.95rem;
+                font-weight: 500;
+            }
+            .profile-stats {
+                background: #ffffff;
+                border-top: 1px solid #f1f5f9;
+                border-bottom: 1px solid #f1f5f9;
+                padding: 24px 0;
+                display: flex;
+                justify-content: space-evenly;
+                align-items: center;
+                width: 100%;
+                margin: 0;
+            }
+            .stat-item {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            .stat-value {
+                font-size: 1.6rem;
+                font-weight: 800;
+                color: #1e293b;
+                margin-bottom: 4px;
+                letter-spacing: -0.5px;
+            }
+            .stat-label {
+                color: #64748b;
+                font-size: 0.8rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            .stat-divider {
+                width: 1px;
+                height: 40px;
+                background: #e2e8f0;
+            }
+            .social-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background: #f1f5f9;
+                color: #475569;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                transition: all 0.2s;
+            }
+            .social-icon:hover {
+                background: #3b82f6;
+                color: white;
+                transform: translateY(-2px);
+            }
+        </style>
+
+
+        <!-- Footer -->
+        <footer class="app-footer mt-5 py-4 border-top bg-white text-center text-muted position-relative"
+            style="font-size: 0.9rem; z-index: 100;">
+            <div class="container">
+                <div class="mb-3">
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទីតាំងទី២ របស់សាលា:</span>
+                        ភូមិក្រាំង សង្កាត់ក្រាំងអំពិល ក្រុងកំពត ខេត្តកំពត
+                    </div>
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទំនាក់ទំនង:</span>
+                        <span class="me-2"><i class="fi fi-rr-smartphone me-1 text-primary"></i>093 835 678
+                            (Smart)</span>
+                        <a href="https://t.me/Tian093835678" target="_blank" class="text-decoration-none">
+                            <i class="fi fi-brands-telegram me-1 text-primary"></i>Telegram
+                        </a>
+                    </div>
+                </div>
+
+                <div class="w-75 mx-auto border-top my-3 opacity-25"></div>
+
+                <div class="footer-update-time mb-1">
+                    <i class="fi fi-rr-clock me-1"></i>កាលបរិច្ឆេទចុងក្រោយ: <span id="last-update-time">09:44:24</span>
+                </div>
+                <div class="footer-copyright">
+                    ©
+                    <script>document.write(new Date().getFullYear())</script> គ្រប់គ្រងសាលា. Developed by <span
+                        class="fw-bold text-pink-primary">មាស មករា</span>.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="/js/core/firebase-config.js"></script>
+    <script src="/js/core/auth-check.js"></script>
+    <script src="/js/core/receiver-utils.js"></script>
+    <script src="/js/core/sidebar.js"></script>
+
+    <script src="/js/utils/khmer-font.js"></script>
+    <script src="/js/pages/system-updates.js"></script>
+    <script src="/js/pages/dashboard.js"></script>
+
+
+
+    <script src="/js/core/offline-manager.js"></script>
+
+    <script>
+        function updateWelcomeUser() {
+            try {
+                const sessionData = localStorage.getItem('userSession');
+                if (sessionData) {
+                    const user = JSON.parse(sessionData);
+                    document.getElementById('welcome-user-name').textContent = user.name || user.email?.split('@')[0] || 'អ្នកប្រើប្រាស់';
+                }
+            } catch (e) {
+                console.error('Error user session', e);
+            }
+        }
+
+        // Profile Display Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const data = window.currentUserProfileData;
+                if (!data) return;
+
+                const nameEl = document.getElementById('profilePageName');
+                const roleEl = document.getElementById('profilePageRole');
+                const bioEl = document.getElementById('profilePageBio');
+                const imgEl = document.getElementById('profilePageImage');
+
+                if (nameEl) nameEl.textContent = data.displayName || data.name || 'មិនមានឈ្មោះ (No Name)';
+                if (roleEl) roleEl.textContent = data.role || data.position || 'តួនាទីអ្នកប្រើប្រាស់ (User)';
+                if (bioEl) bioEl.textContent = data.bio || 'មិនមានការពិពណ៌នាអំពីខ្លួនឯងនៅឡើយទេ។ សូមចូលទៅកាន់ការកំណត់ដើម្បីបន្ថែមជីវប្រវត្តិ។';
+                
+                const statRole = document.getElementById('statRoleText');
+                const statDob = document.getElementById('statDobText');
+                const statUsage = document.getElementById('statUsageCount');
+
+                if (statRole) statRole.textContent = data.role || 'Admin';
+                if (statUsage) statUsage.textContent = data.loginCount || '15';
+                
+                if (statDob) {
+                    if (data.dob) {
+                        const dobDate = new Date(data.dob);
+                        const day = String(dobDate.getDate()).padStart(2, '0');
+                        const month = String(dobDate.getMonth() + 1).padStart(2, '0');
+                        const year = dobDate.getFullYear();
+                        statDob.textContent = `${day}/${month}/${year}`;
+
+                        // Check if today is birthday
+                        const today = new Date();
+                        if (today.getDate() === dobDate.getDate() && today.getMonth() === dobDate.getMonth()) {
+                            statDob.innerHTML = `<span class="text-danger fw-bold">${day}/${month}/${year}</span> 🎂`;
+                            setTimeout(() => {
+                                alert('🎉 រីករាយថ្ងៃខួបកំណើត! សូមជូនពរអោយមានសុខភាពល្អ និងជោគជ័យគ្រប់ភារកិច្ច! 🎉');
+                            }, 1500);
+                        }
+                    } else {
+                        statDob.textContent = 'មិនមាន (N/A)';
+                    }
+                }
+
+                if (imgEl && data.imageUrl && data.imageUrl !== 'undefined' && data.imageUrl !== 'null') {
+                    imgEl.src = data.imageUrl;
+                }
+            }, 1000); // Wait for auth check
+        });
+
+        // Redirect to settings for editing
+        document.querySelectorAll('.profile-edit-cover-btn, .profile-avatar-edit-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                window.location.href = '/settings.html';
+            });
+        });
+
+        function toggleDesktopSidebar() {
+            document.body.classList.toggle('sidebar-collapsed');
+        }
+
+        updateWelcomeUser();
+    </script>
+
+    <!-- System Updates Offcanvas (Side Panel) -->
+    <div class="offcanvas offcanvas-end border-0 shadow-lg" tabindex="-1" id="systemUpdatesOffcanvas"
+        aria-labelledby="systemUpdatesLabel" style="width: 400px; border-radius: 30px 0 0 30px;">
+        <div class="offcanvas-header border-bottom-0 pt-4 px-4">
+            <h5 class="offcanvas-title fw-bold text-pink-dark" id="systemUpdatesLabel">
+                <i class="fi fi-rr-bell me-2"></i>អ្វីដែលបាន Update ថ្មីៗ
+            </h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-4" id="notificationList">
+            <!-- Updates will be loaded here -->
+        </div>
+        <div class="p-4 border-top-0 text-center">
+            <small class="text-muted">ប្រព័ន្ធត្រូវបានរក្សាសុវត្ថិភាព និងធ្វើបច្ចុប្បន្នភាពជានិច្ច</small>
+        </div>
+    </div>
+</body>
+
+</html>

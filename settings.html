@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ប្រព័ន្ធគ្រប់គ្រងសាលាអន្តរជាតិ (Dashboard)</title>
+    <link rel="icon" type="image/jpeg" href="/img/1.jpg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preload" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"
+        as="style">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel="stylesheet" href="/css/loader.css">
+
+    <script src="/js/core/loader-init.js"></script>
+    <script src="/js/core/system-core-standard.js"></script>
+    <script src="/js/core/theme-mode.js"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+    <style>
+        * {
+            font-family: 'Kantumruy Pro', sans-serif;
+        }
+    </style>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+
+<body>
+
+    <!-- Animated Butterflies -->
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+    <div class="butterfly"></div>
+
+    <!-- Enhanced Notification Button -->
+
+
+    <div id="sidebar">
+        <!-- Dashboard Sidebar injected by sidebar.js -->
+    </div>
+
+    <div id="main-content">
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 animate-up" style="position: relative; z-index: 1050;">
+            <div class="mb-3 mb-md-0 d-flex align-items-center gap-4">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" onclick="toggleDesktopSidebar()" title="បង្រួម/ពង្រីក Sidebar (Toggle Sidebar)" style="width: 48px; height: 48px; border: 1px solid #f8fafc; background: white;">
+                        <i class="fi fi-rr-menu-burger" style="font-size: 1.1rem; color: #8a0e5b;"></i>
+                    </button>
+                    <button class="btn btn-light rounded-circle shadow-sm d-none d-lg-flex align-items-center justify-content-center" onclick="toggleFullScreen()" title="ពេញអេក្រង់ (Full Screen)" style="width: 48px; height: 48px; border: 1px solid #f8fafc; background: white;">
+                        <i class="fi fi-rr-expand" style="font-size: 1.1rem; color: #8a0e5b;"></i>
+                    </button>
+                    <button class="btn btn-light rounded-circle shadow-sm d-none d-lg-flex align-items-center justify-content-center theme-toggle-btn" onclick="toggleTheme()" title="ប្តូររចនាប័ទ្ម (Change Theme)" style="width: 48px; height: 48px; border: 1px solid #f8fafc; background: white;">
+                        <i class="fi fi-rr-moon" style="font-size: 1.1rem; color: #8a0e5b;"></i>
+                    </button>
+                </div>
+                <div>
+                    <h4 class="fw-bold mb-1 d-flex align-items-center" style="color: #8a0e5b; font-size: 1.6rem; letter-spacing: 0.5px;">
+                        <i class="fi fi-rr-school me-2"></i>ប្រព័ន្ធគ្រប់គ្រងសាលាអន្តរជាតិ បានស៊ិន
+                    </h4>
+                    <p class="mb-0" style="font-size: 0.95rem; color: #64748b;">
+                        សួស្ដី! លោកគ្រូ <span id="welcome-user-name" class="fw-bold" style="color: #8a0e5b;">User</span> សូមស្វាគមន៍មកកាន់ផ្ទាំងគ្រប់គ្រងទិន្នន័យ។
+                    </p>
+                </div>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <!-- Pink Decorative Blob -->
+                <div class="butterfly-blob d-none d-md-block"></div>
+
+                <!-- Theme Toggle -->
+                <button class="theme-toggle-pill" onclick="toggleTheme()" title="ប្តូររចនាប័ទ្ម (Change Theme)" style="width: 50px; height: 30px;">
+                    <div class="theme-toggle-circle">
+                        <i class="fi fi-rr-settings-sliders"></i>
+                    </div>
+                </button>
+
+                <!-- Notification -->
+                <button class="header-icon-btn d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: #f1f5f9; border-radius: 50%; border: none;">
+                    <i class="fi fi-rr-bell" style="font-size: 1.1rem; color: #64748b;"></i>
+                </button>
+
+                <!-- Messages -->
+                <button class="header-icon-btn position-relative d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: #f1f5f9; border-radius: 50%; border: none;">
+                    <i class="fi fi-rr-comment-alt" style="font-size: 1.1rem; color: #64748b;"></i>
+                    <div class="header-icon-dot" style="top: 8px; right: 8px; border-color: #f1f5f9;"></div>
+                </button>
+
+                <!-- Profile Dropdown -->
+                <div class="dropdown ms-3">
+                    <button class="profile-trigger border-0 bg-transparent text-start p-0 m-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="display: flex; align-items: center; gap: 12px;">
+                        <div class="profile-info text-end d-none d-md-block">
+                            <div class="profile-name" id="user-display-name" style="font-weight: 700; color: #1e293b; font-size: 0.95rem; margin-bottom: 2px;">...</div>
+                            <div class="profile-role badge bg-warning text-dark rounded-pill" id="user-role-badge" style="font-size: 0.75rem; padding: 4px 10px; font-weight: 700;">...</div>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" id="user-display-image" class="profile-avatar" alt="Profile" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                        <i class="fi fi-rr-angle-small-down profile-caret" style="color: #64748b;"></i>
+                    </button>
+
+                    <!-- Custom Dropdown Menu -->
+                    <div class="dropdown-menu dropdown-menu-end custom-profile-menu">
+                        <div class="dropdown-layout">
+                            <!-- Left Panel -->
+                            <div class="dropdown-left-panel">
+                                <div class="panel-icon-wrapper">
+                                    <i class="fi fi-rr-users"></i>
+                                </div>
+                                <div class="panel-stat-value" id="header-total-users">0</div>
+                                <div class="panel-stat-label">Total Users</div>
+                            </div>
+                            
+                            <!-- Right Panel (Menu) -->
+                            <div class="dropdown-right-panel">
+                                <a class="dropdown-item" href="/profile.html">
+                                    <i class="fi fi-rr-user"></i> My Profile
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fi fi-rr-address-book"></i> My Contacts
+                                </a>
+                                <a class="dropdown-item" href="/settings.html">
+                                    <i class="fi fi-rr-settings"></i> Account Settings
+                                </a>
+                                <div class="dropdown-divider-custom"></div>
+                                <a class="dropdown-item" href="#" onclick="handleLogout(event)">
+                                    <i class="fi fi-rr-sign-out-alt"></i> Log Out
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings UI -->
+        <div class="settings-container p-4 animate-up" style="animation-delay: 0.1s;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-dark fw-bold m-0" style="font-size: 1.8rem; letter-spacing: 0.5px;">ការកំណត់គណនី <span class="fw-normal" style="font-size: 1.2rem; color: #64748b;">(Settings)</span></h2>
+                <div class="text-muted fw-bold" style="font-size: 0.9rem;">
+                    <a href="/index.html" class="text-decoration-none" style="color: #64748b;"><i class="fi fi-rr-apps me-1"></i>ផ្ទាំងគ្រប់គ្រង</a> <span class="mx-2 text-secondary">/</span> <span style="color: #3b82f6;">ការកំណត់</span>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Personal Information -->
+                <div class="col-lg-7 col-xl-8">
+                    <div class="settings-card p-4 p-xl-5">
+                        <h5 class="text-dark fw-bold mb-4" style="font-size: 1.1rem;"><i class="fi fi-rr-address-book me-2" style="color: #3b82f6;"></i>ព័ត៌មានផ្ទាល់ខ្លួន (Personal Information)</h5>
+                        
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <label class="settings-label">ឈ្មោះពេញ (Full Name)</label>
+                                <div class="settings-input-wrapper">
+                                    <i class="fi fi-rr-user settings-input-icon"></i>
+                                    <input type="text" class="settings-input ps-5" placeholder="បញ្ចូលឈ្មោះ..." id="settingFullName">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="settings-label">លេខទូរស័ព្ទ (Phone Number)</label>
+                                <div class="settings-input-wrapper">
+                                    <i class="fi fi-rr-smartphone settings-input-icon"></i>
+                                    <input type="text" class="settings-input ps-5" placeholder="បញ្ចូលលេខទូរស័ព្ទ..." id="settingPhone">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="settings-label">អ៊ីមែល (Email Address)</label>
+                                <div class="settings-input-wrapper">
+                                    <i class="fi fi-rr-envelope settings-input-icon"></i>
+                                    <input type="email" class="settings-input ps-5" placeholder="admin@example.com" id="settingEmail" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="settings-label">ថ្ងៃខែឆ្នាំកំណើត (Date of Birth)</label>
+                                <div class="settings-input-wrapper">
+                                    <i class="fi fi-rr-calendar settings-input-icon"></i>
+                                    <input type="date" class="settings-input ps-5" id="settingDob">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label class="settings-label">ឈ្មោះអ្នកប្រើប្រាស់ (Username)</label>
+                                <div class="settings-input-wrapper">
+                                    <i class="fi fi-rr-at settings-input-icon"></i>
+                                    <input type="text" class="settings-input ps-5" placeholder="បញ្ចូលឈ្មោះសម្គាល់..." id="settingUsername">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label class="settings-label">ជីវប្រវត្តិសង្ខេប (BIO)</label>
+                                <div class="settings-input-wrapper" style="height: auto;">
+                                    <i class="fi fi-rr-edit settings-input-icon" style="top: 15px; transform: none;"></i>
+                                    <textarea class="settings-input ps-5 py-3" rows="4" placeholder="ពិពណ៌នាអំពីខ្លួនអ្នកបន្តិចបន្តួច..." id="settingBio"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 mt-4">
+                            <button class="btn btn-settings-cancel"><i class="fi fi-rr-cross me-2"></i>បោះបង់</button>
+                            <button class="btn btn-settings-save" onclick="savePersonalInformation()"><i class="fi fi-rr-disk me-2"></i>រក្សាទុក</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Your Photo -->
+                <div class="col-lg-5 col-xl-4">
+                    <div class="settings-card p-4 p-xl-5 h-100">
+                        <h5 class="text-dark fw-bold mb-4" style="font-size: 1.1rem;"><i class="fi fi-rr-picture me-2" style="color: #ec4899;"></i>រូបថតរបស់អ្នក (Your Photo)</h5>
+                        
+                        <div class="d-flex align-items-center mb-4 gap-3">
+                            <div class="position-relative">
+                                <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" id="settingPreviewImage" class="rounded-circle shadow" style="width: 64px; height: 64px; object-fit: cover; border: 2px solid #e2e8f0;">
+                            </div>
+                            <div>
+                                <h6 class="text-dark fw-bold mb-1" style="font-size: 0.95rem;">ផ្លាស់ប្តូររូបថត</h6>
+                                <div class="d-flex gap-3 mt-1">
+                                    <a href="#" class="text-decoration-none text-danger small fw-bold hover-dark d-flex align-items-center gap-1" onclick="document.getElementById('settingPhotoUpload').value=''; document.getElementById('settingPreviewImage').src='https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff';"><i class="fi fi-rr-trash"></i> លុប</a>
+                                    <a href="#" class="text-decoration-none text-primary small fw-bold hover-dark d-flex align-items-center gap-1" onclick="document.getElementById('settingPhotoUpload').click()"><i class="fi fi-rr-upload"></i> ជ្រើសរើសថ្មី</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-dropzone" onclick="document.getElementById('settingPhotoUpload').click()">
+                            <input type="file" id="settingPhotoUpload" class="d-none" accept="image/*" onchange="handleSettingPhotoSelect(event)">
+                            <div class="dropzone-icon mb-3">
+                                <i class="fi fi-rr-cloud-upload"></i>
+                            </div>
+                            <div class="mb-2 fw-bold" style="font-size: 0.95rem;">
+                                <span class="text-primary">ចុចដើម្បីបញ្ជូល</span> <span class="text-muted">ឬទាញទម្លាក់ទីនេះ</span>
+                            </div>
+                            <div class="text-muted small mb-1">គាំទ្រឯកសារ SVG, PNG, JPG ឬ GIF</div>
+                            <div class="text-muted small" style="font-size: 0.75rem;">(ទំហំអតិបរមា 800x800px)</div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 mt-4">
+                            <button class="btn btn-settings-cancel"><i class="fi fi-rr-cross me-2"></i>បោះបង់</button>
+                            <button class="btn btn-settings-save" onclick="savePhoto()"><i class="fi fi-rr-cloud-check me-2"></i>រក្សាទុករូបថត</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .settings-container {
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+            .settings-card {
+                background: #ffffff; /* Card background */
+                border-radius: 8px;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+                border: 1px solid #f1f5f9;
+            }
+            .settings-label {
+                color: #475569;
+                font-size: 0.85rem;
+                font-weight: 600;
+                margin-bottom: 8px;
+                display: block;
+            }
+            .settings-input-wrapper {
+                position: relative;
+                width: 100%;
+                height: 45px;
+            }
+            .settings-input {
+                width: 100%;
+                height: 100%;
+                background: #f8fafc;
+                border: 1px solid #e2e8f0;
+                border-radius: 6px;
+                color: #1e293b;
+                font-size: 0.95rem;
+                padding: 0 16px;
+                transition: all 0.2s;
+            }
+            .settings-input:focus {
+                outline: none;
+                border-color: #3b82f6;
+                background: #ffffff;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            }
+            .settings-input::placeholder {
+                color: #94a3b8;
+            }
+            .settings-input-icon {
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #94a3b8;
+                font-size: 1rem;
+                pointer-events: none;
+            }
+            .settings-dropzone {
+                border: 1px dashed #cbd5e1;
+                border-radius: 8px;
+                padding: 40px 20px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.2s;
+                background: #f8fafc;
+            }
+            .settings-dropzone:hover {
+                border-color: #3b82f6;
+                background: rgba(59, 130, 246, 0.05);
+            }
+            .dropzone-icon {
+                width: 40px;
+                height: 40px;
+                background: #f1f5f9;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+                color: #64748b;
+            }
+            .btn-settings-cancel {
+                background: transparent;
+                color: #475569;
+                border: 1px solid #e2e8f0;
+                padding: 8px 20px;
+                border-radius: 6px;
+                font-weight: 600;
+                transition: all 0.2s;
+            }
+            .btn-settings-cancel:hover {
+                background: #f1f5f9;
+                color: #1e293b;
+            }
+            .btn-settings-save {
+                background: #4f46e5;
+                color: white;
+                border: none;
+                padding: 8px 24px;
+                border-radius: 6px;
+                font-weight: 600;
+                transition: all 0.2s;
+            }
+            .btn-settings-save:hover {
+                background: #4338ca;
+                color: white;
+            }
+            .hover-dark:hover {
+                color: #1e293b !important;
+            }
+        </style>
+
+
+        <!-- Footer -->
+        <footer class="app-footer mt-5 py-4 border-top bg-white text-center text-muted position-relative"
+            style="font-size: 0.9rem; z-index: 100;">
+            <div class="container">
+                <div class="mb-3">
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទីតាំងទី២ របស់សាលា:</span>
+                        ភូមិក្រាំង សង្កាត់ក្រាំងអំពិល ក្រុងកំពត ខេត្តកំពត
+                    </div>
+                    <div class="mb-2">
+                        <span class="fw-bold text-pink-primary">ទំនាក់ទំនង:</span>
+                        <span class="me-2"><i class="fi fi-rr-smartphone me-1 text-primary"></i>093 835 678
+                            (Smart)</span>
+                        <a href="https://t.me/Tian093835678" target="_blank" class="text-decoration-none">
+                            <i class="fi fi-brands-telegram me-1 text-primary"></i>Telegram
+                        </a>
+                    </div>
+                </div>
+
+                <div class="w-75 mx-auto border-top my-3 opacity-25"></div>
+
+                <div class="footer-update-time mb-1">
+                    <i class="fi fi-rr-clock me-1"></i>កាលបរិច្ឆេទចុងក្រោយ: <span id="last-update-time">09:44:24</span>
+                </div>
+                <div class="footer-copyright">
+                    ©
+                    <script>document.write(new Date().getFullYear())</script> គ្រប់គ្រងសាលា. Developed by <span
+                        class="fw-bold text-pink-primary">មាស មករា</span>.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="/js/core/firebase-config.js"></script>
+    <script src="/js/core/auth-check.js"></script>
+    <script src="/js/core/receiver-utils.js"></script>
+    <script src="/js/core/sidebar.js"></script>
+
+    <script src="/js/utils/khmer-font.js"></script>
+    <script src="/js/pages/system-updates.js"></script>
+    <script src="/js/pages/dashboard.js"></script>
+
+
+
+    <script src="/js/core/offline-manager.js"></script>
+
+    <script>
+        function updateWelcomeUser() {
+            try {
+                const sessionData = localStorage.getItem('userSession');
+                if (sessionData) {
+                    const user = JSON.parse(sessionData);
+                    document.getElementById('welcome-user-name').textContent = user.name || user.email?.split('@')[0] || 'អ្នកប្រើប្រាស់';
+                }
+            } catch (e) {
+                console.error('Error user session', e);
+            }
+        }
+
+        // Settings Profile Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const data = window.currentUserProfileData;
+                if (!data) return;
+
+                document.getElementById('settingFullName').value = data.displayName || '';
+                document.getElementById('settingEmail').value = data.email || '';
+                document.getElementById('settingPhone').value = data.phone || '';
+                document.getElementById('settingUsername').value = data.username || data.email?.split('@')[0] || '';
+                document.getElementById('settingDob').value = data.dob || '';
+                document.getElementById('settingBio').value = data.bio || '';
+                
+                if (data.imageUrl && data.imageUrl !== 'undefined' && data.imageUrl !== 'null') {
+                    document.getElementById('settingPreviewImage').src = data.imageUrl;
+                }
+            }, 1000); // Wait for auth check
+        });
+
+        let newPhotoFile = null;
+
+        function handleSettingPhotoSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            newPhotoFile = file;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                document.getElementById('settingPreviewImage').src = evt.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function savePersonalInformation() {
+            const btn = document.querySelector('.btn-settings-save');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fi fi-rr-spinner fi-spin"></i> Saving...';
+            btn.disabled = true;
+
+            try {
+                const user = firebase.auth().currentUser;
+                if (!user) throw new Error("No user logged in");
+
+                const updates = {
+                    displayName: document.getElementById('settingFullName').value,
+                    phone: document.getElementById('settingPhone').value,
+                    username: document.getElementById('settingUsername').value,
+                    dob: document.getElementById('settingDob').value,
+                    bio: document.getElementById('settingBio').value
+                };
+
+                await firebase.database().ref('users/' + user.uid).update(updates);
+                
+                // Update Auth Profile
+                await user.updateProfile({ displayName: updates.displayName });
+
+                // Update local storage
+                let session = JSON.parse(localStorage.getItem('userSession') || '{}');
+                session.name = updates.displayName;
+                localStorage.setItem('userSession', JSON.stringify(session));
+
+                alert('Personal Information Saved Successfully!');
+                window.location.reload();
+            } catch (error) {
+                console.error(error);
+                alert('Error saving data: ' + error.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        async function savePhoto() {
+            if (!newPhotoFile) {
+                alert('Please select a photo to upload first.');
+                return;
+            }
+
+            const btn = document.querySelectorAll('.btn-settings-save')[1];
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fi fi-rr-spinner fi-spin"></i> Saving...';
+            btn.disabled = true;
+
+            try {
+                const user = firebase.auth().currentUser;
+                if (!user) throw new Error("No user logged in");
+
+                const storageRef = firebase.storage().ref('profile_pictures/' + user.uid + '_' + Date.now());
+                const snapshot = await storageRef.put(newPhotoFile);
+                const downloadURL = await snapshot.ref.getDownloadURL();
+
+                await firebase.database().ref('users/' + user.uid).update({ imageUrl: downloadURL });
+                await user.updateProfile({ photoURL: downloadURL });
+
+                alert('Photo Updated Successfully!');
+                window.location.reload();
+            } catch (error) {
+                console.error(error);
+                alert('Error saving photo: ' + error.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function toggleDesktopSidebar() {
+            document.body.classList.toggle('sidebar-collapsed');
+        }
+
+        updateWelcomeUser();
+    </script>
+
+    <!-- System Updates Offcanvas (Side Panel) -->
+    <div class="offcanvas offcanvas-end border-0 shadow-lg" tabindex="-1" id="systemUpdatesOffcanvas"
+        aria-labelledby="systemUpdatesLabel" style="width: 400px; border-radius: 30px 0 0 30px;">
+        <div class="offcanvas-header border-bottom-0 pt-4 px-4">
+            <h5 class="offcanvas-title fw-bold text-pink-dark" id="systemUpdatesLabel">
+                <i class="fi fi-rr-bell me-2"></i>អ្វីដែលបាន Update ថ្មីៗ
+            </h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-4" id="notificationList">
+            <!-- Updates will be loaded here -->
+        </div>
+        <div class="p-4 border-top-0 text-center">
+            <small class="text-muted">ប្រព័ន្ធត្រូវបានរក្សាសុវត្ថិភាព និងធ្វើបច្ចុប្បន្នភាពជានិច្ច</small>
+        </div>
+    </div>
+</body>
+
+</html>
