@@ -1136,6 +1136,10 @@ function setupEventListeners() {
             const button = event.relatedTarget;
             const type = button.getAttribute('data-type') || 'income';
 
+            // Preserve transDate value before resetting
+            const dateInput = document.getElementById('transDate');
+            const preservedDate = dateInput ? dateInput.value : null;
+
             // Reset Form
             document.getElementById('transactionForm').reset();
             document.getElementById('editTransactionId').value = '';
@@ -1146,9 +1150,9 @@ function setupEventListeners() {
 
             toggleCategoryOptions(type);
 
-            // Set Date to Today (using local time)
-            if (document.getElementById('transDate')) {
-                document.getElementById('transDate').value = toLocalISO(new Date());
+            // Set Date to preserved Date OR Today
+            if (dateInput) {
+                dateInput.value = preservedDate || toLocalISO(new Date());
                 updateDateHint();
             }
 
@@ -1262,13 +1266,31 @@ function handleFormSubmit(e) {
         transactionData.createdAt = firebase.database.ServerValue.TIMESTAMP;
         transactionsRef.push(transactionData)
             .then(() => {
-                closeModal();
+                // Preserve Date & Type to keep modal open for next entry
+                const dateInput = document.getElementById('transDate');
+                const preservedDate = dateInput ? dateInput.value : null;
+
+                document.getElementById('transactionForm').reset();
+                document.getElementById('editTransactionId').value = '';
+
+                if (dateInput && preservedDate) {
+                    dateInput.value = preservedDate;
+                }
+                const radio = document.getElementById('type' + type.charAt(0).toUpperCase() + type.slice(1));
+                if (radio) radio.checked = true;
+                if (typeof toggleCategoryOptions === 'function') {
+                    toggleCategoryOptions(type);
+                }
+                if (typeof updateLiveTotal === 'function') {
+                    updateLiveTotal();
+                }
+
                 fetchTransactions(true); // Refresh and go to page 1
                 Swal.fire({
                     icon: 'success',
                     title: 'រក្សាទុកបានជោគជ័យ',
-                    text: 'ប្រតិបត្តិការថ្មីត្រូវបានរក្សាទុកក្នុងប្រព័ន្ធ!',
-                    timer: 2000,
+                    text: 'ទិន្នន័យត្រូវបានរក្សាទុក! អ្នកអាចបញ្ចូលបន្តទៀតបាន។',
+                    timer: 1500,
                     showConfirmButton: false,
                     background: '#fff',
                     color: '#000',
