@@ -1,4 +1,4 @@
-/**
+﻿/**
  * data-tracking-script.js
  * Script for managing student data display from Firebase Realtime Database
  * Features: View details, Edit (real-time update), Delete, Mark as Paid, Search (DataTables), Reports
@@ -2770,74 +2770,6 @@ function getFamilyInfoTabHTML(s) {
       </div>
     </div>` : ''}
     `;
-}
-                <div class="card-body">
-                    <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle mb-3" style="width: 60px; height: 60px;">
-<i class="fi fi-rr-man-head fa-2x"></i>
-                    </div>
-                    <h6 class="fw-bold">ឪពុក (Father)</h6>
-                    <hr class="w-25 mx-auto my-3 text-primary opacity-25">
-                    <h5 class="fw-bold text-dark mb-1" style="font-family: 'Khmer OS Muol Light'; font-size: 1rem;">${s.fatherName || 'មិនបានបញ្ជាក់'}</h5>
-                    <p class="text-muted small mb-3">${s.fatherJob || 'មុខរបរមិនបានបញ្ជាក់'}</p>
-                    
-                    <div class="bg-light p-2 rounded mb-3 text-start small">
-<div class="d-flex align-items-start">
-    <i class="fi fi-rr-marker text-muted mt-1 me-2"></i>
-    <span class="text-secondary">${s.fatherAddress || 'អាសយដ្ឋានមិនបានបញ្ជាក់'}</span>
-</div>
-                    </div>
-
-                    ${s.fatherPhone ? `<a href="tel:${s.fatherPhone}" class="btn btn-outline-primary btn-sm rounded-pill px-3"><i class="fi fi-rr-phone-call me-2"></i>${formatPhoneWithCarrier(s.fatherPhone)}</a>` : '<span class="text-muted small">គ្មានលេខទូរស័ព្ទ</span>'}
-                </div>
-            </div>
-        </div>
-        <!-- Mother -->
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm text-center" style="border-radius: 15px;">
-                <div class="card-body">
-                    <div class="d-inline-flex align-items-center justify-content-center bg-pink-primary bg-opacity-10 text-pink-dark rounded-circle mb-3" style="width: 60px; height: 60px;">
-<i class="fi fi-rr-woman-head fa-2x"></i>
-                    </div>
-                    <h6 class="fw-bold">ម្តាយ (Mother)</h6>
-                    <hr class="w-25 mx-auto my-3 text-pink-dark opacity-25">
-                    <h5 class="fw-bold text-dark mb-1" style="font-family: 'Khmer OS Muol Light'; font-size: 1rem;">${s.motherName || 'មិនបានបញ្ជាក់'}</h5>
-                    <p class="text-muted small mb-3">${s.motherJob || 'មុខរបរមិនបានបញ្ជាក់'}</p>
-
-                    <div class="bg-light p-2 rounded mb-3 text-start small">
-<div class="d-flex align-items-start">
-    <i class="fi fi-rr-marker text-muted mt-1 me-2"></i>
-    <span class="text-secondary">${s.motherAddress || 'អាសយដ្ឋានមិនបានបញ្ជាក់'}</span>
-</div>
-                    </div>
-
-                    ${s.motherPhone ? `<a href="tel:${s.motherPhone}" class="btn btn-outline-pink btn-sm rounded-pill px-3" style="border-color: var(--bs-pink-primary); color: var(--bs-pink-primary);"><i class="fi fi-rr-phone-call me-2"></i>${formatPhoneWithCarrier(s.motherPhone)}</a>` : '<span class="text-muted small">គ្មានលេខទូរស័ព្ទ</span>'}
-                </div>
-            </div>
-        </div>
-        <!-- Guardian -->
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm text-center" style="border-radius: 15px;">
-                <div class="card-body">
-                    <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-circle mb-3" style="width: 60px; height: 60px;">
-<i class="fi fi-rr-shield-check fa-2x"></i>
-                    </div>
-                    <h6 class="fw-bold">អាណាព្យាបាល (Guardian)</h6>
-                    <hr class="w-25 mx-auto my-3 text-warning opacity-25">
-                    <h5 class="fw-bold text-dark mb-1" style="font-family: 'Khmer OS Muol Light'; font-size: 1rem;">${s.guardianName || 'មិនមាន'}</h5>
-                    <p class="text-muted small mb-3">${s.guardianRelation || 'ត្រូវជា...'}</p>
-                    
-<div class="bg-light p-2 rounded mb-3 text-start small">
-<div class="d-flex align-items-start">
-    <i class="fi fi-rr-marker text-muted mt-1 me-2"></i>
-    <span class="text-secondary">${s.guardianAddress || 'អាសយដ្ឋានមិនបានបញ្ជាក់'}</span>
-</div>
-                    </div>
-
-                    ${s.guardianPhone ? `<a href="tel:${s.guardianPhone}" class="btn btn-outline-warning btn-sm rounded-pill px-3"><i class="fi fi-rr-phone-call me-2"></i>${formatPhoneWithCarrier(s.guardianPhone)}</a>` : '<span class="text-muted small">...</span>'}
-                </div>
-            </div>
-        </div>
-    </div>`;
 }
 
 // Helper for Financial Info Tab
