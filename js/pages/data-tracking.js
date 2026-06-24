@@ -7420,19 +7420,25 @@ function createEditModal(key) {
 </div>
 <div class="card-body p-4">
     <div class="row g-3">
-        <div class="col-12">
+        <div class="col-md-6">
             <div class="form-floating">
-                <select class="form-select border-0 bg-light fw-bold" name="teacherName" id="edit_teacherName">
+                <select class="form-select border-0 bg-light fw-bold" id="edit_teacherName_select">
                     <option value="">ជ្រើសរើសគ្រូ...</option>
                     ${Object.values(allTeachersData || {}).map(tv => `<option value="${tv.nameKhmer}" ${student.teacherName === tv.nameKhmer ? 'selected' : ''} data-phone="${tv.phone || ''}">${tv.nameKhmer}</option>`).join('')}
                 </select>
-                <label class="fw-bold">គ្រូបន្ទុកថ្នាក់</label>
+                <label class="fw-bold">ជ្រើសរើសគ្រូ (Select Teacher)</label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input type="text" class="form-control border-0 bg-light fw-bold" name="teacherName" id="edit_teacherName" value="${student.teacherName || ''}" placeholder="Manual Teacher" />
+                <label>គ្រូបន្ទុកថ្នាក់ (Teacher Name)</label>
             </div>
         </div>
         <div class="col-12">
             <div class="form-floating">
-                <input type="text" class="form-control border-0 bg-light fw-bold" name="teacherPhone" value="${student.teacherPhone || ''}" placeholder="Phone" />
-                <label>លេខទូរស័ព្ទគ្រូ</label>
+                <input type="text" class="form-control border-0 bg-light fw-bold" name="teacherPhone" id="edit_teacherPhone" value="${student.teacherPhone || ''}" placeholder="Phone" />
+                <label>លេខទូរស័ព្ទគ្រូ (Teacher Phone)</label>
             </div>
         </div>
     </div>
@@ -7894,14 +7900,29 @@ function createEditModal(key) {
         const crSelect = document.getElementById('edit_classroom_select');
         const crInput = document.getElementById('edit_classroom');
         if (crSelect && crInput) {
-            crSelect.addEventListener('change', function () { if (this.value) crInput.value = this.value; });
+            crSelect.addEventListener('change', function () { crInput.value = this.value; });
         }
 
         // 2. Sync Study Time Select with Manual Input
         const stSelect = document.getElementById('edit_studyTime_select');
         const stInput = document.getElementById('edit_studyTime');
         if (stSelect && stInput) {
-            stSelect.addEventListener('change', function () { if (this.value) stInput.value = this.value; });
+            stSelect.addEventListener('change', function () { stInput.value = this.value; });
+        }
+
+        // 3. Sync Teacher Select with Manual Inputs & Phone
+        const tSelect = document.getElementById('edit_teacherName_select');
+        const tInput = document.getElementById('edit_teacherName');
+        const tPhone = document.getElementById('edit_teacherPhone');
+        if (tSelect && tInput) {
+            tSelect.addEventListener('change', function () {
+                tInput.value = this.value;
+                if (tPhone) {
+                    const selectedOpt = this.options[this.selectedIndex];
+                    const phone = selectedOpt ? (selectedOpt.getAttribute('data-phone') || '') : '';
+                    tPhone.value = phone;
+                }
+            });
         }
 
         // 3. Auto-translate Study Program based on Course Type
