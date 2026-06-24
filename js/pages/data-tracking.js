@@ -1,4 +1,4 @@
-﻿/**
+/**
  * data-tracking-script.js
  * Script for managing student data display from Firebase Realtime Database
  * Features: View details, Edit (real-time update), Delete, Mark as Paid, Search (DataTables), Reports
@@ -2590,6 +2590,18 @@ function getGeneralInfoTabHTML(s, status, total, paid, remaining) {
               <div class="fw-bold text-dark" style="font-size:0.88rem;">${s.remark}</div>
             </div>` : ''}
 
+            ${s.healthInfo ? `
+            <div class="mt-3 p-3 rounded-3" style="background:rgba(220,53,69,0.08);border-left:3px solid #dc3545;">
+              <div class="small text-muted fw-bold mb-1"><i class="fi fi-rr-heart-pulse me-2 text-danger"></i>ព័ត៌មានសុខភាព (Health Info)</div>
+              <div class="fw-bold text-dark" style="font-size:0.88rem;">${s.healthInfo}</div>
+            </div>` : ''}
+            
+            ${s.referral ? `
+            <div class="mt-3 p-3 rounded-3" style="background:rgba(23,162,184,0.08);border-left:3px solid #17a2b8;">
+              <div class="small text-muted fw-bold mb-1"><i class="fi fi-rr-user-add me-2 text-info"></i>អ្នកណែនាំ (Referral)</div>
+              <div class="fw-bold text-dark" style="font-size:0.88rem;">${s.referral}</div>
+            </div>` : ''}
+
           </div>
         </div>
       </div>
@@ -2639,6 +2651,14 @@ function getGeneralInfoTabHTML(s, status, total, paid, remaining) {
                 </div>
               </div>
             </div>
+
+            ${s.subject ? infoRow('fi-rr-books','មុខវិជ្ជា (Subject)',s.subject) : ''}
+            ${s.grade ? infoRow('fi-rr-e-learning','ថ្នាក់ចំណេះទូទៅ (General Grade)',s.grade) : ''}
+            ${s.currentGrade ? infoRow('fi-rr-graduation-cap','កម្រិតបច្ចុប្បន្ន (Current Grade)',s.currentGrade) : ''}
+            ${s.previousSchool ? infoRow('fi-rr-school','សាលាពីមុន (Previous School)',s.previousSchool) : ''}
+            ${s.bakdoub ? infoRow('fi-rr-diploma','បាក់ឌុប (Bakdoub)',s.bakdoub) : ''}
+            ${s.motivation ? infoRow('fi-rr-target','គោលបំណង (Motivation)',s.motivation) : ''}
+            ${s.isOldStudent ? infoRow('fi-rr-time-past','ប្រភេទសិស្ស (Student Type)','សិស្សចាស់ (Old Student)') : ''}
 
             ${infoRow('fi-rr-chalkboard-user','គ្រូបន្ទុកថ្នាក់ (Teacher)',s.teacherName||s.homeroomTeacher||'មិនទាន់កំណត់')}
             ${s.teacherPhone ? infoRow('fi-rr-phone','លេខទូរស័ព្ទគ្រូ',formatPhoneWithCarrier(s.teacherPhone),'font-poppins') : ''}
@@ -2749,21 +2769,40 @@ function getFamilyInfoTabHTML(s) {
       ${memberCard('fi-rr-woman-head','linear-gradient(135deg,#e91e8c,#9c27b0)','ម្តាយ (Mother)',s.motherName,s.motherJob,s.motherAddress,s.motherPhone,'text-pink-primary',s.motherAge,null)}
       ${memberCard('fi-rr-shield-check','linear-gradient(135deg,#f57c00,#e65100)','អាណាព្យាបាល (Guardian)',s.guardianName,null,s.guardianAddress,s.guardianPhone,'text-warning',null,s.guardianRelation)}
     </div>
-    ${(s.emergencyContactName || s.emergencyContactPhone) ? `
+    ${(s.emergencyContactName || s.emergencyContactPhone || s.pickerName || s.pickerPhone) ? `
     <div class="row mt-4">
       <div class="col-12">
         <div class="card border-0 shadow-sm" style="border-radius:20px;">
           <div class="card-body p-4">
-            <div class="d-flex align-items-center gap-3 mb-3">
-              <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:40px;height:40px;background:linear-gradient(135deg,#e53935,#b71c1c);">
-                <i class="fi fi-rr-ambulance text-white"></i>
-              </div>
-              <h6 class="fw-bold mb-0 text-dark">ទំនាក់ទំនងបន្ទាន់ (Emergency Contact)</h6>
-            </div>
-            <div class="row g-3">
-              ${s.emergencyContactName ? `<div class="col-md-4"><div class="small text-muted mb-1">ឈ្មោះ</div><div class="fw-bold">${s.emergencyContactName}</div></div>` : ''}
-              ${s.emergencyContactRelation ? `<div class="col-md-4"><div class="small text-muted mb-1">ត្រូវជា</div><div class="fw-bold">${s.emergencyContactRelation}</div></div>` : ''}
-              ${s.emergencyContactPhone ? `<div class="col-md-4"><div class="small text-muted mb-1">លេខទូរស័ព្ទ</div><a href="tel:${s.emergencyContactPhone}" class="fw-bold text-danger d-block">${formatPhoneWithCarrier(s.emergencyContactPhone)}</a></div>` : ''}
+            <div class="row g-4">
+              ${(s.emergencyContactName || s.emergencyContactPhone) ? `
+              <div class="col-md-6">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                  <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:40px;height:40px;background:linear-gradient(135deg,#e53935,#b71c1c);">
+                    <i class="fi fi-rr-ambulance text-white"></i>
+                  </div>
+                  <h6 class="fw-bold mb-0 text-dark">ទំនាក់ទំនងបន្ទាន់ (Emergency)</h6>
+                </div>
+                <div class="row g-2">
+                  ${s.emergencyContactName ? `<div class="col-12"><span class="small text-muted me-2">ឈ្មោះ:</span><span class="fw-bold">${s.emergencyContactName}</span></div>` : ''}
+                  ${s.emergencyContactRelation ? `<div class="col-12"><span class="small text-muted me-2">ត្រូវជា:</span><span class="fw-bold">${s.emergencyContactRelation}</span></div>` : ''}
+                  ${s.emergencyContactPhone ? `<div class="col-12"><span class="small text-muted me-2">ទូរស័ព្ទ:</span><a href="tel:${s.emergencyContactPhone}" class="fw-bold text-danger">${formatPhoneWithCarrier(s.emergencyContactPhone)}</a></div>` : ''}
+                </div>
+              </div>` : ''}
+              
+              ${(s.pickerName || s.pickerPhone) ? `
+              <div class="col-md-6">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                  <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:40px;height:40px;background:linear-gradient(135deg,#00897b,#004d40);">
+                    <i class="fi fi-rr-steering-wheel text-white"></i>
+                  </div>
+                  <h6 class="fw-bold mb-0 text-dark">អ្នកទទួល/អ្នកជូន (Picker)</h6>
+                </div>
+                <div class="row g-2">
+                  ${s.pickerName ? `<div class="col-12"><span class="small text-muted me-2">ឈ្មោះ:</span><span class="fw-bold">${s.pickerName}</span></div>` : ''}
+                  ${s.pickerPhone ? `<div class="col-12"><span class="small text-muted me-2">ទូរស័ព្ទ:</span><a href="tel:${s.pickerPhone}" class="fw-bold text-success">${formatPhoneWithCarrier(s.pickerPhone)}</a></div>` : ''}
+                </div>
+              </div>` : ''}
             </div>
           </div>
         </div>
