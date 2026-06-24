@@ -7408,7 +7408,20 @@ function createEditModal(key) {
             <div class="form-floating">
                 <select class="form-select border-0 bg-light fw-bold" id="edit_teacherName_select">
                     <option value="">ជ្រើសរើសគ្រូ...</option>
-                    ${Object.values(allTeachersData || {}).map(tv => `<option value="${tv.nameKhmer}" ${(student.teacherName === tv.nameKhmer || student.homeroomTeacher === tv.nameKhmer) ? 'selected' : ''} data-phone="${tv.phone || ''}">${tv.nameKhmer}</option>`).join('')}
+                    ${(() => {
+                        let teachers = Object.values(allTeachersData || {});
+                        let hasMatch = false;
+                        let html = teachers.map(tv => {
+                            let isSel = (student.teacherName === tv.nameKhmer || student.homeroomTeacher === tv.nameKhmer);
+                            if (isSel) hasMatch = true;
+                            return `<option value="${tv.nameKhmer}" ${isSel ? 'selected' : ''} data-phone="${tv.phone || ''}">${tv.nameKhmer}</option>`;
+                        }).join('');
+                        let currentTeacher = student.teacherName || student.homeroomTeacher;
+                        if (currentTeacher && !hasMatch) {
+                            html += `<option value="${currentTeacher}" selected data-phone="${student.teacherPhone || ''}">${currentTeacher} (រក្សាទុក)</option>`;
+                        }
+                        return html;
+                    })()}
                 </select>
                 <label class="fw-bold">ជ្រើសរើសគ្រូ (Select Teacher)</label>
             </div>
@@ -7442,7 +7455,19 @@ function createEditModal(key) {
             <div class="form-floating">
                 <select class="form-select border-0 bg-light" name="studyLevel">
                     <option value="">ជ្រើសរើស...</option>
-                    ${(window.allMasterLevels || []).map(l => `<option value="${l}" ${student.studyLevel === l ? 'selected' : ''}>${l}</option>`).join('')}
+                    ${(() => {
+                        let levels = window.allMasterLevels || [];
+                        let hasMatch = false;
+                        let html = levels.map(l => {
+                            let isSel = (student.studyLevel === l);
+                            if (isSel) hasMatch = true;
+                            return `<option value="${l}" ${isSel ? 'selected' : ''}>${l}</option>`;
+                        }).join('');
+                        if (student.studyLevel && !hasMatch) {
+                            html += `<option value="${student.studyLevel}" selected>${student.studyLevel}</option>`;
+                        }
+                        return html;
+                    })()}
                 </select>
                 <label class="fw-bold">កម្រិតសិក្សា (Level)</label>
             </div>
@@ -7451,7 +7476,19 @@ function createEditModal(key) {
             <div class="form-floating">
                 <select class="form-select border-0 bg-light" id="edit_classroom_select">
                     <option value="">ជ្រើសរើស...</option>
-                    ${(window.allMasterClassrooms || []).map(c => `<option value="${c}" ${student.classroom === c ? 'selected' : ''}>${c}</option>`).join('')}
+                    ${(() => {
+                        let rooms = window.allMasterClassrooms || [];
+                        let hasMatch = false;
+                        let html = rooms.map(c => {
+                            let isSel = (student.classroom === c);
+                            if (isSel) hasMatch = true;
+                            return `<option value="${c}" ${isSel ? 'selected' : ''}>${c}</option>`;
+                        }).join('');
+                        if (student.classroom && !hasMatch) {
+                            html += `<option value="${student.classroom}" selected>${student.classroom}</option>`;
+                        }
+                        return html;
+                    })()}
                 </select>
                 <label class="fw-bold">បន្ទប់ (Select Room)</label>
             </div>
@@ -7466,7 +7503,19 @@ function createEditModal(key) {
             <div class="form-floating">
                 <select class="form-select border-0 bg-light" id="edit_studyTime_select">
                     <option value="">ជ្រើសរើស...</option>
-                    ${(window.allMasterStudyTimes || []).map(t => `<option value="${t}" ${student.studyTime === t ? 'selected' : ''}>${t}</option>`).join('')}
+                    ${(() => {
+                        let times = window.allMasterStudyTimes || [];
+                        let hasMatch = false;
+                        let html = times.map(t => {
+                            let isSel = (student.studyTime === t);
+                            if (isSel) hasMatch = true;
+                            return `<option value="${t}" ${isSel ? 'selected' : ''}>${t}</option>`;
+                        }).join('');
+                        if (student.studyTime && !hasMatch) {
+                            html += `<option value="${student.studyTime}" selected>${student.studyTime}</option>`;
+                        }
+                        return html;
+                    })()}
                 </select>
                 <label class="fw-bold">ម៉ោងសិក្សា (Study Time)</label>
             </div>
@@ -7884,14 +7933,18 @@ function createEditModal(key) {
         const crSelect = document.getElementById('edit_classroom_select');
         const crInput = document.getElementById('edit_classroom');
         if (crSelect && crInput) {
-            crSelect.addEventListener('change', function () { crInput.value = this.value; });
+            crSelect.addEventListener('change', function () { 
+                if (this.value !== "") crInput.value = this.value; 
+            });
         }
 
         // 2. Sync Study Time Select with Manual Input
         const stSelect = document.getElementById('edit_studyTime_select');
         const stInput = document.getElementById('edit_studyTime');
         if (stSelect && stInput) {
-            stSelect.addEventListener('change', function () { stInput.value = this.value; });
+            stSelect.addEventListener('change', function () { 
+                if (this.value !== "") stInput.value = this.value; 
+            });
         }
 
         // 3. Sync Teacher Select with Manual Inputs & Phone
@@ -7900,11 +7953,13 @@ function createEditModal(key) {
         const tPhone = document.getElementById('edit_teacherPhone');
         if (tSelect && tInput) {
             tSelect.addEventListener('change', function () {
-                tInput.value = this.value;
-                if (tPhone) {
-                    const selectedOpt = this.options[this.selectedIndex];
-                    const phone = selectedOpt ? (selectedOpt.getAttribute('data-phone') || '') : '';
-                    tPhone.value = phone;
+                if (this.value !== "") {
+                    tInput.value = this.value;
+                    if (tPhone) {
+                        const selectedOpt = this.options[this.selectedIndex];
+                        const phone = selectedOpt ? (selectedOpt.getAttribute('data-phone') || '') : '';
+                        tPhone.value = phone;
+                    }
                 }
             });
         }
