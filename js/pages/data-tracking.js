@@ -2488,276 +2488,289 @@ ${actionButtons}
 
 // Helper for General Info Tab
 function getGeneralInfoTabHTML(s, status, total, paid, remaining) {
+    // Compute age helper
+    const calcAge = () => {
+        if (!s.dob || s.dob === 'មិនមាន') return 'មិនមាន';
+        const dob = typeof getDateObject === 'function' ? getDateObject(s.dob) : new Date(s.dob);
+        if (!dob || isNaN(dob.getTime())) return 'មិនមាន';
+        return Math.abs(new Date(Date.now() - dob.getTime()).getUTCFullYear() - 1970) + ' ឆ្នាំ';
+    };
+    // Next payment countdown
+    const payDue = () => {
+        if (!s.nextPaymentDate || ['N/A','','មិនមាន'].includes(s.nextPaymentDate)) return '';
+        const parts = s.nextPaymentDate.split('/');
+        if (parts.length !== 3) return '';
+        const nd = new Date(parts[2], parts[1]-1, parts[0]);
+        const today = new Date(); today.setHours(0,0,0,0); nd.setHours(0,0,0,0);
+        const diff = Math.ceil((nd - today)/(86400000));
+        if (diff < 0) return `<span class="badge bg-danger ms-2">ហួស ${Math.abs(diff)} ថ្ងៃ</span>`;
+        if (diff <= 10) return `<span class="badge bg-warning text-dark ms-2">នៅសល់ ${diff} ថ្ងៃ</span>`;
+        return `<span class="badge bg-success ms-2">នៅសល់ ${diff} ថ្ងៃ</span>`;
+    };
+    const infoRow = (icon, label, value, cls='') => value
+        ? `<div class="d-flex align-items-start gap-3 p-3 rounded-3 mb-2" style="background:rgba(0,0,0,0.025);">
+            <div class="flex-shrink-0 rounded-2 d-flex align-items-center justify-content-center" style="width:32px;height:32px;background:rgba(138,14,91,0.08);">
+              <i class="fi ${icon} text-pink-primary" style="font-size:14px;"></i>
+            </div>
+            <div class="flex-grow-1 min-w-0">
+              <div class="text-muted" style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">${label}</div>
+              <div class="fw-bold text-dark ${cls}" style="font-size:0.88rem;word-break:break-word;">${value}</div>
+            </div>
+           </div>`
+        : '';
+    const statCard = (icon, label, val, bg, text) =>
+        `<div class="col-6 col-lg-3">
+          <div class="rounded-4 p-3 text-center h-100" style="background:${bg};border:1px solid ${bg};">
+            <i class="fi ${icon} mb-2 d-block" style="font-size:1.4rem;color:${text};"></i>
+            <div style="font-size:0.7rem;font-weight:600;color:${text};opacity:.8;">${label}</div>
+            <div class="fw-bold" style="font-size:1.05rem;color:${text};">${val}</div>
+          </div>
+        </div>`;
+    const hasChinese = s.chineseLastName || s.chineseFirstName;
     return `
+    <style>
+      .info-section-title{display:flex;align-items:center;gap:10px;padding:0 0 10px;margin-bottom:16px;border-bottom:2px solid rgba(138,14,91,0.12);}
+      .info-section-title i{font-size:1.1rem;}
+      .info-section-title h6{margin:0;font-weight:700;font-size:0.95rem;}
+    </style>
     <div class="row g-4">
-        <!-- Personal Info -->
-        <div class="col-lg-6">
-            <div class="card h-100 border-0 shadow-sm" style="border-radius: 15px;">
-                <div class="card-header bg-white border-0 py-3">
-                    <h6 class="fw-bold text-primary mb-0"><i class="fi fi-rr-info me-2"></i>ព័ត៌មានផ្ទាល់ខ្លួន</h6>
-                </div>
-                <div class="card-body pt-0">
-                    <ul class="list-group list-group-flush">
-<li class="list-group-item px-0 d-flex justify-content-between">
-    <span class="text-muted">ភេទ</span>
-    <span class="fw-bold">${(s.gender === 'Male' || s.gender === 'ប្រុស') ? 'ប្រុស' : 'ស្រី'}</span>
-</li>
-<li class="list-group-item px-0 d-flex justify-content-between">
-    <span class="text-muted">ថ្ងៃកំណើត</span>
-    <span class="fw-bold">${convertToKhmerDate(s.dob)}</span>
-</li>
-<li class="list-group-item px-0 d-flex justify-content-between">
-    <span class="text-muted">អាយុ (Age)</span>
-    <span class="fw-bold text-danger">${
-        (function() {
-            if (!s.dob || s.dob === 'មិនមាន') return 'មិនមាន';
-            const dob = typeof getDateObject === 'function' ? getDateObject(s.dob) : new Date(s.dob);
-            if (!dob || isNaN(dob.getTime())) return 'មិនមាន';
-            const ageDifMs = Date.now() - dob.getTime();
-            const ageDate = new Date(ageDifMs);
-            return Math.abs(ageDate.getUTCFullYear() - 1970) + ' ឆ្នាំ';
-        })()
-    }</span>
-</li>
-<li class="list-group-item px-0 d-flex justify-content-between">
-    <span class="text-muted">សញ្ជាតិ</span>
-    <span class="fw-bold">${s.nationality || 'ខ្មែរ'}</span>
-</li>
-<li class="list-group-item px-0 d-flex justify-content-between">
-    <span class="text-muted">លេខទូរស័ព្ទ</span>
-    <span class="fw-bold text-primary" style="font-family: 'Poppins';">${formatPhoneWithCarrier(s.personalPhone)}</span>
-</li>
-<li class="list-group-item px-0">
-    <div class="text-muted mb-1">អាសយដ្ឋានបច្ចុប្បន្ន</div>
-    <div class="fw-bold text-dark bg-light p-2 rounded small">
-        <div class="d-flex align-items-start mb-1">
-            <i class="fi fi-rr-marker text-danger mt-1 me-2"></i>
-            <div>
-                ${[
-            s.village ? `ភូមិ ${s.village}` : '',
-            s.commune ? `ឃុំ/សង្កាត់ ${s.commune}` : '',
-            s.district ? `ស្រុក/ខណ្ឌ ${s.district}` : '',
-            s.province ? `ខេត្ត/ក្រុង ${s.province}` : ''
-        ].filter(Boolean).join(' - ')}
-            </div>
-        </div>
-        ${s.studentAddress ? `<div class="mt-2 text-secondary border-top pt-1 text-break"><i class="fi fi-rr-home me-2"></i>${s.studentAddress}</div>` : ''}
-    </div>
-</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
 
-        <!-- Academic Info -->
-        <div class="col-lg-6">
-            <div class="card h-100 border-0 shadow-sm" style="border-radius: 15px;">
-                <div class="card-header bg-white border-0 py-3">
-                    <h6 class="fw-bold text-success mb-0"><i class="fi fi-rr-book-alt me-2"></i>ការសិក្សា (Academic)</h6>
-                </div>
-                <div class="card-body pt-0">
-                    <div class="row g-3">
-<div class="col-12">
-    <div class="p-3 rounded bg-pink-primary text-white shadow-sm border border-white border-opacity-25">
-        <div class="small text-white-50 mb-1">ប្រភេទវគ្គសិក្សា (Course Type)</div>
-        <div class="fw-bold text-white fs-5">${formatStudyType(s)}</div>
-    </div>
-</div>
-<div class="col-12">
-     <div class="p-3 rounded bg-light border">
-        <div class="d-flex justify-content-between align-items-center">
-             <span class="text-muted small"><i class="fi fi-rr-calendar-plus me-2"></i>ថ្ងៃចូលរៀន (Join Date):</span>
-             <span class="fw-bold text-success">${convertToKhmerWordDate(s.startDate)}</span>
-        </div>
-    </div>
-</div>
-<div class="col-6">
-    <div class="p-3 rounded bg-success bg-opacity-10 h-100">
-        <div class="small text-muted mb-1">កម្រិតសិក្សា</div>
-        <div class="fw-bold text-success">${s.studyLevel || 'N/A'}</div>
-    </div>
-</div>
-<div class="col-6">
-    <div class="p-3 rounded bg-info bg-opacity-10 h-100">
-        <div class="small text-muted mb-1">ម៉ោងសិក្សា</div>
-        <div class="fw-bold text-info">${formatStudyTimeKhmer(s.studyTime)}</div>
-    </div>
-</div>
-<div class="col-12">
-    <div class="p-3 rounded bg-secondary bg-opacity-10 border border-secondary border-opacity-25">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <div class="small text-muted mb-1"><i class="fi fi-rr-clock-three me-2"></i>ចំនួនខែសិក្សាសរុប (Total Duration)</div>
-                <div class="h5 fw-bold text-dark mb-0">${s.paymentMonths || '1'} <span class="small text-muted">ខែ (Months)</span></div>
-            </div>
-            <div class="bg-white p-2 rounded-circle shadow-sm text-secondary">
-                <i class="fi fi-rr-calendar-clock fs-4"></i>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="col-12">
-    <div class="p-3 rounded bg-light border">
-        <div class="d-flex justify-content-between mb-2">
-            <span class="text-muted small">គ្រូបន្ទុកថ្នាក់:</span>
-            <span class="fw-bold">${s.teacherName || s.homeroomTeacher || 'មិនទាន់កំណត់'}</span>
-        </div>
-        <div class="d-flex justify-content-between">
-            <span class="text-muted small">បន្ទប់រៀន:</span>
-            <span class="fw-bold">${s.classroom || 'N/A'}</span>
-        </div>
-    </div>
-</div>
-<div class="col-12">
-    <div class="p-3 rounded border border-warning border-opacity-50 bg-warning bg-opacity-10 text-center">
-        <div class="small text-muted mb-2"><i class="fi fi-rr-calendar-clock me-2"></i>ថ្ងៃត្រូវបង់បន្ទាប់ (Due Payment Date)</div>
-        <div class="h5 fw-bold text-danger bg-white p-2 rounded shadow-sm border border-danger mb-0 d-inline-block">
-            ${s.nextPaymentDate ? convertToKhmerWordDate(s.nextPaymentDate) : 'N/A'}
-            ${(() => {
-                if (s.nextPaymentDate && !['N/A', '', 'មិនមាន'].includes(s.nextPaymentDate)) {
-                    const parts = s.nextPaymentDate.split('/');
-                    if (parts.length === 3) {
-const nextDateObj = new Date(parts[2], parts[1] - 1, parts[0]);
-const today = new Date();
-today.setHours(0, 0, 0, 0);
-nextDateObj.setHours(0, 0, 0, 0);
-const diffTime = nextDateObj - today;
-const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      <!-- ===== COL 1: Personal Info ===== -->
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:20px;">
+          <div class="card-body p-4">
 
-if (diffDays < 0) {
-    return `<br><span class="badge bg-danger rounded-pill mt-2 shadow-sm" style="font-size: 0.85rem;">ហួសកំណត់ ${Math.abs(diffDays)} ថ្ងៃ</span>`;
-} else if (diffDays <= 10) {
-    return `<br><span class="badge bg-warning text-dark rounded-pill mt-2 shadow-sm" style="font-size: 0.85rem;">នៅសល់ ${diffDays} ថ្ងៃ</span>`;
-} else {
-    return `<br><span class="badge bg-success bg-opacity-10 text-success rounded-pill mt-2" style="font-size: 0.85rem;">នៅសល់ ${diffDays} ថ្ងៃ</span>`;
-}
-                    }
-                }
-                return '';
-            })()}
+            <div class="info-section-title">
+              <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:38px;height:38px;background:linear-gradient(135deg,#e91e8c,#9c27b0);">
+                <i class="fi fi-rr-user text-white" style="font-size:1rem;"></i>
+              </div>
+              <h6 class="text-dark">ព័ត៌មានផ្ទាល់ខ្លួន (Personal Info)</h6>
+            </div>
+
+            ${infoRow('fi-rr-venus-mars','ភេទ (Gender)',(s.gender === 'Male' || s.gender === 'ប្រុស') ? '♂ ប្រុស' : '♀ ស្រី')}
+            ${infoRow('fi-rr-calendar','ថ្ងៃ ខែ ឆ្នាំ (DOB)',convertToKhmerDate(s.dob))}
+            ${infoRow('fi-rr-time-check','អាយុ (Age)',calcAge(),'text-danger')}
+            ${infoRow('fi-rr-flag','សញ្ជាតិ (Nationality)',s.nationality||'ខ្មែរ')}
+            ${infoRow('fi-rr-phone-call','លេខទូរស័ព្ទ (Phone)',formatPhoneWithCarrier(s.personalPhone),'font-poppins text-primary')}
+
+            ${hasChinese ? `
+            <div class="mt-3 mb-2">
+              <div class="info-section-title">
+                <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:38px;height:38px;background:linear-gradient(135deg,#e53935,#b71c1c);">
+                  <i class="fi fi-rr-language text-white" style="font-size:1rem;"></i>
+                </div>
+                <h6 class="text-dark">ឈ្មោះចិន (Chinese Name)</h6>
+              </div>
+              <div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background:rgba(229,57,53,0.06);border:1px dashed rgba(229,57,53,0.2);">
+                <div class="text-center" style="font-size:1.4rem;font-weight:900;color:#b71c1c;letter-spacing:4px;">${(s.chineseLastName||'')+(s.chineseFirstName||'')}</div>
+                <div class="text-muted small">${s.chineseLastName||''} ${s.chineseFirstName||''}</div>
+              </div>
+            </div>` : ''}
+
+            <div class="mt-3">
+              <div class="info-section-title">
+                <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:38px;height:38px;background:linear-gradient(135deg,#00acc1,#006064);">
+                  <i class="fi fi-rr-marker text-white" style="font-size:1rem;"></i>
+                </div>
+                <h6 class="text-dark">អាសយដ្ឋាន (Address)</h6>
+              </div>
+              <div class="p-3 rounded-3" style="background:rgba(0,172,193,0.06);border:1px solid rgba(0,172,193,0.15);">
+                ${[s.village ? `ភូមិ ${s.village}` : '',
+                   s.commune ? `ឃុំ/សង្កាត់ ${s.commune}` : '',
+                   s.district ? `ស្រុក/ខណ្ឌ ${s.district}` : '',
+                   s.province ? `ខេត្ត/ក្រុង ${s.province}` : ''
+                  ].filter(Boolean).join(' · ') || '<span class="text-muted small">មិនបានបញ្ចូល</span>'}
+                ${s.studentAddress ? `<div class="mt-2 pt-2 border-top text-muted small text-break"><i class="fi fi-rr-home me-2"></i>${s.studentAddress}</div>` : ''}
+              </div>
+            </div>
+
+            ${s.remark ? `
+            <div class="mt-3 p-3 rounded-3" style="background:rgba(255,193,7,0.08);border-left:3px solid #ffc107;">
+              <div class="small text-muted fw-bold mb-1"><i class="fi fi-rr-comment me-2 text-warning"></i>កំណត់ចំណាំ (Remark)</div>
+              <div class="fw-bold text-dark" style="font-size:0.88rem;">${s.remark}</div>
+            </div>` : ''}
+
+          </div>
         </div>
-    </div>
-</div>
+      </div>
+
+      <!-- ===== COL 2: Academic Info ===== -->
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:20px;">
+          <div class="card-body p-4">
+
+            <div class="info-section-title">
+              <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:38px;height:38px;background:linear-gradient(135deg,#43a047,#1b5e20);">
+                <i class="fi fi-rr-book-alt text-white" style="font-size:1rem;"></i>
+              </div>
+              <h6 class="text-dark">ព័ត៌មានការសិក្សា (Academic Info)</h6>
+            </div>
+
+            <!-- Course Type Banner -->
+            <div class="p-3 rounded-3 mb-3 text-white" style="background:linear-gradient(135deg,#8a0e5b,#6a0dad);">
+              <div class="small mb-1" style="opacity:.75;">ប្រភេទវគ្គសិក្សា</div>
+              <div class="fw-bold" style="font-size:1rem;">${formatStudyType(s)}</div>
+            </div>
+
+            <!-- Info Grid -->
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <div class="p-3 rounded-3 text-center h-100" style="background:rgba(67,160,71,0.08);border:1px solid rgba(67,160,71,0.2);">
+                  <div class="small text-muted fw-bold mb-1">កម្រិតសិក្សា</div>
+                  <div class="fw-bold text-success">${s.studyLevel || 'N/A'}</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="p-3 rounded-3 text-center h-100" style="background:rgba(0,172,193,0.08);border:1px solid rgba(0,172,193,0.2);">
+                  <div class="small text-muted fw-bold mb-1">ម៉ោងសិក្សា</div>
+                  <div class="fw-bold text-info">${formatStudyTimeKhmer(s.studyTime)}</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="p-3 rounded-3 text-center h-100" style="background:rgba(138,14,91,0.06);border:1px solid rgba(138,14,91,0.15);">
+                  <div class="small text-muted fw-bold mb-1">ចំនួនខែ</div>
+                  <div class="fw-bold" style="color:#8a0e5b;">${s.paymentMonths||1} ខែ</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="p-3 rounded-3 text-center h-100" style="background:rgba(255,152,0,0.08);border:1px solid rgba(255,152,0,0.2);">
+                  <div class="small text-muted fw-bold mb-1">ថ្ងៃចូលរៀន</div>
+                  <div class="fw-bold text-warning" style="font-size:0.82rem;">${convertToKhmerWordDate(s.startDate)}</div>
+                </div>
+              </div>
+            </div>
+
+            ${infoRow('fi-rr-chalkboard-user','គ្រូបន្ទុកថ្នាក់ (Teacher)',s.teacherName||s.homeroomTeacher||'មិនទាន់កំណត់')}
+            ${s.teacherPhone ? infoRow('fi-rr-phone','លេខទូរស័ព្ទគ្រូ',formatPhoneWithCarrier(s.teacherPhone),'font-poppins') : ''}
+            ${infoRow('fi-rr-building','បន្ទប់រៀន (Classroom)',s.classroom||'N/A')}
+            ${s.boardingPlace ? infoRow('fi-rr-bed','ទីតាំងស្នាក់នៅ (Boarding)',s.boardingPlace) : ''}
+
+            <!-- Next Payment Due -->
+            <div class="p-3 rounded-3 mt-2" style="background:rgba(255,193,7,0.08);border:1px solid rgba(255,193,7,0.3);">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="small fw-bold text-muted"><i class="fi fi-rr-calendar-clock me-2"></i>ថ្ងៃត្រូវបង់ (Next Due)</span>
+                <span class="fw-bold text-danger">${s.nextPaymentDate ? convertToKhmerWordDate(s.nextPaymentDate) : 'N/A'} ${payDue()}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PAYMENT SUMMARY STRIP ===== -->
+      <div class="col-12">
+        <div class="card border-0 shadow-sm" style="border-radius:20px;overflow:hidden;">
+          <div class="p-1" style="background:linear-gradient(90deg,#8a0e5b,#6a0dad,#1565c0);"></div>
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="fw-bold mb-0 text-dark"><i class="fi fi-rr-hand-holding-usd me-2 text-primary"></i>សង្ខេបហិរញ្ញវត្ថុ (Financial Summary)</h6>
+              <span class="badge ${status.badge} px-3 py-2 rounded-pill shadow-sm animate__animated animate__pulse animate__infinite animate__slow">${status.text}</span>
+            </div>
+            <div class="row g-3 text-center">
+              ${statCard('fi-rr-receipt','ថ្លៃសិក្សា','$'+parseFloat(s.tuitionFee||s.courseFee||0).toFixed(2),'rgba(0,172,193,0.08)','#006064')}
+              ${statCard('fi-rr-calculator','សរុប (Total)','$'+total.toFixed(2),'rgba(21,101,192,0.08)','#1565c0')}
+              ${statCard('fi-rr-check-circle','បង់រួច (Paid)','$'+paid.toFixed(2),'rgba(67,160,71,0.08)','#1b5e20')}
+              ${statCard('fi-rr-exclamation','នៅខ្វះ (Remaining)','$'+remaining.toFixed(2), remaining>0 ? 'rgba(229,57,53,0.08)' : 'rgba(67,160,71,0.08)', remaining>0 ? '#c62828' : '#1b5e20')}
+            </div>
+            ${(s.postponedReason||s.postponedDate) ? `
+            <div class="mt-3 p-3 rounded-3 d-flex align-items-center gap-3" style="background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.3);">
+              <i class="fi fi-rr-info text-warning fs-4"></i>
+              <div>
+                <div class="fw-bold small text-dark">ព័ត៌មានពន្យារបង់ (Postponement)</div>
+                <div class="text-muted small">ថ្ងៃ: <strong class="text-dark">${s.postponedDate ? convertToKhmerWordDate(s.postponedDate) : 'N/A'}</strong>${s.postponedReason ? ` · មូលហេតុ: <strong class="text-dark">${s.postponedReason}</strong>` : ''}</div>
+              </div>
+            </div>` : ''}
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== ATTACHMENTS ===== -->
+      <div class="col-12">
+        <div class="card border-0 shadow-sm" style="border-radius:20px;">
+          <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+            <h6 class="fw-bold mb-0 text-dark"><i class="fi fi-rr-clip me-2 text-primary"></i>ឯកសារ / រូបថត (Documents & Photos)</h6>
+            <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="document.getElementById('attachUpload_${s.key}').click()">
+              <i class="fi fi-rr-upload me-2"></i>បន្ថែម
+            </button>
+            <input type="file" id="attachUpload_${s.key}" class="d-none" accept="image/*" onchange="uploadStudentAttachment('${s.key}', this)">
+          </div>
+          <div class="card-body bg-light bg-opacity-30 px-4 pb-4">
+            <div id="attachmentGallery_${s.key}" class="row g-3">
+              ${(() => {
+                const attachments = s.attachments ? (Array.isArray(s.attachments) ? s.attachments : Object.values(s.attachments)) : [];
+                if (attachments.length === 0) return `<div class="col-12 text-center py-5 opacity-50"><i class="fi fi-rr-inbox fs-1 d-block mb-2"></i><p class="small mb-0">មិនទាន់មានឯកសារភ្ជាប់</p></div>`;
+                return attachments.map((url, idx) => `
+                  <div class="col-md-3 col-6">
+                    <div class="position-relative shadow-sm rounded-4 overflow-hidden bg-white border" style="height:120px;">
+                      <img src="${url}" class="w-100 h-100 object-fit-cover" style="cursor:pointer;" onclick="window.open('${url}','_blank')">
+                      <div class="position-absolute top-0 end-0 p-1">
+                        <button class="btn btn-danger btn-sm rounded-circle p-1" onclick="deleteStudentAttachment('${s.key}',${idx})" title="លុប"><i class="fi fi-rr-cross-small" style="font-size:10px;"></i></button>
+                      </div>
                     </div>
-                </div>
+                  </div>`).join('');
+              })()}
             </div>
+            <div class="mt-3 small text-muted text-center"><i class="fi fi-rr-info me-1"></i>ទំហំរូបភាពមិនឲ្យលើសពី <strong>2MB</strong> ។</div>
+          </div>
         </div>
+      </div>
 
-        <!-- Dynamic Payment Summary -->
-        <div class="col-12 mt-4">
-            <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 15px; border-left: 5px solid ${status.badge.includes('danger') ? '#dc3545' : (status.badge.includes('success') ? '#28a745' : '#8a0e5b')} !important;">
-                <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-                    <h6 class="fw-bold mb-0 text-dark">
-<i class="fi fi-rr-hand-holding-usd me-2 text-primary"></i>សង្ខេបស្ថានភាពបង់ប្រាក់ (Payment & Financial Summary)
-                    </h6>
-                    <span class="badge ${status.badge} px-3 py-2 rounded-pill shadow-sm animate__animated animate__pulse animate__infinite animate__slow">${status.text}</span>
-                </div>
-                <div class="card-body bg-light bg-opacity-50 p-4">
-                    <div class="row g-4 text-center">
-<div class="col-lg col-md-4 col-sm-6">
-    <div class="bg-white p-3 rounded-4 shadow-sm h-100 border border-light">
-        <div class="small text-muted mb-2">ថ្លៃសិក្សា (Tuition Fee)</div>
-        <div class="h4 fw-black text-info mb-0">$${(parseFloat(s.tuitionFee || s.courseFee || 0)).toFixed(2)}</div>
-    </div>
-</div>
-<div class="col-lg col-md-4 col-sm-6">
-    <div class="bg-white p-3 rounded-4 shadow-sm h-100 border border-light">
-        <div class="small text-muted mb-2">ថ្លៃសិក្សាសរុប (Total)</div>
-        <div class="h4 fw-black text-dark mb-0">$${total.toFixed(2)}</div>
-    </div>
-</div>
-<div class="col-lg col-md-4 col-sm-6">
-    <div class="bg-white p-3 rounded-4 shadow-sm h-100 border border-light">
-        <div class="small text-muted mb-2">បង់រួច (Paid)</div>
-        <div class="h4 fw-black text-success mb-0">$${paid.toFixed(2)}</div>
-    </div>
-</div>
-<div class="col-lg col-md-6 col-sm-6">
-    <div class="bg-white p-3 rounded-4 shadow-sm h-100 border border-light">
-        <div class="small text-muted mb-2">នៅខ្វះ (Remaining)</div>
-        <div class="h4 fw-black text-danger mb-0">$${remaining.toFixed(2)}</div>
-    </div>
-</div>
-<div class="col-lg col-md-6 col-sm-12">
-    <div class="bg-white p-3 rounded-4 shadow-sm h-100 border border-light">
-        <div class="small text-muted mb-2">ថ្ងៃត្រូវបង់ (Next Due)</div>
-        <div class="h4 fw-bold text-primary mb-0">${s.nextPaymentDate || 'មិនមាន'}</div>
-        ${status.daysRemaining !== 0 ? `<small class="text-muted d-block mt-1">${status.daysRemaining < 0 ? `ហួស ${Math.abs(status.daysRemaining)} ថ្ងៃ` : `នៅសល់ ${status.daysRemaining} ថ្ងៃ`}</small>` : ''}
-    </div>
-</div>
-                    </div>
-
-                    ${s.postponedReason || s.postponedDate ? `
-                    <div class="mt-4 p-3 rounded-4 bg-warning bg-opacity-10 border border-warning border-opacity-20 animate__animated animate__fadeIn">
-<div class="d-flex align-items-center gap-3">
-    <i class="fi fi-rr-info text-warning fs-3"></i>
-    <div class="text-start">
-        <h6 class="fw-bold mb-1 text-dark mb-0 moul-font small">ព័ត៌មានពន្យាពេលបង់ (Postponement Detail)</h6>
-        <p class="text-muted small mb-0">
-            <span class="fw-bold text-dark">ថ្ងៃសន្យាបង់:</span> ${s.postponedDate ? convertToKhmerWordDate(s.postponedDate) : 'N/A'} 
-            ${s.postponedReason ? ` | <span class="fw-bold text-dark">មូលហេតុ:</span> ${s.postponedReason}` : ''}
-        </p>
-    </div>
-</div>
-                    </div>` : ''}
-                </div>
-            </div>
-        </div>
-
-        <!-- 📂 ATTACHMENTS SECTION (Dynamic Upload & Delete) -->
-        <div class="col-12 mt-4">
-            <div class="card border-0 shadow-sm" style="border-radius: 15px;">
-                <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-                    <h6 class="fw-bold mb-0 text-dark">
-<i class="fi fi-rr-clip me-2 text-primary"></i>ឯកសារផ្សេងៗ (Student Photos/Docs)
-                    </h6>
-                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="document.getElementById('attachUpload_${s.key}').click()">
-<i class="fi fi-rr-upload me-2"></i>បន្ថែមឯកសារ
-                    </button>
-                    <input type="file" id="attachUpload_${s.key}" class="d-none" accept="image/*" onchange="uploadStudentAttachment('${s.key}', this)">
-                </div>
-                <div class="card-body bg-light bg-opacity-30 p-4">
-                    <div id="attachmentGallery_${s.key}" class="row g-3">
-${(() => {
-            const attachments = s.attachments ? (Array.isArray(s.attachments) ? s.attachments : Object.values(s.attachments)) : [];
-            if (attachments.length === 0) {
-                return `
-            <div class="col-12 text-center py-4 opacity-50">
-                <i class="fi fi-rr-inbox fs-1 d-block mb-2"></i>
-                <p class="small mb-0">មិនទាន់មានឯកសារភ្ជាប់</p>
-            </div>`;
-            }
-            return attachments.map((url, idx) => `
-        <div class="col-md-3 col-6">
-            <div class="position-relative group shadow-sm rounded-3 overflow-hidden bg-white border" style="height: 120px;">
-                <img src="${url}" class="w-100 h-100 object-fit-cover cursor-pointer" onclick="window.open('${url}', '_blank')">
-                <div class="position-absolute top-0 end-0 p-1">
-                    <button class="btn btn-danger btn-sm rounded-circle p-1" onclick="deleteStudentAttachment('${s.key}', ${idx})" title="លុបចោល">
-<i class="fi fi-rr-cross-small" style="font-size: 10px;"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-        })()}
-                    </div>
-                    <div class="mt-3 small text-muted text-center">
-<i class="fi fi-rr-info me-2"></i>រូបថតត្រូវមានទំហំមិនលើសពី <span class="fw-bold">2MB</span> ។ បន្ទាប់ពី Upload រួច វានឹងបង្ហាញនៅទីនេះ។
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>`;
-
 }
 
 // Helper for Family Info Tab
 function getFamilyInfoTabHTML(s) {
+    const memberCard = (icon, iconBg, title, name, job, address, phone, phoneColor, age, relation) => `
+    <div class="col-md-4">
+      <div class="card h-100 border-0 shadow-sm" style="border-radius:20px;overflow:hidden;">
+        <div class="p-1" style="background:${iconBg};"></div>
+        <div class="card-body p-4 text-center">
+          <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width:64px;height:64px;background:${iconBg.replace('linear-gradient(135deg,','').split(',')[0].trim()}22;">
+            <i class="fi ${icon}" style="font-size:1.8rem;background:${iconBg};-webkit-background-clip:text;-webkit-text-fill-color:transparent;"></i>
+          </div>
+          <h6 class="fw-bold mb-0">${title}</h6>
+          ${relation ? `<div class="small text-muted mb-2">${relation}</div>` : '<div class="mb-2"></div>'}
+          <hr class="my-3 opacity-10">
+          <div class="fw-bold text-dark mb-1" style="font-family:'Khmer OS Muol Light';font-size:1rem;">${name||'មិនបានបញ្ជាក់'}</div>
+          ${age ? `<div class="badge bg-secondary bg-opacity-10 text-secondary mb-2">${age} ឆ្នាំ</div>` : ''}
+          <div class="text-muted small mb-3">${job||'មុខរបរមិនបានបញ្ជាក់'}</div>
+          ${address ? `<div class="p-2 rounded-3 text-start small mb-3" style="background:rgba(0,0,0,0.03);">
+            <i class="fi fi-rr-marker text-muted me-2"></i>${address}
+          </div>` : ''}
+          ${phone ? `<a href="tel:${phone}" class="btn btn-sm rounded-pill px-3 fw-bold" style="background:${iconBg};color:#fff;border:none;">
+            <i class="fi fi-rr-phone-call me-2"></i>${formatPhoneWithCarrier(phone)}
+          </a>` : '<span class="text-muted small">គ្មានលេខទូរស័ព្ទ</span>'}
+        </div>
+      </div>
+    </div>`;
     return `
     <div class="row g-4">
-        <!-- Father -->
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm text-center" style="border-radius: 15px;">
+      ${memberCard('fi-rr-man-head','linear-gradient(135deg,#1565c0,#1e88e5)','ឪពុក (Father)',s.fatherName,s.fatherJob,s.fatherAddress,s.fatherPhone,'text-primary',s.fatherAge,null)}
+      ${memberCard('fi-rr-woman-head','linear-gradient(135deg,#e91e8c,#9c27b0)','ម្តាយ (Mother)',s.motherName,s.motherJob,s.motherAddress,s.motherPhone,'text-pink-primary',s.motherAge,null)}
+      ${memberCard('fi-rr-shield-check','linear-gradient(135deg,#f57c00,#e65100)','អាណាព្យាបាល (Guardian)',s.guardianName,null,s.guardianAddress,s.guardianPhone,'text-warning',null,s.guardianRelation)}
+    </div>
+    ${(s.emergencyContactName || s.emergencyContactPhone) ? `
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm" style="border-radius:20px;">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:40px;height:40px;background:linear-gradient(135deg,#e53935,#b71c1c);">
+                <i class="fi fi-rr-ambulance text-white"></i>
+              </div>
+              <h6 class="fw-bold mb-0 text-dark">ទំនាក់ទំនងបន្ទាន់ (Emergency Contact)</h6>
+            </div>
+            <div class="row g-3">
+              ${s.emergencyContactName ? `<div class="col-md-4"><div class="small text-muted mb-1">ឈ្មោះ</div><div class="fw-bold">${s.emergencyContactName}</div></div>` : ''}
+              ${s.emergencyContactRelation ? `<div class="col-md-4"><div class="small text-muted mb-1">ត្រូវជា</div><div class="fw-bold">${s.emergencyContactRelation}</div></div>` : ''}
+              ${s.emergencyContactPhone ? `<div class="col-md-4"><div class="small text-muted mb-1">លេខទូរស័ព្ទ</div><a href="tel:${s.emergencyContactPhone}" class="fw-bold text-danger d-block">${formatPhoneWithCarrier(s.emergencyContactPhone)}</a></div>` : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>` : ''}
+    `;
+}
                 <div class="card-body">
                     <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle mb-3" style="width: 60px; height: 60px;">
 <i class="fi fi-rr-man-head fa-2x"></i>
