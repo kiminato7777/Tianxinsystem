@@ -82,16 +82,30 @@
                 </div>
             </div>
             <div class="card-body p-4">
+                <!-- Visual progress step bar -->
+                <div class="registration-steps">
+                    <div class="registration-steps-progress" id="steps-progress"></div>
+                    <button type="button" class="step-btn active" onclick="switchStep(1)">
+                        <div class="step-num">១</div>
+                        <div class="step-label">ព័ត៌មានផ្ទាល់ខ្លួន</div>
+                    </button>
+                    <button type="button" class="step-btn" onclick="switchStep(2)">
+                        <div class="step-num">២</div>
+                        <div class="step-label">ព័ត៌មានការសិក្សា</div>
+                    </button>
+                    <button type="button" class="step-btn" onclick="switchStep(3)">
+                        <div class="step-num">៣</div>
+                        <div class="step-label">ព័ត៌មានហិរញ្ញវត្ថុ</div>
+                    </button>
+                </div>
+
                 <form id="studentRegistrationForm">
                     <input type="hidden" id="reg_studentKey" name="studentKey">
                     <input type="hidden" id="reg_studentId" name="studentId">
                     <input type="hidden" id="reg_isOldStudent" name="isOldStudent" value="false">
 
-                    <!-- ផ្នែកទី១: ព័ត៌មានអំពីសិស្ស -->
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="section-title mb-0 border-0"
-                            style="padding-bottom: 0px; margin-bottom: 0px; border-bottom: 2px solid #ff69b4;"><i
-                                class="fi fi-rr-user"></i> ព័ត៌មានអំពីសិស្ស</h4>
+                    <!-- ផ្នែកអត្តលេខសិស្ស (បង្ហាញនៅផ្នែកខាងលើគ្រប់ដំណាក់កាល) -->
+                    <div class="d-flex justify-content-end mb-4">
                         <div class="d-flex align-items-center bg-white p-2 rounded shadow-sm border"
                             style="border-color: #ffc2d1 !important;">
                             <label for="reg_displayId" class="form-label mb-0 me-2 text-dark fw-bold"
@@ -111,77 +125,85 @@
                         </div>
                     </div>
 
+                    <div class="step-content" id="step-1-content">
+                        <!-- ផ្នែកទី១: ព័ត៌មានអំពីសិស្ស -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="section-title mb-0 border-0"
+                                style="padding-bottom: 0px; margin-bottom: 0px; border-bottom: 2px solid #ff69b4;"><i
+                                    class="fi fi-rr-user"></i> ព័ត៌មានអំពីសិស្ស</h4>
+                        </div>
+
                     <div class="row g-4 mb-4">
-                        <!-- Khmer Name -->
-                        <div class="col-md-12">
-                            <label for="reg_khmerName" class="form-label"><i
-                                    class="fi fi-rr-user me-1"></i>ឈ្មោះជាភាសាខ្មែរ</label>
-                            <input type="text" class="form-control" id="reg_khmerName" required
-                                placeholder="បញ្ចូលឈ្មោះពេញជាភាសាខ្មែរ">
-                        </div>
+                        <!-- ផ្នែកខាងឆ្វេង: ព័ត៌មានលម្អិតសិស្ស -->
+                        <div class="col-md-9">
+                            <div class="row g-3">
+                                <!-- Khmer Name -->
+                                <div class="col-md-12">
+                                    <label for="reg_khmerName" class="form-label"><i
+                                            class="fi fi-rr-user me-1"></i>ឈ្មោះជាភាសាខ្មែរ</label>
+                                    <input type="text" class="form-control" id="reg_khmerName" required
+                                        placeholder="បញ្ចូលឈ្មោះពេញជាភាសាខ្មែរ">
+                                </div>
 
-                        <!-- Chinese Name -->
-                        <div class="col-md-6">
-                            <label for="reg_chineseName" class="form-label"><i
-                                    class="fi fi-rr-language me-1"></i>ឈ្មោះជាភាសាចិន (中文)</label>
-                            <input type="text" class="form-control" id="reg_chineseName" placeholder="输入中文全名">
-                        </div>
+                                <!-- Chinese Name -->
+                                <div class="col-md-6">
+                                    <label for="reg_chineseName" class="form-label"><i
+                                            class="fi fi-rr-language me-1"></i>ឈ្មោះជាភាសាចិន (中文)</label>
+                                    <input type="text" class="form-control" id="reg_chineseName" placeholder="输入中文全名">
+                                </div>
 
-                        <!-- English Name -->
-                        <div class="col-md-6">
-                            <label for="reg_englishName" class="form-label"><i
-                                    class="fi fi-rr-text-font me-1"></i>ឈ្មោះជាភាសាអង់គ្លេស (English)</label>
-                            <input type="text" class="form-control" id="reg_englishName"
-                                placeholder="Enter Full Name in English">
-                        </div>
+                                <!-- English Name -->
+                                <div class="col-md-6">
+                                    <label for="reg_englishName" class="form-label"><i
+                                            class="fi fi-rr-text-font me-1"></i>ឈ្មោះជាភាសាអង់គ្លេស (English)</label>
+                                    <input type="text" class="form-control" id="reg_englishName"
+                                        placeholder="Enter Full Name in English">
+                                </div>
 
-                        <!-- Row 4: Gender, DOB, Nationality -->
-                        <div class="col-md-4">
-                            <label for="reg_gender" class="form-label"><i class="fi fi-rr-intersex me-1"></i>ភេទ</label>
-                            <select class="form-select" id="reg_gender" required>
-                                <option value="">ជ្រើសរើស...</option>
-                                <option value="ប្រុស">ប្រុស</option>
-                                <option value="ស្រី">ស្រី</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="reg_dob" class="form-label"><i
-                                    class="fi fi-rr-calendar-day me-1"></i>ថ្ងៃខែឆ្នាំកំណើត</label>
-                            <div class="date-input-icon">
-                                <input type="text" class="form-control" id="reg_dob" placeholder="DD/MM/YYYY">
+                                <!-- Gender, DOB, Nationality -->
+                                <div class="col-md-4">
+                                    <label for="reg_gender" class="form-label"><i class="fi fi-rr-intersex me-1"></i>ភេទ</label>
+                                    <select class="form-select" id="reg_gender" required>
+                                        <option value="">ជ្រើសរើស...</option>
+                                        <option value="ប្រុស">ប្រុស</option>
+                                        <option value="ស្រី">ស្រី</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="reg_dob" class="form-label"><i
+                                            class="fi fi-rr-calendar-day me-1"></i>ថ្ងៃខែឆ្នាំកំណើត</label>
+                                    <div class="date-input-icon">
+                                        <input type="text" class="form-control" id="reg_dob" placeholder="DD/MM/YYYY">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="reg_nationality" class="form-label"><i
+                                            class="fi fi-rr-flag me-1"></i>សញ្ជាតិ</label>
+                                    <input type="text" class="form-control" id="reg_nationality" value="ខ្មែរ">
+                                </div>
+
+                                <!-- Phone -->
+                                <div class="col-md-12">
+                                    <label for="reg_personalPhone" class="form-label"><i
+                                            class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទផ្ទាល់ខ្លួន</label>
+                                    <input type="text" class="form-control" id="reg_personalPhone" placeholder="012 345 678">
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <label for="reg_nationality" class="form-label"><i
-                                    class="fi fi-rr-flag me-1"></i>សញ្ជាតិ</label>
-                            <input type="text" class="form-control" id="reg_nationality" value="ខ្មែរ">
-                        </div>
 
-                        <!-- Row 5: Phone and Stay With -->
-                        <div class="col-md-6">
-                            <label for="reg_personalPhone" class="form-label"><i
-                                    class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទផ្ទាល់ខ្លួន</label>
-                            <input type="text" class="form-control" id="reg_personalPhone" placeholder="012 345 678">
-                        </div>
-                    </div>
-
-                    <!-- ផ្នែកទី២: ព័ត៌មានរូបភាព និងភាសាចិន -->
-                    <h5 class="section-title"><i class="fi fi-rr-picture"></i> ព័ត៌មានបន្ថែម</h5>
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-6">
-                            <label for="reg_studentImage" class="form-label"><i
-                                    class="fi fi-rr-picture me-1"></i>រូបភាពសិស្ស</label>
-                            <input type="file" class="form-control" id="reg_studentImage" accept="image/*">
-                            <small class="form-text text-muted">ទំហំរូបភាពមិនត្រូវលើសពី 5MB</small>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label"><i class="fi fi-rr-eye me-1"></i>រូបភាព Preview</label>
-                            <div id="imagePreview" class="border p-1 rounded"
-                                style="height: 150px; background: #f8f9fa;">
+                        <!-- ផ្នែកខាងស្តាំ: រូបថតសិស្ស (Preview និង បញ្ចូលរូបថត) -->
+                        <div class="col-md-3 d-flex flex-column align-items-center justify-content-start border-start ps-4">
+                            <label class="form-label mb-2"><i class="fi fi-rr-camera me-1"></i>រូបភាព Preview</label>
+                            <div id="imagePreview" class="border p-1 rounded mb-3" style="width: 150px; height: 180px; background: #f8f9fa; border-radius: 12px !important; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
                                 <div class="d-flex flex-column align-items-center justify-content-center h-100">
-                                    <i class="fi fi-rr-camera fa-3x text-secondary"></i>
+                                    <i class="fi fi-rr-camera fa-2x text-secondary"></i>
                                     <small class="mt-2 text-muted">រូបភាពសិស្ស</small>
                                 </div>
+                            </div>
+                            <div class="w-100">
+                                <label for="reg_studentImage" class="form-label"><i class="fi fi-rr-picture me-1"></i>រូបភាពសិស្ស</label>
+                                <input type="file" class="form-control form-control-sm" id="reg_studentImage" accept="image/*">
+                                <small class="form-text text-muted" style="font-size: 0.75rem;">ទំហំមិនត្រូវលើសពី 5MB</small>
                             </div>
                         </div>
                     </div>
@@ -233,41 +255,201 @@
                                 <option value="កែប">កែប</option>
                                 <option value="ប៉ៃលិន">ប៉ៃលិន</option>
                                 <option value="កោះកុង">កោះកុង</option>
-                            </select>
                         </div>
                     </div>
 
+                    <!-- ផ្នែកទី៨: ព័ត៌មានមាតាបិតា/អ្នកអាណាព្យាបាល -->
+                    <h4 class="section-title"><i class="fi fi-rr-users"></i> ព័ត៌មានមាតាបិតា/អ្នកអាណាព្យាបាល</h4>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <label for="reg_guardianName" class="form-label"><i
+                                    class="fi fi-rr-shield-check me-1"></i>ឈ្មោះមាតាបិតា/អ្នកអាណាព្យាបាល</label>
+                            <input type="text" class="form-control" id="reg_guardianName" placeholder="បញ្ចូលឈ្មោះ">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="reg_guardianRelation" class="form-label"><i
+                                    class="fi fi-rr-heart me-1"></i>ទំនាក់ទំនងជាមួយសិស្ស</label>
+                            <select class="form-select" id="reg_guardianRelation">
+                                <option value="">ជ្រើសរើស...</option>
+                                <option value="ឪពុក">ឪពុក</option>
+                                <option value="ម្តាយ">ម្តាយ</option>
+                                <option value="បងប្រុស">បងប្រុស</option>
+                                <option value="បងស្រី">បងស្រី</option>
+                                <option value="ជីដូន">ជីដូន</option>
+                                <option value="ជីតា">ជីតា</option>
+                                <option value="អាណាព្យាបាល">អាណាព្យាបាល</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="reg_guardianPhone" class="form-label"><i
+                                    class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទ</label>
+                            <input type="text" class="form-control" id="reg_guardianPhone" placeholder="012 345 678">
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="reg_guardianAddress" class="form-label mb-0"><i
+                                        class="fi fi-rr-map me-1"></i>អាសយដ្ឋានស្នាក់នៅបច្ចុប្បន្ន</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="reg_guardianSameAddress">
+                                    <label class="form-check-label small text-muted" for="reg_guardianSameAddress">
+                                        ដូចអាសយដ្ឋានសិស្ស
+                                    </label>
+                                </div>
+                            </div>
+                            <textarea class="form-control" id="reg_guardianAddress" rows="2"
+                                placeholder="បញ្ចូលអាសយដ្ឋានពេញ"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- ផ្នែកទី៩: ព័ត៌មានអំពីឪពុក -->
+                    <h4 class="section-title"><i class="fi fi-rr-user"></i> ព័ត៌មានអំពីឪពុក</h4>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <label for="reg_fatherName" class="form-label"><i
+                                    class="fi fi-rr-user me-1"></i>ឪពុកឈ្មោះ</label>
+                            <input type="text" class="form-control" id="reg_fatherName" placeholder="បញ្ចូលឈ្មោះឪពុក">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="reg_fatherAge" class="form-label"><i
+                                    class="fi fi-rr-cake-birthday me-1"></i>អាយុ
+                                (ឆ្នាំ)</label>
+                            <input type="number" class="form-control" id="reg_fatherAge" placeholder="ឧ. ៤៥">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="reg_fatherJob" class="form-label"><i
+                                    class="fi fi-rr-briefcase me-1"></i>មុខរបរ</label>
+                            <input type="text" class="form-control" id="reg_fatherJob" placeholder="បញ្ចូលមុខរបរ">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="reg_fatherPhone" class="form-label"><i
+                                    class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទ</label>
+                            <input type="text" class="form-control" id="reg_fatherPhone" placeholder="012 345 678">
+                        </div>
+                        <div class="col-md-12">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="reg_fatherAddress" class="form-label mb-0"><i
+                                        class="fi fi-rr-marker me-1"></i>អាសយដ្ឋានបច្ចុប្បន្ន</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="reg_fatherSameAddress">
+                                    <label class="form-check-label small text-muted" for="reg_fatherSameAddress">
+                                        ដូចអាសយដ្ឋានសិស្ស
+                                    </label>
+                                </div>
+                            </div>
+                            <textarea class="form-control" id="reg_fatherAddress" rows="2"
+                                placeholder="បញ្ចូលអាសយដ្ឋានពេញ"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- ផ្នែកទី១០: ព័ត៌មានអំពីម្តាយ -->
+                    <h4 class="section-title"><i class="fi fi-rr-user"></i> ព័ត៌មានអំពីម្តាយ</h4>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <label for="reg_motherName" class="form-label"><i
+                                    class="fi fi-rr-user me-1"></i>ម្តាយឈ្មោះ</label>
+                            <input type="text" class="form-control" id="reg_motherName" placeholder="បញ្ចូលឈ្មោះម្តាយ">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="reg_motherAge" class="form-label"><i
+                                    class="fi fi-rr-cake-birthday me-1"></i>អាយុ
+                                (ឆ្នាំ)</label>
+                            <input type="number" class="form-control" id="reg_motherAge" placeholder="ឧ. ៤២">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="reg_motherJob" class="form-label"><i
+                                    class="fi fi-rr-briefcase me-1"></i>មុខរបរ</label>
+                            <input type="text" class="form-control" id="reg_motherJob" placeholder="ឧ. មេផ្ទះ">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="reg_motherPhone" class="form-label"><i
+                                    class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទ</label>
+                            <input type="text" class="form-control" id="reg_motherPhone" placeholder="012 345 678">
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="reg_motherAddress" class="form-label mb-0"><i
+                                        class="fi fi-rr-marker me-1"></i>អាសយដ្ឋានបច្ចុប្បន្ន</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="reg_motherSameAddress">
+                                    <label class="form-check-label small text-muted" for="reg_motherSameAddress">
+                                        ដូចអាសយដ្ឋានសិស្ស
+                                    </label>
+                                </div>
+                            </div>
+                            <textarea class="form-control" id="reg_motherAddress" rows="2"
+                                placeholder="បញ្ចូលអាសយដ្ឋានពេញ"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- ផ្នែកទី១១: ព័ត៌មានអ្នកមកទទួល -->
+                    <h4 class="section-title"><i class="fi fi-rr-user-check"></i> ព័ត៌មានអ្នកមកទទួល</h4>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label for="reg_pickerName" class="form-label"><i
+                                    class="fi fi-rr-user me-1"></i>អ្នកមកទទួល</label>
+                            <input type="text" class="form-control" id="reg_pickerName"
+                                placeholder="បញ្ចូលឈ្មោះអ្នកមកទទួល">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="reg_pickerPhone" class="form-label"><i
+                                    class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទ</label>
+                            <input type="text" class="form-control" id="reg_pickerPhone" placeholder="012 345 678">
+                        </div>
+                    </div>
+
+                    <!-- Step 1 Footer Navigation -->
+                    <div class="step-navigation-footer">
+                        <div></div>
+                        <button type="button" class="btn btn-pink-primary px-4 btn-lg" onclick="switchStep(2)">
+                            បន្ទាប់ <i class="fi fi-rr-angle-double-small-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step-content" id="step-2-content" style="display: none;">
                     <!-- ផ្នែកទី៥: ព័ត៌មានលម្អិតអំពីការសិក្សា -->
                     <h4 class="section-title"><i class="fi fi-rr-book-alt"></i> ព័ត៌មានលម្អិតអំពីការសិក្សា</h4>
 
                     <!-- ផ្នែកថ្មី: ជ្រើសរើសប្រភេទការសិក្សា -->
                     <div class="course-options mb-4">
-                        <label class="form-label fw-bold"><i
-                                class="fi fi-rr-book me-1"></i>សូមជ្រើសរើសប្រភេទការសិក្សា</label><br>
+                        <label class="form-label fw-bold w-100 mb-3"><i class="fi fi-rr-book me-1"></i>សូមជ្រើសរើសប្រភេទការសិក្សា</label>
+                        
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input course-type" type="radio" name="reg_course_type"
-                                id="reg_cOneLanguage" data-course="one-language">
-                            <label class="form-check-label" for="reg_cOneLanguage">ថ្នាក់ភាសា (១ភាសា)</label>
+                            <input class="form-check-input course-type" type="radio" name="reg_course_type" id="reg_cOneLanguage" data-course="one-language">
+                            <label class="course-card-option" for="reg_cOneLanguage">
+                                <i class="fi fi-rr-language text-primary fs-4"></i>
+                                <span class="course-card-label">ថ្នាក់ភាសា (១ភាសា)</span>
+                            </label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input course-type" type="radio" name="reg_course_type"
-                                id="reg_cTwoLanguages" data-course="two-languages">
-                            <label class="form-check-label" for="reg_cTwoLanguages">ថ្នាក់ភាសា (២ភាសា)</label>
+                            <input class="form-check-input course-type" type="radio" name="reg_course_type" id="reg_cTwoLanguages" data-course="two-languages">
+                            <label class="course-card-option" for="reg_cTwoLanguages">
+                                <i class="fi fi-rr-globe text-success fs-4"></i>
+                                <span class="course-card-label">ថ្នាក់ភាសា (២ភាសា)</span>
+                            </label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input course-type" type="radio" name="reg_course_type"
-                                id="reg_cThreeLanguages" data-course="three-languages">
-                            <label class="form-check-label" for="reg_cThreeLanguages">ថ្នាក់ចំណះដឹងទូទៅ</label>
+                            <input class="form-check-input course-type" type="radio" name="reg_course_type" id="reg_cThreeLanguages" data-course="three-languages">
+                            <label class="course-card-option" for="reg_cThreeLanguages">
+                                <i class="fi fi-rr-book-alt text-warning fs-4"></i>
+                                <span class="course-card-label">ថ្នាក់ចំណេះដឹងទូទៅ</span>
+                            </label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input course-type" type="radio" name="reg_course_type"
-                                id="reg_cFullTime" data-course="chinese-fulltime">
-                            <label class="form-check-label" for="reg_cFullTime">ថ្នាក់ភាសាចិនពេញម៉ោង</label>
+                            <input class="form-check-input course-type" type="radio" name="reg_course_type" id="reg_cFullTime" data-course="chinese-fulltime">
+                            <label class="course-card-option" for="reg_cFullTime">
+                                <i class="fi fi-rr-graduation-cap text-danger fs-4"></i>
+                                <span class="course-card-label">ថ្នាក់ភាសាចិនពេញម៉ោង</span>
+                            </label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input course-type" type="radio" name="reg_course_type"
-                                id="reg_cPartTime" data-course="chinese-parttime">
-                            <label class="form-check-label" for="reg_cPartTime">ថ្នាក់ភាសាចិនក្រៅម៉ោង</label>
+                            <input class="form-check-input course-type" type="radio" name="reg_course_type" id="reg_cPartTime" data-course="chinese-parttime">
+                            <label class="course-card-option" for="reg_cPartTime">
+                                <i class="fi fi-rr-clock text-info fs-4"></i>
+                                <span class="course-card-label">ថ្នាក់ភាសាចិនក្រៅម៉ោង</span>
+                            </label>
                         </div>
                     </div>
 
@@ -636,8 +818,18 @@
                         </div>
                     </div>
 
+                    <!-- Step 2 Footer Navigation -->
+                    <div class="step-navigation-footer">
+                        <button type="button" class="btn btn-secondary px-4 btn-lg" onclick="switchStep(1)">
+                            <i class="fi fi-rr-angle-double-small-left"></i> ត្រឡប់ក្រោយ
+                        </button>
+                        <button type="button" class="btn btn-pink-primary px-4 btn-lg" onclick="switchStep(3)">
+                            បន្ទាប់ <i class="fi fi-rr-angle-double-small-right"></i>
+                        </button>
+                    </div>
+                </div>
 
-
+                <div class="step-content" id="step-3-content" style="display: none;">
                     <!-- ផ្នែកទី៧: ព័ត៌មានហិរញ្ញវត្ថុ -->
                     <h4 class="section-title"><i class="fi fi-rr-dollar"></i> ព័ត៌មានហិរញ្ញវត្ថុ</h4>
 
@@ -839,162 +1031,27 @@
                         </div>
                     </div>
 
-                    <!-- ផ្នែកទី៨: ព័ត៌មានមាតាបិតា/អ្នកអាណាព្យាបាល -->
-                    <h4 class="section-title"><i class="fi fi-rr-users"></i> ព័ត៌មានមាតាបិតា/អ្នកអាណាព្យាបាល</h4>
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-4">
-                            <label for="reg_guardianName" class="form-label"><i
-                                    class="fi fi-rr-shield-check me-1"></i>ឈ្មោះមាតាបិតា/អ្នកអាណាព្យាបាល</label>
-                            <input type="text" class="form-control" id="reg_guardianName" placeholder="បញ្ចូលឈ្មោះ">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="reg_guardianRelation" class="form-label"><i
-                                    class="fi fi-rr-heart me-1"></i>ទំនាក់ទំនងជាមួយសិស្ស</label>
-                            <select class="form-select" id="reg_guardianRelation">
-                                <option value="">ជ្រើសរើស...</option>
-                                <option value="ឪពុក">ឪពុក</option>
-                                <option value="ម្តាយ">ម្តាយ</option>
-                                <option value="បងប្រុស">បងប្រុស</option>
-                                <option value="បងស្រី">បងស្រី</option>
-                                <option value="ជីដូន">ជីដូន</option>
-                                <option value="ជីតា">ជីតា</option>
-                                <option value="អាណាព្យាបាល">អាណាព្យាបាល</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="reg_guardianPhone" class="form-label"><i
-                                    class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទ</label>
-                            <input type="text" class="form-control" id="reg_guardianPhone" placeholder="012 345 678">
-                        </div>
-
-                        <div class="col-md-12">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <label for="reg_guardianAddress" class="form-label mb-0"><i
-                                        class="fi fi-rr-map me-1"></i>អាសយដ្ឋានស្នាក់នៅបច្ចុប្បន្ន</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="reg_guardianSameAddress">
-                                    <label class="form-check-label small text-muted" for="reg_guardianSameAddress">
-                                        ដូចអាសយដ្ឋានសិស្ស
-                                    </label>
-                                </div>
-                            </div>
-                            <textarea class="form-control" id="reg_guardianAddress" rows="2"
-                                placeholder="បញ្ចូលអាសយដ្ឋានពេញ"></textarea>
-                        </div>
-                    </div>
-
-                    <!-- ផ្នែកទី៩: ព័ត៌មានអំពីឪពុក -->
-                    <h4 class="section-title"><i class="fi fi-rr-user"></i> ព័ត៌មានអំពីឪពុក</h4>
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-3">
-                            <label for="reg_fatherName" class="form-label"><i
-                                    class="fi fi-rr-user me-1"></i>ឪពុកឈ្មោះ</label>
-                            <input type="text" class="form-control" id="reg_fatherName" placeholder="បញ្ចូលឈ្មោះឪពុក">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="reg_fatherAge" class="form-label"><i
-                                    class="fi fi-rr-cake-birthday me-1"></i>អាយុ
-                                (ឆ្នាំ)</label>
-                            <input type="number" class="form-control" id="reg_fatherAge" placeholder="ឧ. ៤៥">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="reg_fatherJob" class="form-label"><i
-                                    class="fi fi-rr-briefcase me-1"></i>មុខរបរ</label>
-                            <input type="text" class="form-control" id="reg_fatherJob" placeholder="បញ្ចូលមុខរបរ">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="reg_fatherPhone" class="form-label"><i
-                                    class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទ</label>
-                            <input type="text" class="form-control" id="reg_fatherPhone" placeholder="012 345 678">
-                        </div>
-                        <div class="col-md-12">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <label for="reg_fatherAddress" class="form-label mb-0"><i
-                                        class="fi fi-rr-marker me-1"></i>អាសយដ្ឋានបច្ចុប្បន្ន</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="reg_fatherSameAddress">
-                                    <label class="form-check-label small text-muted" for="reg_fatherSameAddress">
-                                        ដូចអាសយដ្ឋានសិស្ស
-                                    </label>
-                                </div>
-                            </div>
-                            <textarea class="form-control" id="reg_fatherAddress" rows="2"
-                                placeholder="បញ្ចូលអាសយដ្ឋានពេញ"></textarea>
-                        </div>
-                    </div>
-
-                    <!-- ផ្នែកទី១០: ព័ត៌មានអំពីម្តាយ -->
-                    <h4 class="section-title"><i class="fi fi-rr-user"></i> ព័ត៌មានអំពីម្តាយ</h4>
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-3">
-                            <label for="reg_motherName" class="form-label"><i
-                                    class="fi fi-rr-user me-1"></i>ម្តាយឈ្មោះ</label>
-                            <input type="text" class="form-control" id="reg_motherName" placeholder="បញ្ចូលឈ្មោះម្តាយ">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="reg_motherAge" class="form-label"><i
-                                    class="fi fi-rr-cake-birthday me-1"></i>អាយុ
-                                (ឆ្នាំ)</label>
-                            <input type="number" class="form-control" id="reg_motherAge" placeholder="ឧ. ៤២">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="reg_motherJob" class="form-label"><i
-                                    class="fi fi-rr-briefcase me-1"></i>មុខរបរ</label>
-                            <input type="text" class="form-control" id="reg_motherJob" placeholder="ឧ. មេផ្ទះ">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="reg_motherPhone" class="form-label"><i
-                                    class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទ</label>
-                            <input type="text" class="form-control" id="reg_motherPhone" placeholder="012 345 678">
-                        </div>
-
-                        <div class="col-md-12">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <label for="reg_motherAddress" class="form-label mb-0"><i
-                                        class="fi fi-rr-marker me-1"></i>អាសយដ្ឋានបច្ចុប្បន្ន</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="reg_motherSameAddress">
-                                    <label class="form-check-label small text-muted" for="reg_motherSameAddress">
-                                        ដូចអាសយដ្ឋានសិស្ស
-                                    </label>
-                                </div>
-                            </div>
-                            <textarea class="form-control" id="reg_motherAddress" rows="2"
-                                placeholder="បញ្ចូលអាសយដ្ឋានពេញ"></textarea>
-                        </div>
-                    </div>
-
-                    <!-- ផ្នែកទី១១: ព័ត៌មានអ្នកមកទទួល -->
-                    <h4 class="section-title"><i class="fi fi-rr-user-check"></i> ព័ត៌មានអ្នកមកទទួល</h4>
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-6">
-                            <label for="reg_pickerName" class="form-label"><i
-                                    class="fi fi-rr-user me-1"></i>អ្នកមកទទួល</label>
-                            <input type="text" class="form-control" id="reg_pickerName"
-                                placeholder="បញ្ចូលឈ្មោះអ្នកមកទទួល">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="reg_pickerPhone" class="form-label"><i
-                                    class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទ</label>
-                            <input type="text" class="form-control" id="reg_pickerPhone" placeholder="012 345 678">
-                        </div>
-                    </div>
-
-                    <!-- ផ្នែកទី១២: ប៊ូតុងសកម្មភាព -->
-                    <div class="d-grid gap-3 d-md-flex justify-content-md-end mt-4 pt-3 border-top">
-                        <button type="submit" class="btn btn-pink-primary btn-lg" id="submitBtn">
-                            <i class="fi fi-rr-paper-plane"></i> បញ្ជូនទម្រង់ចុះឈ្មោះ
+                    <!-- Step 3 Footer Navigation -->
+                    <div class="step-navigation-footer">
+                        <button type="button" class="btn btn-secondary px-4 btn-lg" onclick="switchStep(2)">
+                            <i class="fi fi-rr-angle-double-small-left"></i> ត្រឡប់ក្រោយ
                         </button>
-                        <button type="button" class="btn btn-warning btn-lg" id="updateBtn" style="display: none;">
-                            <i class="fi fi-rr-disk"></i> រក្សាទុកការកែសម្រួល
-                        </button>
-                        <button type="button" class="btn btn-info btn-lg" id="cancelEditBtn" style="display: none;">
-                            <i class="fi fi-rr-cross"></i> ថ្ងាក់ចេញពីការកែសម្រួល
-                        </button>
-                        <button type="reset" class="btn btn-secondary btn-lg" id="resetBtn">
-                            <i class="fi fi-rr-eraser"></i> សម្អាតទម្រង់
-                        </button>
+                        <div class="d-flex gap-2">
+                            <button type="reset" class="btn btn-secondary btn-lg" id="resetBtn">
+                                <i class="fi fi-rr-eraser"></i> សម្អាតទម្រង់
+                            </button>
+                            <button type="button" class="btn btn-info btn-lg" id="cancelEditBtn" style="display: none;">
+                                <i class="fi fi-rr-cross"></i> ថ្ងាក់ចេញពីការកែសម្រួល
+                            </button>
+                            <button type="button" class="btn btn-warning btn-lg" id="updateBtn" style="display: none;">
+                                <i class="fi fi-rr-disk"></i> រក្សាទុកការកែសម្រួល
+                            </button>
+                            <button type="submit" class="btn btn-pink-primary btn-lg" id="submitBtn">
+                                <i class="fi fi-rr-paper-plane"></i> បញ្ជូនទម្រង់ចុះឈ្មោះ
+                            </button>
+                        </div>
                     </div>
+                </div>
                 </form>
             </div>
         </div>

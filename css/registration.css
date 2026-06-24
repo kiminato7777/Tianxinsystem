@@ -642,3 +642,232 @@
             border: 1px solid #ffc107;
             z-index: 1;
         }
+
+        /* --- MODERN 3-STEP REGISTRATION WIZARD STYLES --- */
+        .registration-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 105, 180, 0.1);
+        }
+
+        /* Connecting line behind steps */
+        .registration-steps::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50px;
+            right: 50px;
+            height: 3px;
+            background: #e9ecef;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        /* Step progress line active background */
+        .registration-steps-progress {
+            position: absolute;
+            top: 50%;
+            left: 50px;
+            width: 0%; /* Dynamic via JS */
+            height: 3px;
+            background: linear-gradient(95deg, #8a0e5b, #ff69b4);
+            transform: translateY(-50%);
+            z-index: 2;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .step-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 3;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 120px;
+        }
+
+        .step-num {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #dee2e6;
+            color: #6c757d;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .step-label {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        /* Hover states */
+        .step-btn:hover .step-num {
+            border-color: #ff69b4;
+            color: #ff69b4;
+            transform: scale(1.05);
+        }
+
+        /* Active states */
+        .step-btn.active .step-num {
+            background: linear-gradient(135deg, #8a0e5b, #ff69b4);
+            border-color: #ffc2d1;
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(138, 14, 91, 0.25);
+        }
+
+        .step-btn.active .step-label {
+            color: #8a0e5b;
+            font-weight: 700;
+        }
+
+        /* Completed states */
+        .step-btn.completed .step-num {
+            background: #20c997;
+            border-color: #a2e9d4;
+            color: white;
+        }
+        
+        .step-btn.completed .step-label {
+            color: #20c997;
+        }
+
+        /* Step Content containers */
+        .step-content {
+            animation: slideIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Step footer navigation buttons */
+        .step-navigation-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(0,0,0,0.06);
+        }
+
+        /* Form improvement additions */
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            font-size: 0.92rem;
+        }
+
+        .form-label i {
+            color: #8a0e5b;
+            font-size: 1.05rem;
+            margin-right: 6px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 12px;
+            padding: 12px 16px;
+            border: 1.5px solid #e2e8f0;
+            font-size: 0.95rem;
+            background-color: #fff;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #333;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #ff69b4;
+            box-shadow: 0 0 0 4px rgba(255, 105, 180, 0.12);
+            background-color: #fff;
+        }
+
+        .form-control::placeholder {
+            color: #a0aec0;
+            font-weight: 300;
+        }
+
+        /* Course Selector Type Cards */
+        .course-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .course-options .form-check-inline {
+            margin: 0;
+            padding: 0;
+        }
+
+        .course-card-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            height: 100%;
+            width: 100%;
+        }
+
+        .course-card-option:hover {
+            border-color: #ff69b4;
+            background: #fff5f8;
+            transform: translateY(-2px);
+        }
+
+        .course-options input[type="radio"]:checked + .course-card-option {
+            border-color: #8a0e5b;
+            background: #fff0f6;
+            box-shadow: 0 4px 12px rgba(138, 14, 91, 0.1);
+        }
+
+        .course-options input[type="radio"] {
+            display: none; /* Hide standard radio button */
+        }
+
+        .course-card-label {
+            font-weight: 700;
+            color: #495057;
+            font-size: 0.95rem;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .course-options input[type="radio"]:checked + .course-card-option .course-card-label {
+            color: #8a0e5b;
+        }

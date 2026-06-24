@@ -398,11 +398,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Study Time
                     const studyTimeInput = document.getElementById('reg_studyTime'); // the manual input
                     const studyTimeSelect = document.getElementById('reg_studyTime_select');
+                    const fulltimeStudyTimeSelect = document.getElementById('reg_fulltime_studyTime_select');
+                    const fulltimeStudyTimeManual = document.getElementById('reg_fulltime_studyTime_manual');
+                    const parttimeStudyTimeSelect = document.getElementById('reg_parttime_studyTime_select');
+                    const parttimeStudyTimeManual = document.getElementById('reg_parttime_studyTime_manual');
 
                     if (studyTime) {
                         const firstTime = studyTime.split(',')[0].trim();
                         if (studyTimeSelect) studyTimeSelect.value = firstTime;
-                        if (studyTimeInput) studyTimeInput.value = studyTime;
+                        if (studyTimeInput) studyTimeInput.value = firstTime;
+                        if (fulltimeStudyTimeSelect) fulltimeStudyTimeSelect.value = firstTime;
+                        if (fulltimeStudyTimeManual) fulltimeStudyTimeManual.value = firstTime;
+                        if (parttimeStudyTimeSelect) parttimeStudyTimeSelect.value = firstTime;
+                        if (parttimeStudyTimeManual) parttimeStudyTimeManual.value = firstTime;
                     }
 
                     // Classroom
@@ -411,7 +419,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (classroom) {
                         const firstRoom = classroom.split(',')[0].trim();
                         if (roomSelect) roomSelect.value = firstRoom;
-                        if (roomInput) roomInput.value = classroom;
+                        if (roomInput) roomInput.value = firstRoom;
                     }
                 });
 
@@ -1125,9 +1133,15 @@ document.addEventListener('DOMContentLoaded', function () {
         // Copy admin fees from manual fields
         const materialFeeManual = document.getElementById('reg_materialFee_manual');
         const adminFeeManual = document.getElementById('reg_adminFee_manual');
+        const adminServicesFeeManual = document.getElementById('reg_adminServicesFee_manual');
+        const adminServicesFeeMain = document.getElementById('reg_adminServicesFee');
 
         const materialFee = materialFeeManual ? parseFloat(materialFeeManual.value) || 0 : 0;
         const adminFee = adminFeeManual ? parseFloat(adminFeeManual.value) || 0 : 0;
+        
+        if (adminServicesFeeManual && adminServicesFeeMain) {
+            adminServicesFeeMain.value = adminServicesFeeManual.value || '0.00';
+        }
 
         // Update admin materials
         updateAdminMaterialsFromManual(materialFee, adminFee);
@@ -1635,13 +1649,9 @@ document.addEventListener('DOMContentLoaded', function () {
             let discount = 0;
             let discountPercent = 0;
             let initialPayment = 0;
-
-            // Manual fee input fallback if needed, but mainly focusing on tuition now
-            // We assume manual inputs for Tuition/Discount/InitialPayment still exist?
-            // Yes, user said "Remove Admin Materials", not everything.
-
             let materialFee = 0;
             let adminFee = 0;
+            let adminServicesFee = 0;
 
             if (enableManualFeeCheckbox && enableManualFeeCheckbox.checked) {
                 const tuitionFeeManual = document.getElementById('reg_tuitionFee_manual');
@@ -1650,6 +1660,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const initialPaymentManual = document.getElementById('reg_initialPayment_manual');
                 const materialFeeManual = document.getElementById('reg_materialFee_manual');
                 const adminFeeManual = document.getElementById('reg_adminFee_manual');
+                const adminServicesFeeManual = document.getElementById('reg_adminServicesFee_manual');
 
                 tuitionFee = tuitionFeeManual ? parseFloat(tuitionFeeManual.value) || 0 : 0;
                 discount = discountManual ? parseFloat(discountManual.value) || 0 : 0;
@@ -1657,6 +1668,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 initialPayment = initialPaymentManual ? parseFloat(initialPaymentManual.value) || 0 : 0;
                 materialFee = materialFeeManual ? parseFloat(materialFeeManual.value) || 0 : 0;
                 adminFee = adminFeeManual ? parseFloat(adminFeeManual.value) || 0 : 0;
+                adminServicesFee = adminServicesFeeManual ? parseFloat(adminServicesFeeManual.value) || 0 : 0;
 
             } else {
                 const tuitionFeeField = document.getElementById('reg_tuitionFee');
@@ -1664,35 +1676,39 @@ document.addEventListener('DOMContentLoaded', function () {
                 const discountPercentField = document.getElementById('reg_discountPercent');
                 const initialPaymentField = document.getElementById('reg_initialPayment');
 
+                const bookFeeField = document.getElementById('reg_bookFee');
+                const fulltimeBookFeeField = document.getElementById('reg_fulltimeBookFee');
+                const uniformFeeField = document.getElementById('reg_uniformFee');
+                const idCardFeeField = document.getElementById('reg_idCardFee');
+                const registrationFeeField = document.getElementById('reg_registrationFee');
+                const adminFeeField = document.getElementById('reg_adminFee');
+
                 tuitionFee = tuitionFeeField ? parseFloat(tuitionFeeField.value) || 0 : 0;
                 discount = discountField ? parseFloat(discountField.value) || 0 : 0;
                 discountPercent = discountPercentField ? parseFloat(discountPercentField.value) || 0 : 0;
                 initialPayment = initialPaymentField ? parseFloat(initialPaymentField.value) || 0 : 0;
+
+                const bookFee = bookFeeField ? parseFloat(bookFeeField.value) || 0 : 0;
+                const fulltimeBookFee = fulltimeBookFeeField ? parseFloat(fulltimeBookFeeField.value) || 0 : 0;
+                const uniformFee = uniformFeeField ? parseFloat(uniformFeeField.value) || 0 : 0;
+                const idCardFee = idCardFeeField ? parseFloat(idCardFeeField.value) || 0 : 0;
+                const registrationFee = registrationFeeField ? parseFloat(registrationFeeField.value) || 0 : 0;
+
+                materialFee = bookFee + fulltimeBookFee + uniformFee + idCardFee + registrationFee;
+                adminFee = adminFeeField ? parseFloat(adminFeeField.value) || 0 : 0;
+                adminServicesFee = adminServicesFeeInput ? parseFloat(adminServicesFeeInput.value) || 0 : 0;
             }
 
             const discountFromPercent = tuitionFee * (discountPercent / 100);
             const totalDiscount = discount + discountFromPercent;
             const netTuition = Math.max(0, tuitionFee - totalDiscount);
 
-            // Total fees including materials and admin
-            const totalAllFees = netTuition + materialFee + adminFee;
+            // Total fees including materials, admin, and admin services
+            const totalAllFees = netTuition + materialFee + adminFee + adminServicesFee;
             const balance = Math.max(0, totalAllFees - initialPayment);
 
-            // Update Total display
-            // Note: I removed 'reg_totalAllFees' input in HTML previously?
-            // No, I removed 'reg_totalAdminFees' block. 'reg_totalAllFees' was in another block?
-            // Re-checking HTML diff: I removed 'reg_totalAllFees' INPUT container as part of the admin block removal?
-            // Wait, looking at Step 281 diff: 
-            // -                        <div class="row g-3 mt-3">
-            // -                            <div class="col-md-12">
-            // -                                <label for="reg_totalAllFees" ...
-            // YES. I removed 'reg_totalAllFees' input from the DOM.
-            // So this JS line [1212-1215] would fail or accept null.
-            // I should look if there is any other place showing total.
-            // There is 'summaryTotalFees' in the summary section.
-
             // Update summary
-            updateSummaryDisplay(tuitionFee, discount, discountPercent, totalDiscount, netTuition, totalAllFees, initialPayment, balance, materialFee, adminFee);
+            updateSummaryDisplay(tuitionFee, discount, discountPercent, totalDiscount, netTuition, totalAllFees, initialPayment, balance, materialFee, adminFee, adminServicesFee);
 
             updateInstallmentAmounts(balance);
 
@@ -1702,7 +1718,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function updateSummaryDisplay(tuitionFee, discount, discountPercent, totalDiscount, netTuition, totalAllFees, initialPayment, balance, materialFee = 0, adminFee = 0) {
+    function updateSummaryDisplay(tuitionFee, discount, discountPercent, totalDiscount, netTuition, totalAllFees, initialPayment, balance, materialFee = 0, adminFee = 0, adminServicesFee = 0) {
 
         // Update tuition section
         if (summaryTuitionFee) summaryTuitionFee.textContent = `$${tuitionFee.toFixed(2)}`;
@@ -1714,19 +1730,20 @@ document.addEventListener('DOMContentLoaded', function () {
         const totalAdminMaterials = materialFee + adminFee;
         if (summaryAdminMaterials) summaryAdminMaterials.textContent = `$${totalAdminMaterials.toFixed(2)}`;
 
-        // If we want to show them separately, we could add more summary elements, 
-        // but for now let's ensure summaryAdminMaterials reflects them.
-
         // Update totals
         if (summaryTotalFees) summaryTotalFees.textContent = `$${totalAllFees.toFixed(2)}`;
         if (summaryPaid) summaryPaid.textContent = `$${initialPayment.toFixed(2)}`;
         if (summaryBalance) summaryBalance.textContent = `$${balance.toFixed(2)}`;
+
+        // Update administrative services fee in summary
+        if (summaryServicesFee) {
+            summaryServicesFee.textContent = `$${adminServicesFee.toFixed(2)}`;
+        }
     }
-
-
 
     function updateInstallmentAmounts(balance) {
         const enableInstallmentCheckbox = document.getElementById('reg_enableInstallment');
+        const installmentTotalAmount = document.getElementById('installmentTotalAmount');
         if (enableInstallmentCheckbox && enableInstallmentCheckbox.checked && installmentTotalAmount) {
             installmentTotalAmount.textContent = `$${balance.toFixed(2)}`;
 
@@ -1791,6 +1808,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     }
+    window.calculateInstallmentTotal = calculateInstallmentTotal;
 
     // ============================================
     // 8. មុខងារបញ្ជាក់ដំណើរកាលបង់ (Installment Stages)
@@ -3952,6 +3970,51 @@ document.addEventListener('DOMContentLoaded', function () {
             Swal.fire('Error', 'មានបញ្ហាបច្គេកទេសក្នុងការពិនិត្យ', 'error');
         }
     };
+
+    // --- STEP WIZARD LOGIC ---
+    window.switchStep = (stepNum) => {
+        // Hide all step contents
+        document.querySelectorAll('.step-content').forEach(el => {
+            el.style.display = 'none';
+        });
+
+        // Show target step content
+        const targetContent = document.getElementById(`step-${stepNum}-content`);
+        if (targetContent) {
+            targetContent.style.display = 'block';
+        }
+
+        // Update step navigation buttons state
+        const stepBtns = document.querySelectorAll('.registration-steps .step-btn');
+        stepBtns.forEach((btn, index) => {
+            const btnStep = index + 1;
+            if (btnStep < stepNum) {
+                btn.classList.add('completed');
+                btn.classList.remove('active');
+            } else if (btnStep === stepNum) {
+                btn.classList.add('active');
+                btn.classList.remove('completed');
+            } else {
+                btn.classList.remove('active', 'completed');
+            }
+        });
+
+        // Update progress bar width
+        const progressBar = document.getElementById('steps-progress');
+        if (progressBar && stepBtns.length > 1) {
+            const progressPercentage = ((stepNum - 1) / (stepBtns.length - 1)) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+        }
+
+        // Scroll smoothly to top of card
+        const mainCard = document.querySelector('.card');
+        if (mainCard) {
+            mainCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
+    // Initialize Step 1
+    window.switchStep(1);
 
 });
 
