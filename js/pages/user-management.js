@@ -111,19 +111,33 @@ function renderPermissionCards(containerId, prefix) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    container.innerHTML = PERMISSION_CONFIG.map(p => `
-        <div class="permission-card p-2 border rounded-3 d-flex align-items-center justify-content-between hover-shadow-sm transition-all flex-shrink-0"
-             style="min-width: 140px; cursor: pointer; background: white;"
-             onclick="document.getElementById('${prefix}${capitalize(p.key)}').click()">
-            <div class="d-flex align-items-center">
-                <i class="${p.icon} ${p.colorClass} fs-5 me-2"></i>
-                <span class="fw-bold text-dark small">${p.label}</span>
+    container.innerHTML = PERMISSION_CONFIG.map(p => {
+        let colorStyle = 'color: #8a0e5b;';
+        if (p.badgeColor && p.badgeColor.includes('success')) colorStyle = 'color: #198754;';
+        else if (p.badgeColor && p.badgeColor.includes('danger')) colorStyle = 'color: #dc3545;';
+        else if (p.badgeColor && p.badgeColor.includes('warning')) colorStyle = 'color: #fd7e14;';
+        else if (p.badgeColor && p.badgeColor.includes('info')) colorStyle = 'color: #0dcaf0;';
+        else if (p.badgeColor && p.badgeColor.includes('dark')) colorStyle = 'color: #212529;';
+        else if (p.badgeColor && p.badgeColor.includes('secondary')) colorStyle = 'color: #6c757d;';
+
+        return `
+            <div class="col-6">
+                <div class="permission-card p-3 border rounded-3 d-flex align-items-center justify-content-between hover-shadow-sm transition-all"
+                     style="cursor: pointer; background: white; border-color: #e2e8f0; height: 100%;"
+                     onclick="const chk = document.getElementById('${prefix}${capitalize(p.key)}'); if (!chk.disabled) { chk.checked = !chk.checked; chk.dispatchEvent(new Event('change')); }">
+                    <div class="d-flex align-items-center me-2">
+                        <div class="rounded-circle p-2 me-2 d-flex align-items-center justify-content-center bg-light" style="width: 36px; height: 36px;">
+                            <i class="fi ${p.icon} fs-5" style="${colorStyle}"></i>
+                        </div>
+                        <span class="fw-bold text-dark" style="font-size: 0.85rem; line-height: 1.2;">${p.label}</span>
+                    </div>
+                    <div class="form-check form-switch ms-auto">
+                        <input class="form-check-input" type="checkbox" id="${prefix}${capitalize(p.key)}" ${p.defaultChecked && prefix === 'perm' ? 'checked' : ''} style="cursor: pointer;" onclick="event.stopPropagation();">
+                    </div>
+                </div>
             </div>
-            <div class="form-check form-switch pointer-events-none ms-2">
-                <input class="form-check-input" type="checkbox" id="${prefix}${capitalize(p.key)}" ${p.defaultChecked && prefix === 'perm' ? 'checked' : ''}>
-            </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function capitalize(s) {
@@ -149,16 +163,22 @@ function handleRolePermissionLock(role, prefix) {
     PERMISSION_CONFIG.forEach(config => {
         const el = document.getElementById(`${prefix}${capitalize(config.key)}`);
         if (el) {
+            const card = el.closest('.permission-card');
             if (isAdmin) {
                 el.checked = true;
                 el.disabled = true;
-                // Add a visual indicator that it's locked
-                el.closest('.permission-card').style.opacity = '0.7';
-                el.closest('.permission-card').style.cursor = 'not-allowed';
+                if (card) {
+                    card.classList.add('locked');
+                    card.style.opacity = '';
+                    card.style.cursor = '';
+                }
             } else {
                 el.disabled = false;
-                el.closest('.permission-card').style.opacity = '1';
-                el.closest('.permission-card').style.cursor = 'pointer';
+                if (card) {
+                    card.classList.remove('locked');
+                    card.style.opacity = '';
+                    card.style.cursor = '';
+                }
             }
         }
     });
