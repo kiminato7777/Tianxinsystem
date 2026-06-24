@@ -237,15 +237,38 @@
         /* --- FORMS & BUTTONS --- */
         .form-control {
             border-radius: 10px;
-            padding: 12px 15px;
             border: 1px solid #e0e0e0;
             background-color: #f8f9fa;
+        }
+
+        .form-control:not(.form-floating > .form-control) {
+            padding: 12px 15px;
         }
 
         .form-control:focus {
             background-color: #fff;
             box-shadow: 0 0 0 4px rgba(255, 105, 180, 0.15);
             border-color: #ff69b4;
+        }
+
+        /* --- INPUT GROUPS & PASSWORD TOGGLE --- */
+        .input-group > .form-floating:first-child > .form-control {
+            border-top-right-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+            border-right: none !important;
+        }
+
+        .input-group > .btn:last-child {
+            border-top-left-radius: 0 !important;
+            border-bottom-left-radius: 0 !important;
+            border-color: #e0e0e0 !important;
+            border-left: none !important;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .input-group:focus-within > .btn:last-child {
+            border-color: #ff69b4 !important;
+            color: #ff69b4 !important;
         }
 
         .btn-success {
@@ -585,8 +608,8 @@
                                                  onclick="document.getElementById('newUserImageInput').click()">
                                                 <i class="fi fi-rr-user-circle text-primary" style="font-size: 5rem;"></i>
                                             </div>
-                                            <div class="position-absolute bottom-0 end-0 mb-2 me-1">
-                                                <button type="button" class="btn btn-primary btn-sm rounded-circle p-1 shadow-sm" style="width: 25px; height: 25px; line-height: 1;">
+                                            <div class="position-absolute bottom-0 end-0 mb-2 me-1" style="pointer-events: none;">
+                                                <button type="button" class="btn btn-primary btn-sm rounded-circle p-1 shadow-sm" style="width: 25px; height: 25px; line-height: 1; pointer-events: none; background-color: #8a0e5b; border-color: #8a0e5b;">
                                                     <i class="fi fi-rr-camera" style="font-size: 0.7rem;"></i>
                                                 </button>
                                             </div>
@@ -674,7 +697,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
                 <div class="modal-header text-white"
-                    style="background-color: #0d6efd; border-bottom: 2px solid rgba(255,255,255,0.1);">
+                    style="background-color: #8a0e5b; border-bottom: 2px solid rgba(255,255,255,0.1);">
                     <h5 class="modal-title fw-bold title-font"><i
                             class="fi fi-rr-edit me-2"></i>កែប្រែសិទ្ធិអ្នកប្រើប្រាស់</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
@@ -687,10 +710,10 @@
                             <!-- Basic Info -->
                             <div class="col-md-6">
                                 <div class="bg-white p-4 rounded-4 shadow-sm h-100 border border-light">
-                                    <h6 class="fw-bold text-primary mb-4 border-bottom pb-2 d-flex align-items-center">
-                                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2 d-flex justify-content-center align-items-center"
-                                            style="width: 35px; height: 35px;">
-                                            <i class="fi fi-rr-info text-primary"></i>
+                                    <h6 class="fw-bold text-pink-dark mb-4 border-bottom pb-2 d-flex align-items-center">
+                                        <div class="bg-pink-light rounded-circle p-2 me-2 d-flex justify-content-center align-items-center"
+                                            style="width: 35px; height: 35px; background: #fff0f5;">
+                                            <i class="fi fi-rr-info text-pink-dark"></i>
                                         </div>
                                         ព័ត៌មានគណនី
                                     </h6>
@@ -702,8 +725,8 @@
                                                  onclick="document.getElementById('editUserImageInput').click()">
                                                 <i class="fi fi-rr-user-circle text-primary" style="font-size: 5rem;"></i>
                                             </div>
-                                            <div class="position-absolute bottom-0 end-0 mb-2 me-1">
-                                                <button type="button" class="btn btn-primary btn-sm rounded-circle p-1 shadow-sm" style="width: 25px; height: 25px; line-height: 1;">
+                                            <div class="position-absolute bottom-0 end-0 mb-2 me-1" style="pointer-events: none;">
+                                                <button type="button" class="btn btn-primary btn-sm rounded-circle p-1 shadow-sm" style="width: 25px; height: 25px; line-height: 1; pointer-events: none; background-color: #8a0e5b; border-color: #8a0e5b;">
                                                     <i class="fi fi-rr-camera" style="font-size: 0.7rem;"></i>
                                                 </button>
                                             </div>
@@ -758,10 +781,10 @@
                             <!-- Permissions -->
                             <div class="col-md-6">
                                 <div class="bg-white p-4 rounded-4 shadow-sm h-100 border border-light">
-                                    <h6 class="fw-bold text-success mb-4 border-bottom pb-2 d-flex align-items-center">
-                                        <div class="bg-success bg-opacity-10 rounded-circle p-2 me-2 d-flex justify-content-center align-items-center"
-                                            style="width: 35px; height: 35px;">
-                                            <i class="fi fi-rr-shield-check text-success"></i>
+                                    <h6 class="fw-bold text-pink-dark mb-4 border-bottom pb-2 d-flex align-items-center">
+                                        <div class="bg-pink-light rounded-circle p-2 me-2 d-flex justify-content-center align-items-center"
+                                            style="width: 35px; height: 35px; background: #fff0f5;">
+                                            <i class="fi fi-rr-shield-check text-pink-dark"></i>
                                         </div>
                                         សិទ្ធិប្រើប្រាស់
                                     </h6>
@@ -778,8 +801,10 @@
                         </div>
 
                         <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-success py-3 fw-bold shadow-sm"
-                                style="border-radius: 12px; transition: all 0.3s;">
+                            <button type="submit" class="btn text-white py-3 fw-bold shadow-sm"
+                                style="background-color: #8a0e5b; border-radius: 12px; transition: all 0.3s;"
+                                onmouseover="this.style.backgroundColor='#700b4a'"
+                                onmouseout="this.style.backgroundColor='#8a0e5b'">
                                 <i class="fi fi-rr-disk me-2"></i>រក្សាទុកការផ្លាស់ប្តូរ (Save Changes)
                             </button>
                         </div>
