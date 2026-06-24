@@ -2047,7 +2047,7 @@ function renderSpecificTable(tableId, data, key) {
                 <td class="text-center fw-bold text-danger" style="white-space: nowrap; font-size: 0.85rem;"><i class="fi fi-rr-user-remove me-1"></i>${convertToKhmerWordDate(s.dropoutDate || s.lastUpdated)}</td>
                 <td class="text-center fw-bold" style="font-size: 0.85rem;">${formatStudyTimeKhmer(s.studyTime)}</td>
                 <td class="text-center fw-bold" style="font-size: 0.85rem;">${s.studyLevel || '-'}</td>
-                <td class="text-center fw-bold" style="font-size: 0.85rem;">${s.teacherName || '-'}</td>
+                <td class="text-center fw-bold" style="font-size: 0.85rem;">${s.teacherName || s.homeroomTeacher || '-'}</td>
                 <td class="text-start px-3 small text-muted">
                     <div class="fw-bold text-danger">${s.dropoutReason || s.remark || 'គ្មានបញ្ជាក់'}</div>
                 </td>
@@ -2072,7 +2072,7 @@ function renderSpecificTable(tableId, data, key) {
                 <td class="text-center fw-bold text-success" style="white-space: nowrap; font-size: 0.85rem;"><i class="fi fi-rr-graduation-cap me-1"></i>${convertToKhmerWordDate(s.graduatedDate || s.lastUpdated)}</td>
                 <td class="text-center fw-bold" style="font-size: 0.85rem;">${formatStudyTimeKhmer(s.studyTime)}</td>
                 <td class="text-center fw-bold" style="font-size: 0.85rem;">${s.studyLevel || '-'}</td>
-                <td class="text-center fw-bold" style="font-size: 0.85rem;">${s.teacherName || '-'}</td>
+                <td class="text-center fw-bold" style="font-size: 0.85rem;">${s.teacherName || s.homeroomTeacher || '-'}</td>
                 <td class="text-start px-3 small text-muted">
                     <div class="fw-bold text-dark">${s.graduationNote || '-'}</div>
                     ${s.remark ? `<div class="mt-1 opacity-75">${s.remark}</div>` : ''}
@@ -2098,7 +2098,7 @@ function renderSpecificTable(tableId, data, key) {
                 <td class="text-center fw-bold text-success" style="white-space: nowrap; font-size: 0.85rem;"><i class="fi fi-rr-check-circle me-1"></i>${convertToKhmerWordDate(s.paidOffDate || s.lastUpdated)}</td>
                 <td class="text-center fw-bold" style="font-size: 0.85rem;">${formatStudyTimeKhmer(s.studyTime)}</td>
                 <td class="text-center fw-bold" style="font-size: 0.85rem;">${s.studyLevel || '-'}</td>
-                <td class="text-center fw-bold" style="font-size: 0.85rem;">${s.teacherName || '-'}</td>
+                <td class="text-center fw-bold" style="font-size: 0.85rem;">${s.teacherName || s.homeroomTeacher || '-'}</td>
                 <td class="text-start px-3 small text-muted">
                     <div class="fw-bold text-success">បានបង់ផ្តាច់ ១០០% (Paid Full)</div>
                     ${s.remark ? `<div class="mt-1 opacity-75">${s.remark}</div>` : ''}
@@ -2123,7 +2123,7 @@ function renderSpecificTable(tableId, data, key) {
             <td class="text-center fw-bold" style="white-space: nowrap; color: #0f172a; font-size: 0.82rem;"><i class="fi fi-rr-calendar-plus me-1 text-success"></i>${convertToKhmerWordDate(getLastPaymentDate(s))}</td>
             <td class="text-center fw-bold" style="color: #0f172a; font-size: 0.85rem;">${formatStudyTimeKhmer(s.studyTime)}</td>
             <td class="text-center fw-bold" style="color: #0f172a; font-size: 0.85rem;">${s.studyLevel || '-'}</td>
-            <td class="text-center fw-bold" style="color: #0f172a; font-size: 0.85rem;">${s.teacherName || '-'}</td>
+            <td class="text-center fw-bold" style="color: #0f172a; font-size: 0.85rem;">${s.teacherName || s.homeroomTeacher || '-'}</td>
             <td class="text-center">${formatDueDateWithColor(s)}</td>
             <td class="text-center fw-bolder" style="font-family: 'Inter', sans-serif; color: #0f172a;">${s.paymentMonths || 1} <span class="text-muted fw-bold" style="font-size: 0.78rem;">ខែ</span></td>
             <td class="text-center fw-bolder" style="font-family: 'Inter', sans-serif; color: #0f172a; font-size: 0.95rem;">$${getLastPaidAmount(s).toFixed(2)}</td>
@@ -2600,7 +2600,7 @@ function getGeneralInfoTabHTML(s, status, total, paid, remaining) {
     <div class="p-3 rounded bg-light border">
         <div class="d-flex justify-content-between mb-2">
             <span class="text-muted small">គ្រូបន្ទុកថ្នាក់:</span>
-            <span class="fw-bold">${s.teacherName || 'មិនទាន់កំណត់'}</span>
+            <span class="fw-bold">${s.teacherName || s.homeroomTeacher || 'មិនទាន់កំណត់'}</span>
         </div>
         <div class="d-flex justify-content-between">
             <span class="text-muted small">បន្ទប់រៀន:</span>
@@ -7187,7 +7187,7 @@ function createEditModal(key) {
     <div class="bg-light p-2 rounded-5 shadow-inner">
         <ul class="nav nav-pills nav-fill gap-2" id="editStudentTabs" role="tablist">
             <li class="nav-item">
-                <button class="nav-link active fw-bold py-2 rounded-4 border-0 transition-all d-flex align-items-center justify-content-center gap-2 bg-white text-primary shadow-sm" id="edit-personal-tab" data-bs-toggle="tab" data-bs-target="#edit-personal" type="button" role="tab">
+                <button class="nav-link active fw-bold py-2 rounded-4 border-0 transition-all d-flex align-items-center justify-content-center gap-2" id="edit-personal-tab" data-bs-toggle="tab" data-bs-target="#edit-personal" type="button" role="tab">
                     <i class="fi fi-rr-user small"></i><span>ផ្ទាល់ខ្លួន</span>
                 </button>
             </li>
@@ -7217,8 +7217,8 @@ function createEditModal(key) {
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link rounded-pill fw-bold" id="card-tab" data-bs-toggle="tab" data-bs-target="#card" type="button" role="tab" aria-selected="false">
-                    <i class="fi fi-rr-id-badge me-2"></i>កាតសិស្ស (Student Card)
+                <button class="nav-link fw-bold py-2 rounded-4 border-0 transition-all d-flex align-items-center justify-content-center gap-2" id="card-tab" data-bs-toggle="tab" data-bs-target="#card" type="button" role="tab">
+                    <i class="fi fi-rr-id-badge small"></i><span>កាតសិស្ស</span>
                 </button>
             </li>
         </ul>
@@ -7424,14 +7424,14 @@ function createEditModal(key) {
             <div class="form-floating">
                 <select class="form-select border-0 bg-light fw-bold" id="edit_teacherName_select">
                     <option value="">ជ្រើសរើសគ្រូ...</option>
-                    ${Object.values(allTeachersData || {}).map(tv => `<option value="${tv.nameKhmer}" ${student.teacherName === tv.nameKhmer ? 'selected' : ''} data-phone="${tv.phone || ''}">${tv.nameKhmer}</option>`).join('')}
+                    ${Object.values(allTeachersData || {}).map(tv => `<option value="${tv.nameKhmer}" ${(student.teacherName === tv.nameKhmer || student.homeroomTeacher === tv.nameKhmer) ? 'selected' : ''} data-phone="${tv.phone || ''}">${tv.nameKhmer}</option>`).join('')}
                 </select>
                 <label class="fw-bold">ជ្រើសរើសគ្រូ (Select Teacher)</label>
             </div>
         </div>
         <div class="col-md-6">
             <div class="form-floating">
-                <input type="text" class="form-control border-0 bg-light fw-bold" name="teacherName" id="edit_teacherName" value="${student.teacherName || ''}" placeholder="Manual Teacher" />
+                <input type="text" class="form-control border-0 bg-light fw-bold" name="teacherName" id="edit_teacherName" value="${student.teacherName || student.homeroomTeacher || ''}" placeholder="Manual Teacher" />
                 <label>គ្រូបន្ទុកថ្នាក់ (Teacher Name)</label>
             </div>
         </div>
@@ -8657,6 +8657,7 @@ async function saveStudentChanges(key) {
 
     // Data Consistency Sync
     data.studyType = data.courseType; // Sync keys
+    data.homeroomTeacher = data.teacherName || ''; // Sync legacy key
     data.paymentDueDate = data.nextPaymentDate;
 
     // Recalculate Fees & Balance and Payment Status (DYNAMIC 100%)
