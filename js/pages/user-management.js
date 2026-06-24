@@ -760,7 +760,26 @@ function handleCreateUser(e) {
         })
         .catch((error) => {
             console.error(error);
-            showAlertPremium("❌ បរាជ័យ: " + error.message, 'error');
+            if (error.code === 'auth/email-already-in-use') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'អ៊ីមែលនេះមានរួចហើយ!',
+                    html: `
+                        <div class="text-start fs-6 font-kantumruy" style="line-height: 1.6;">
+                            <p class="text-danger fw-bold">អ៊ីមែលនេះត្រូវបានចុះឈ្មោះរួចហើយនៅក្នុងប្រព័ន្ធសុវត្ថិភាព Firebase Auth។</p>
+                            <p class="mb-2"><strong>ដំណោះស្រាយ៖</strong></p>
+                            <ol class="ps-3 mb-0">
+                                <li class="mb-2">ពិនិត្យមើលបញ្ជីគណនីខាងក្រោម បើមានអ៊ីមែលនេះរួចហើយ សូមប្រើប៊ូតុង <strong>កែប្រែ (Edit)</strong> ជំនួសវិញ។</li>
+                                <li>ប្រសិនបើអ្នកធ្លាប់លុបគណនីនេះពីមុនមក សូមចូលទៅកាន់ <strong>Firebase Console &gt; Authentication &gt; Users</strong> រួចស្វែងរក និងលុបគណនីអ៊ីមែលនេះចេញជាមុនសិន ទើបអាចបង្កើតឡើងវិញបាន។</li>
+                            </ol>
+                        </div>
+                    `,
+                    confirmButtonText: 'យល់ព្រម',
+                    confirmButtonColor: '#8a0e5b'
+                });
+            } else {
+                showAlertPremium("❌ បរាជ័យ: " + error.message, 'error');
+            }
             secondaryApp.delete();
         })
         .finally(() => {
