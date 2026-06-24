@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
-                const requiredPerm = pagePermissionMap[currentPage];
+                const requiredPerm = pagePermissionMap['/' + currentPage] || pagePermissionMap[currentPage];
                 if (requiredPerm && !p[requiredPerm]) {
                     const fallback = modules.find(m => p[m.key]);
                     if (fallback) window.location.href = fallback.href;
