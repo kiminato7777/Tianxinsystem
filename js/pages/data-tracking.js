@@ -8686,6 +8686,13 @@ async function saveStudentChanges(key) {
 
     data.updatedAt = new Date().toISOString();
 
+    // Clean up undefined properties to avoid Firebase update errors
+    Object.keys(data).forEach(k => {
+        if (data[k] === undefined) {
+            delete data[k];
+        }
+    });
+
     studentsRef.child(key).update(data)
         .then(() => {
             Swal.fire({
