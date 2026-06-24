@@ -121,7 +121,7 @@ function renderPermissionCards(containerId, prefix) {
         else if (p.badgeColor && p.badgeColor.includes('secondary')) colorStyle = 'color: #6c757d;';
 
         return `
-            <div class="col-6">
+            <div class="col-12">
                 <div class="permission-card p-3 border rounded-3 d-flex align-items-center justify-content-between hover-shadow-sm transition-all"
                      style="cursor: pointer; background: white; border-color: #e2e8f0; height: 100%;"
                      onclick="const chk = document.getElementById('${prefix}${capitalize(p.key)}'); if (!chk.disabled) { chk.checked = !chk.checked; chk.dispatchEvent(new Event('change')); }">
