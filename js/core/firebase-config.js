@@ -229,18 +229,18 @@ if (typeof firebase !== 'undefined') {
      * To add a new feature, just add an entry here.
      */
     window.SYSTEM_MODULES = [
-        { key: 'dashboard', label: 'ផ្ទាំងគ្រប់គ្រង', icon: 'fi-rr-apps', href: '/index.html', badgeColor: 'bg-primary' },
-        { key: 'registration', label: 'ការចុះឈ្មោះសិស្ស', icon: 'fi-rr-user-add', href: '/registration.html', badgeColor: 'bg-success', defaultChecked: true },
-        { key: 'data', label: 'បញ្ជីទិន្នន័យសិស្ស', icon: 'fi-rr-users-alt', href: '/data-tracking.html', badgeColor: 'bg-info text-dark', defaultChecked: true },
-        { key: 'incomeExpense', label: 'ចំណូលចំណាយ', icon: 'fi-rr-receipt', href: '/income-expense.html', badgeColor: 'bg-danger' },
-        { key: 'inventory', label: 'ស្តុកសម្ភារៈ', icon: 'fi-rr-box-alt', href: '/inventory.html', badgeColor: 'bg-warning text-dark' },
-        { key: 'userManagement', label: 'គ្រប់គ្រងអ្នកប្រើប្រាស់', icon: 'fi-rr-shield-check', href: '/user-management.html', badgeColor: 'bg-dark' },
-        { key: 'staffManagement', label: 'គ្រប់គ្រងបុគ្គលិក', icon: 'fi-rr-briefcase', href: '/staff-management.html', badgeColor: 'bg-secondary' },
-        { key: 'teacherPortal', label: 'ផ្ទាំងគ្រូបង្រៀន', icon: 'fi-rr-chalkboard-user', href: '/teacher-portal.html', badgeColor: 'bg-primary', sectionBefore: 'កិច្ចការប្រចាំថ្ងៃ (Daily Tasks)' },
-        { key: 'attendance', label: 'អវត្តមានប្រចាំថ្ងៃ', icon: 'fi-rr-calendar-check', href: '/daily-attendance.html', badgeColor: 'bg-danger' },
-        { key: 'dropoutStudents', label: 'សិស្សបោះបង់ការសិក្សា', icon: 'fi-rr-user-remove', href: '/dropout-students.html', badgeColor: 'bg-danger' },
-        { key: 'paidStudents', label: 'សិស្សបង់ផ្ដាច់', icon: 'fi-rr-badge-check', href: '/paid-students.html', badgeColor: 'bg-success' },
-        { key: 'graduatedStudents', label: 'សិស្សបញ្ចប់ការសិក្សា', icon: 'fi-rr-graduation-cap', href: '/graduated-students.html', badgeColor: 'bg-info text-dark' }
+        { key: 'dashboard', label: 'ផ្ទាំងគ្រប់គ្រង', icon: 'fi-rr-apps', href: 'index.html', badgeColor: 'bg-primary' },
+        { key: 'registration', label: 'ការចុះឈ្មោះសិស្ស', icon: 'fi-rr-user-add', href: 'registration.html', badgeColor: 'bg-success', defaultChecked: true },
+        { key: 'data', label: 'បញ្ជីទិន្នន័យសិស្ស', icon: 'fi-rr-users-alt', href: 'data-tracking.html', badgeColor: 'bg-info text-dark', defaultChecked: true },
+        { key: 'incomeExpense', label: 'ចំណូលចំណាយ', icon: 'fi-rr-receipt', href: 'income-expense.html', badgeColor: 'bg-danger' },
+        { key: 'inventory', label: 'ស្តុកសម្ភារៈ', icon: 'fi-rr-box-alt', href: 'inventory.html', badgeColor: 'bg-warning text-dark' },
+        { key: 'userManagement', label: 'គ្រប់គ្រងអ្នកប្រើប្រាស់', icon: 'fi-rr-shield-check', href: 'user-management.html', badgeColor: 'bg-dark' },
+        { key: 'staffManagement', label: 'គ្រប់គ្រងបុគ្គលិក', icon: 'fi-rr-briefcase', href: 'staff-management.html', badgeColor: 'bg-secondary' },
+        { key: 'teacherPortal', label: 'ផ្ទាំងគ្រូបង្រៀន', icon: 'fi-rr-chalkboard-user', href: 'teacher-portal.html', badgeColor: 'bg-primary', sectionBefore: 'កិច្ចការប្រចាំថ្ងៃ (Daily Tasks)' },
+        { key: 'studentAttendance', label: 'បញ្ជីសម្រង់អវត្តមាន', icon: 'fi-rr-calendar-check', href: 'student-attendance.html', badgeColor: 'bg-danger' },
+        { key: 'dropoutStudents', label: 'សិស្សបោះបង់ការសិក្សានិងពន្យា', icon: 'fi-rr-user-remove', href: 'dropout-students.html', badgeColor: 'bg-danger' },
+        { key: 'paidStudents', label: 'សិស្សបង់ផ្ដាច់', icon: 'fi-rr-badge-check', href: 'paid-students.html', badgeColor: 'bg-success' },
+        { key: 'graduatedStudents', label: 'សិស្សបញ្ចប់ការសិក្សា', icon: 'fi-rr-graduation-cap', href: 'graduated-students.html', badgeColor: 'bg-info text-dark' }
     ];
 } else {
     console.error("❌ Firebase SDK not found. Please ensure Firebase scripts are loaded before firebase-config.js");

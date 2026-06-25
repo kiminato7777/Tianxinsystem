@@ -2989,7 +2989,7 @@ document.addEventListener('DOMContentLoaded', function () {
             setTimeout(() => {
                 showAlert(`
                     សិស្សត្រូវបានចុះឈ្មោះដោយជោគជ័យ! 
-                    <a href="/data-tracking.html" class="alert-link">ចុចទីនេះដើម្បីមើលបញ្ជីសិស្ស</a>
+                    <a href="data-tracking.html" class="alert-link">ចុចទីនេះដើម្បីមើលបញ្ជីសិស្ស</a>
                 `, 'success');
             }, 1000);
 

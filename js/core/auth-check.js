@@ -161,6 +161,25 @@ document.addEventListener("DOMContentLoaded", () => {
                         roleEl.className = 'badge bg-info text-white fw-bold rounded-pill px-3 py-2 shadow-sm';
                     }
                 }
+
+                // Update new sidebar footer elements dynamically
+                const sidebarNameEl = document.getElementById('sidebar-user-name');
+                const sidebarRoleEl = document.getElementById('sidebar-user-role');
+                const sidebarAvatarEl = document.getElementById('sidebar-user-avatar');
+
+                if (sidebarNameEl) sidebarNameEl.textContent = data.displayName;
+                if (sidebarRoleEl) {
+                    if (data.isAdmin) {
+                        sidebarRoleEl.textContent = 'Admin (អ្នកគ្រប់គ្រង)';
+                        sidebarRoleEl.className = 'sidebar-user-role badge bg-warning text-dark fw-bold rounded-pill';
+                    } else {
+                        sidebarRoleEl.textContent = 'Staff (បុគ្គលិក)';
+                        sidebarRoleEl.className = 'sidebar-user-role badge bg-info text-white fw-bold rounded-pill';
+                    }
+                }
+                if (sidebarAvatarEl) {
+                    sidebarAvatarEl.src = (data.imageUrl && data.imageUrl !== 'undefined' && data.imageUrl !== 'null') ? data.imageUrl : `https://ui-avatars.com/api/?name=${encodeURIComponent(data.displayName)}&background=ff69b4&color=fff`;
+                }
             };
 
             // Store globally for refresh
@@ -189,15 +208,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 const userRole = (userData.role || (isSuperAdmin ? 'admin' : 'staff')).toLowerCase();
                 const isAdmin = userRole === 'admin' || isSuperAdmin;
                 
-                // Name Priority: DB Name > isSuperAdmin Hardcoded > Email Prefix
-                const displayName = userData.name || (isSuperAdmin ? 'Admin (អ្នកគ្រប់គ្រង)' : user.email.split('@')[0]);
+                // Name Priority: DB Name > DB displayName > isSuperAdmin Hardcoded > Email Prefix
+                const displayName = userData.name || userData.displayName || (isSuperAdmin ? 'Admin (អ្នកគ្រប់គ្រង)' : user.email.split('@')[0]);
                 
                 window.currentUserProfileData = {
                     displayName: displayName,
+                    name: displayName,
                     email: user.email,
                     imageUrl: userData.imageUrl,
                     isAdmin: isAdmin,
-                    role: userRole
+                    role: userRole,
+                    phone: userData.phone || '',
+                    username: userData.username || '',
+                    dob: userData.dob || '',
+                    bio: userData.bio || ''
                 };
 
                 window.refreshSidebarProfile();
@@ -235,13 +259,55 @@ document.addEventListener("DOMContentLoaded", () => {
 function handleLogout(event) {
     if (event) event.preventDefault();
 
-    if (confirm("តើអ្នកពិតជាចង់ចាកចេញមែនទេ?")) {
-        firebase.auth().signOut().then(() => {
-            console.log("User signed out.");
-            window.location.href = "/login.html";
-        }).catch((error) => {
-            console.error("Logout Error:", error);
-            alert("មានបញ្ហាក្នុងការចាកចេញ។");
+    const performSignOut = () => {
+        Swal.fire({
+            title: 'ចាកចេញពីប្រព័ន្ធ? (Logout)',
+            text: 'តើអ្នកពិតជាចង់ចាកចេញមែនទេ? (Are you sure you want to log out?)',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'ចាកចេញ (Logout)',
+            cancelButtonText: 'បោះបង់ (Cancel)',
+            customClass: {
+                popup: 'rounded-4'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                firebase.auth().signOut().then(() => {
+                    console.log("User signed out.");
+                    window.location.href = "/login.html";
+                }).catch((error) => {
+                    console.error("Logout Error:", error);
+                    Swal.fire({
+                        title: 'កំហុស! (Error)',
+                        text: 'មានបញ្ហាក្នុងការចាកចេញ៖ ' + error.message,
+                        icon: 'error',
+                        confirmButtonColor: '#8a0e5b'
+                    });
+                });
+            }
         });
+    };
+
+    if (typeof Swal !== 'undefined') {
+        performSignOut();
+    } else {
+        // Dynamically load SweetAlert2 if not loaded on the page
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+        script.onload = performSignOut;
+        script.onerror = () => {
+            // Fallback to native confirm if CDN loading fails
+            if (confirm("តើអ្នកពិតជាចង់ចាកចេញមែនទេ?")) {
+                firebase.auth().signOut().then(() => {
+                    window.location.href = "/login.html";
+                }).catch((error) => {
+                    console.error("Logout Error:", error);
+                    alert("មានបញ្ហាក្នុងការចាកចេញ។");
+                });
+            }
+        };
+        document.head.appendChild(script);
     }
 }

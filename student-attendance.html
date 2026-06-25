@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បញ្ជីសម្រង់អវត្តមាន</title>
+    <link rel="icon" type="image/jpeg" href="/img/1.jpg">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="preload" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"
+        as="style">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel="stylesheet" href="/css/loader.css">
+    <script src="/js/core/loader-init.js"></script>
+    <script src="/js/core/system-core-standard.js"></script>
+    <script src="/js/core/theme-mode.js"></script>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.0/css/buttons.dataTables.min.css">
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* --- Premium UI Enhancements --- */
+        .search-filter-section {
+            background: var(--bs-card-bg, white);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(255, 105, 180, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        /* --- Standard 100% Modern Dashboard Cards --- */
+        .dash-card {
+            border: none;
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 1;
+            padding: 24px !important;
+        }
+
+        [data-theme="dark"] .dash-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .dash-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .dash-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(138, 14, 91, 0.12);
+            border-color: rgba(138, 14, 91, 0.2);
+        }
+
+        [data-theme="dark"] .dash-card:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 105, 180, 0.2);
+        }
+
+        .dash-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Accent left bars */
+        .dash-card.card-absent {
+            border-left: 6px solid #ff416c;
+        }
+        .dash-card.card-leave {
+            border-left: 6px solid #f57c00;
+        }
+        .dash-card.card-noleave {
+            border-left: 6px solid #64748b;
+        }
+
+        /* Floating background icons */
+        .dash-card .card-watermark {
+            position: absolute;
+            right: -10px;
+            bottom: -20px;
+            font-size: 7.5rem;
+            opacity: 0.035;
+            transform: rotate(-12deg);
+            transition: all 0.4s ease;
+            color: var(--bs-pink-dark, #8a0e5b);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .dash-card:hover .card-watermark {
+            transform: scale(1.12) rotate(0deg);
+            opacity: 0.07;
+            right: 0px;
+        }
+
+        /* Icon wrapper in card */
+        .dash-card .icon-wrapper {
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.4s ease;
+        }
+
+        .dash-card:hover .icon-wrapper {
+            transform: scale(1.15) rotate(8deg);
+        }
+
+        .card-absent .icon-wrapper {
+            background: linear-gradient(135deg, rgba(255, 65, 108, 0.1) 0%, rgba(255, 75, 43, 0.1) 100%);
+            color: #ff416c;
+        }
+        .card-leave .icon-wrapper {
+            background: linear-gradient(135deg, rgba(245, 124, 0, 0.1) 0%, rgba(255, 179, 0, 0.1) 100%);
+            color: #f57c00;
+        }
+        .card-noleave .icon-wrapper {
+            background: linear-gradient(135deg, rgba(100, 116, 139, 0.1) 0%, rgba(148, 163, 184, 0.1) 100%);
+            color: #64748b;
+        }
+
+        /* Text Gradients */
+        .text-gradient-absent {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: #ff416c;
+        }
+
+        .text-gradient-leave {
+            background: linear-gradient(135deg, #f57c00 0%, #ffb300 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: #f57c00;
+        }
+
+        .text-gradient-noleave {
+            background: linear-gradient(135deg, #64748b 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: #64748b;
+        }
+
+        .btn-premium-add {
+            background: linear-gradient(135deg, var(--bs-pink-dark) 0%, #ff69b4 100%);
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(138, 14, 91, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .btn-premium-add:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(138, 14, 91, 0.35);
+            color: white;
+        }
+
+        .btn-premium-report {
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .btn-premium-report:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(2, 132, 199, 0.35);
+            color: white;
+        }
+
+        .btn-premium-excel {
+            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(22, 163, 74, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .btn-premium-excel:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(22, 163, 74, 0.35);
+            color: white;
+        }
+
+        /* --- Premium Soft Pastel Badges --- */
+        .badge-presence {
+            background-color: rgba(25, 135, 84, 0.08) !important;
+            color: #198754 !important;
+            border: 1px solid rgba(25, 135, 84, 0.15) !important;
+            font-weight: 600;
+            padding: 6px 12px;
+        }
+        .badge-excused {
+            background-color: rgba(245, 124, 0, 0.08) !important;
+            color: #f57c00 !important;
+            border: 1px solid rgba(245, 124, 0, 0.15) !important;
+            font-weight: 600;
+            padding: 6px 12px;
+        }
+        .badge-unexcused {
+            background-color: rgba(220, 53, 69, 0.08) !important;
+            color: #dc3545 !important;
+            border: 1px solid rgba(220, 53, 69, 0.15) !important;
+            font-weight: 600;
+            padding: 6px 12px;
+        }
+
+        /* --- Premium Modern Form & Modal Styles --- */
+        .modal-content {
+            background: var(--bs-card-bg, #ffffff);
+            border: none;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2) !important;
+            border-radius: 24px !important;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            border: none;
+            padding: 22px 30px;
+            background: linear-gradient(135deg, var(--bs-pink-dark) 0%, var(--bs-pink-primary) 100%) !important;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-body {
+            background-color: var(--bs-body-bg, #f8fafc);
+            padding: 35px !important;
+        }
+
+        /* Styled Labels */
+        .form-label {
+            color: var(--bs-body-color, #334155);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        /* Premium Form Controls */
+        .form-control, .form-select {
+            font-size: 14px;
+            padding: 11px 16px;
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            background-color: var(--bs-card-bg, #ffffff);
+            color: var(--bs-body-color, #1e293b);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] .form-control, 
+        [data-theme="dark"] .form-select {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--bs-pink-primary);
+            box-shadow: 0 0 0 4px rgba(138, 14, 91, 0.15);
+            background-color: var(--bs-card-bg, #ffffff);
+        }
+
+        .input-group-text {
+            background-color: var(--bs-card-bg, #ffffff);
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            color: var(--bs-secondary, #64748b);
+            padding: 11px 16px;
+            transition: border-color 0.3s;
+        }
+
+        [data-theme="dark"] .input-group-text {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .input-group:focus-within .input-group-text {
+            border-color: var(--bs-pink-primary);
+        }
+
+        /* Select2 Customized Styles for Premium Design */
+        .select2-container--bootstrap-5 .select2-selection {
+            border: 1.5px solid rgba(0, 0, 0, 0.08) !important;
+            border-radius: 12px !important;
+            min-height: 46px !important;
+            padding: 5px 12px !important;
+            background-color: var(--bs-card-bg, #ffffff) !important;
+            color: var(--bs-body-color, #1e293b) !important;
+            transition: all 0.3s ease !important;
+        }
+
+        [data-theme="dark"] .select2-container--bootstrap-5 .select2-selection {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .select2-container--bootstrap-5.select2-container--focus .select2-selection {
+            border-color: var(--bs-pink-primary) !important;
+            box-shadow: 0 0 0 4px rgba(138, 14, 91, 0.15) !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__chip {
+            background-color: rgba(138, 14, 91, 0.08) !important;
+            color: var(--bs-pink-dark) !important;
+            border: 1px solid rgba(138, 14, 91, 0.15) !important;
+            border-radius: 8px !important;
+            padding: 2px 8px !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+        }
+
+        [data-theme="dark"] .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__chip {
+            background-color: rgba(255, 105, 180, 0.1) !important;
+            color: #ff69b4 !important;
+            border: 1px solid rgba(255, 105, 180, 0.2) !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__chip__remove {
+            color: var(--bs-pink-dark) !important;
+            margin-right: 5px !important;
+        }
+
+        [data-theme="dark"] .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__chip__remove {
+            color: #ff69b4 !important;
+        }
+
+        /* Custom Segmented Card-Checkboxes for Leave Types */
+        .leave-type-card {
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            padding: 14px 20px;
+            background: var(--bs-card-bg, #ffffff);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.01);
+        }
+
+        [data-theme="dark"] .leave-type-card {
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .leave-type-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.04);
+        }
+
+        .leave-type-card.active-bought {
+            border-color: #eab308;
+            background-color: rgba(234, 179, 8, 0.06);
+            box-shadow: 0 4px 12px rgba(234, 179, 8, 0.1);
+        }
+
+        .leave-type-card.active-called {
+            border-color: #06b6d4;
+            background-color: rgba(6, 182, 212, 0.06);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.1);
+        }
+
+        .leave-type-card.active-none {
+            border-color: #ef4444;
+            background-color: rgba(239, 68, 68, 0.06);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+        }
+
+        /* Buttons Styling */
+        .btn-reset-form {
+            background-color: var(--bs-card-bg, #ffffff);
+            color: var(--bs-secondary, #64748b);
+            border: 1.5px solid rgba(0, 0, 0, 0.15);
+            padding: 11px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        [data-theme="dark"] .btn-reset-form {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-reset-form:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+            color: var(--bs-body-color, #334155);
+        }
+
+        .btn-save-form {
+            background: linear-gradient(135deg, var(--bs-pink-dark) 0%, var(--bs-pink-primary) 100%) !important;
+            border: none !important;
+            color: white !important;
+            padding: 11px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(138, 14, 91, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .btn-save-form:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(138, 14, 91, 0.35);
+        }
+
+        /* --- Premium DataTables Pagination Styles --- */
+        .dt-paging.paging_full_numbers {
+            display: flex !important;
+            justify-content: flex-end !important;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .dt-paging-button {
+            border: 1.5px solid rgba(0, 0, 0, 0.08) !important;
+            background: var(--bs-card-bg, #ffffff) !important;
+            color: var(--bs-body-color, #334155) !important;
+            padding: 8px 16px !important;
+            border-radius: 12px !important;
+            font-weight: 700 !important;
+            font-size: 14px !important;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            outline: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        [data-theme="dark"] .dt-paging-button {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .dt-paging-button:hover:not(.disabled):not(.current) {
+            background-color: rgba(138, 14, 91, 0.05) !important;
+            border-color: var(--bs-pink-primary) !important;
+            color: var(--bs-pink-dark) !important;
+            transform: translateY(-1px);
+        }
+
+        .dt-paging-button.current {
+            background: linear-gradient(135deg, var(--bs-pink-dark) 0%, var(--bs-pink-primary) 100%) !important;
+            border-color: transparent !important;
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(138, 14, 91, 0.3) !important;
+        }
+
+        .dt-paging-button.disabled {
+            background-color: rgba(0, 0, 0, 0.05) !important;
+            border-color: transparent !important;
+            color: var(--bs-secondary, #cbd5e1) !important;
+            cursor: not-allowed;
+            pointer-events: none;
+            box-shadow: none !important;
+        }
+
+        [data-theme="dark"] .dt-paging-button.disabled {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        /* Modern DataTables Search Input & Length Select */
+        .dt-search, .dataTables_filter {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .dt-search input, .dataTables_filter input {
+            font-size: 14px !important;
+            padding: 8px 16px !important;
+            border: 1.5px solid rgba(0, 0, 0, 0.08) !important;
+            border-radius: 50px !important;
+            background-color: var(--bs-card-bg, #ffffff) !important;
+            color: var(--bs-body-color, #1e293b) !important;
+            outline: none;
+            transition: all 0.3s ease;
+            min-width: 220px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+        }
+
+        [data-theme="dark"] .dt-search input,
+        [data-theme="dark"] .dataTables_filter input {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .dt-search input:focus, .dataTables_filter input:focus {
+            border-color: var(--bs-pink-primary) !important;
+            box-shadow: 0 0 0 4px rgba(138, 14, 91, 0.15) !important;
+        }
+
+        .dt-length, .dataTables_length {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .dt-length select, .dataTables_length select {
+            font-size: 14px !important;
+            padding: 6px 12px !important;
+            border: 1.5px solid rgba(0, 0, 0, 0.08) !important;
+            border-radius: 10px !important;
+            background-color: var(--bs-card-bg, #ffffff) !important;
+            color: var(--bs-body-color, #1e293b) !important;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .dt-length select,
+        [data-theme="dark"] .dataTables_length select {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Custom styled leave dropdowns */
+        .leave-select-styled {
+            font-weight: 600 !important;
+            transition: all 0.25s ease !important;
+        }
+        .leave-select-styled.status-bought {
+            border-color: #f57c00 !important;
+            color: #f57c00 !important;
+            background-color: rgba(245, 124, 0, 0.05) !important;
+        }
+        .leave-select-styled.status-called {
+            border-color: #0d6efd !important;
+            color: #0d6efd !important;
+            background-color: rgba(13, 110, 253, 0.05) !important;
+        }
+        .leave-select-styled.status-none {
+            border-color: #dc3545 !important;
+            color: #dc3545 !important;
+            background-color: rgba(220, 53, 69, 0.05) !important;
+        }
+        
+        [data-theme="dark"] .leave-select-styled.status-bought {
+            background-color: rgba(245, 124, 0, 0.12) !important;
+        }
+        [data-theme="dark"] .leave-select-styled.status-called {
+            background-color: rgba(13, 110, 253, 0.12) !important;
+        }
+        [data-theme="dark"] .leave-select-styled.status-none {
+            background-color: rgba(220, 53, 69, 0.12) !important;
+        }
+
+        /* Set font size 15px for all form elements in the modal and the main dashboard table */
+        #attendanceModal .form-label {
+            font-size: 15px !important;
+        }
+        #attendanceModal .form-control,
+        #attendanceModal .form-select,
+        #attendanceModal .input-group-text,
+        #attendanceModal .select2-container--bootstrap-5 .select2-selection,
+        #attendanceModal .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__chip,
+        #attendanceModal .student-leave-type,
+        #attendanceModal .student-reason,
+        #attendanceModal .student-display-name,
+        #attendanceModal table,
+        #attendanceModal table th,
+        #attendanceModal table td,
+        #attendanceModal button,
+        #attendanceModal input,
+        #attendanceModal select,
+        #attendanceModal .modal-body,
+        #attendanceTable,
+        #attendanceTable th,
+        #attendanceTable td,
+        #attendanceTable td span,
+        #attendanceTable td div,
+        #attendanceTable td button,
+        #attendanceTable td i {
+            font-size: 15px !important;
+        }
+        #attendanceTable th,
+        #attendanceTable td {
+            text-align: center !important;
+        }
+        #attendanceTable td div,
+        #attendanceTable td span {
+            justify-content: center !important;
+        }
+        
+        /* Premium style for student links */
+        .student-link-premium {
+            color: var(--bs-pink-dark, #8a0e5b) !important;
+            text-decoration: none !important;
+            border-bottom: 1.5px dashed rgba(138, 14, 91, 0.3) !important;
+            transition: all 0.2s ease !important;
+            font-weight: 700 !important;
+            display: inline-block !important;
+        }
+        .student-link-premium:hover {
+            color: #ff69b4 !important;
+            border-bottom: 1.5px solid #ff69b4 !important;
+            transform: translateY(-1px) !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar"></div>
+    <script src="/js/core/sidebar.js"></script>
+
+    <div id="main-content">
+        <div class="main-header animate__animated animate__fadeInDown">
+            <div class="header-title">
+                <button
+                    class="btn btn-light rounded-circle me-1 d-none d-lg-flex align-items-center justify-content-center"
+                    onclick="toggleDesktopSidebar()" title="បង្រួម/ពង្រីក Sidebar (Toggle Sidebar)"
+                    style="width: 40px; height: 40px; border: 1px solid rgba(0,0,0,0.08);">
+                    <i class="fi fi-rr-menu-burger" style="font-size: 0.9rem; color: var(--bs-pink-primary);"></i>
+                </button>
+                <button
+                    class="btn btn-light rounded-circle me-2 d-none d-lg-flex align-items-center justify-content-center"
+                    onclick="toggleFullScreen()" title="ពេញអេក្រង់ (Full Screen)"
+                    style="width: 40px; height: 40px; border: 1px solid rgba(0,0,0,0.08);">
+                    <i class="fi fi-rr-expand" style="font-size: 0.9rem; color: var(--bs-pink-primary);"></i>
+                </button>
+                <button
+                    class="btn btn-light rounded-circle me-2 d-none d-lg-flex align-items-center justify-content-center theme-toggle-btn"
+                    onclick="toggleTheme()" title="ប្តូររចនាប័ទ្ម (Change Theme)"
+                    style="width: 40px; height: 40px; border: 1px solid rgba(0,0,0,0.08);">
+                    <i class="fi fi-rr-moon" style="font-size: 0.9rem; color: var(--bs-pink-primary);"></i>
+                </button>
+                <a href="/index.html" class="btn-back-home d-none d-sm-flex">
+                    <i class="fi fi-rr-arrow-left"></i> <span>ត្រឡប់ទៅផ្ទាំងដើម</span>
+                </a>
+                <i class="fi fi-rr-calendar-check ms-2"></i> <span>បញ្ជីសម្រង់អវត្តមាន (Student Attendance)</span>
+            </div>
+            
+            <div class="d-flex align-items-center gap-2">
+                <!-- Clock/Date Display -->
+                <div class="text-end d-none d-md-block me-3">
+                    <div id="current-date-display" class="fw-bold text-pink-dark small"></div>
+                    <div id="current-time-display" class="text-muted small" style="font-size: 0.8rem;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div class="row g-4 mb-5 animate__animated animate__fadeInUp">
+            <div class="col-md-4">
+                <div class="card dash-card card-absent h-100">
+                    <div class="d-flex justify-content-between align-items-start position-relative z-1">
+                        <div>
+                            <h6 class="text-muted fw-bold mb-2 text-uppercase" style="letter-spacing: 0.8px; font-size: 0.8rem;">អវត្តមានសរុប (ថ្ងៃនេះ)</h6>
+                            <h2 class="fw-bold mb-1 text-gradient-absent" style="font-size: 2.8rem; letter-spacing: -1px;" id="dash_totalAbsent">0</h2>
+                            <p class="text-muted mb-0 small"><i class="fi fi-rr-info me-1"></i>ចំនួនសិស្សអវត្តមានសរុប</p>
+                        </div>
+                        <div class="icon-wrapper">
+                            <i class="fi fi-rr-user-xmark"></i>
+                        </div>
+                    </div>
+                    <div class="card-watermark">
+                        <i class="fi fi-rr-user-xmark"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card dash-card card-leave h-100">
+                    <div class="d-flex justify-content-between align-items-start position-relative z-1">
+                        <div>
+                            <h6 class="text-muted fw-bold mb-2 text-uppercase" style="letter-spacing: 0.8px; font-size: 0.8rem;">មានច្បាប់សរុប (ថ្ងៃនេះ)</h6>
+                            <h2 class="fw-bold mb-1 text-gradient-leave" style="font-size: 2.8rem; letter-spacing: -1px;" id="dash_totalLeave">0</h2>
+                            <p class="text-muted mb-0 small"><i class="fi fi-rr-info me-1"></i>សិស្សទិញច្បាប់/ខលសុំច្បាប់</p>
+                        </div>
+                        <div class="icon-wrapper">
+                            <i class="fi fi-rr-envelope-open-text"></i>
+                        </div>
+                    </div>
+                    <div class="card-watermark">
+                        <i class="fi fi-rr-envelope-open-text"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card dash-card card-noleave h-100">
+                    <div class="d-flex justify-content-between align-items-start position-relative z-1">
+                        <div>
+                            <h6 class="text-muted fw-bold mb-2 text-uppercase" style="letter-spacing: 0.8px; font-size: 0.8rem;">អត់ច្បាប់សរុប (ថ្ងៃនេះ)</h6>
+                            <h2 class="fw-bold mb-1 text-gradient-noleave" style="font-size: 2.8rem; letter-spacing: -1px;" id="dash_totalNoLeave">0</h2>
+                            <p class="text-muted mb-0 small"><i class="fi fi-rr-info me-1"></i>សិស្សអត់ច្បាប់ (អវត្តមានឥតច្បាប់)</p>
+                        </div>
+                        <div class="icon-wrapper">
+                            <i class="fi fi-rr-ban"></i>
+                        </div>
+                    </div>
+                    <div class="card-watermark">
+                        <i class="fi fi-rr-ban"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0 fw-bold" style="color: var(--bs-pink-dark);"><i class="fi fi-rr-list-check me-2"></i>បញ្ជីអវត្តមានប្រចាំថ្ងៃ</h4>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-premium-excel" onclick="exportAttendanceToExcel()">
+                    <i class="fi fi-rr-file-excel me-2"></i>ទាញ Excel
+                </button>
+                <button type="button" class="btn btn-premium-report" onclick="generateAttendanceReportPDF()">
+                    <i class="fi fi-rr-file-pdf me-2"></i>ទាញរបាយការណ៍
+                </button>
+                <button type="button" class="btn btn-premium-add" data-bs-toggle="modal" data-bs-target="#attendanceModal">
+                    <i class="fi fi-rr-add me-2"></i>បញ្ចូលអវត្តមាន
+                </button>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 w-100" id="attendanceTable">
+                        <thead>
+                                <tr>
+                                    <th>កាលបរិច្ឆេទ</th>
+                                    <th>ម៉ោងសិក្សា</th>
+                                    <th>គ្រូបន្ទុកថ្នាក់</th>
+                                    <th>សិស្សសរុប</th>
+                                    <th>សិស្សមក</th>
+                                    <th>អវត្តមាន</th>
+                                    <th>ឈ្មោះសិស្ស</th>
+                                    <th>ឈ្មោះចិន</th>
+                                    <th>ភេទ</th>
+                                    <th>ប្រភេទច្បាប់</th>
+                                    <th>មូលហេតុ</th>
+                                    <th class="text-center">សកម្មភាព</th>
+                                </tr>
+                        </thead>
+                        <tbody id="attendanceDataBody">
+                            <tr>
+                                <td colspan="12" class="text-center text-muted py-5 bg-white rounded-4" style="border: none;">
+                                    <div class="d-flex flex-column align-items-center justify-content-center gap-3">
+                                        <div class="popup-loader-spinner">
+                                            <svg viewBox="0 0 50 50" class="pls-svg">
+                                                <circle class="pls-track" cx="25" cy="25" r="20" fill="none" stroke-width="4"/>
+                                                <circle class="pls-fill"  cx="25" cy="25" r="20" fill="none" stroke-width="4"
+                                                        stroke-dasharray="126" stroke-dashoffset="126"/>
+                                            </svg>
+                                            <div class="popup-loader-logo-wrapper">
+                                                <img src="/img/1.jpg" alt="Logo" class="popup-loader-logo" onerror="this.parentElement.style.display='none'">
+                                            </div>
+                                        </div>
+                                        <div class="popup-loader-msg" style="font-size: 15px; font-family: 'Kantumruy', 'Khmer OS Battambang', sans-serif;">កំពុងទាញយកទិន្នន័យពីប្រព័ន្ធ... (Loading Data...)</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    <!-- Attendance Modal -->
+    <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header text-white rounded-top-4" style="background: linear-gradient(135deg, var(--bs-pink-dark) 0%, var(--bs-pink-primary) 100%);">
+                    <h5 class="modal-title fw-bold" id="attendanceModalLabel"><i class="fi fi-rr-edit me-2"></i>ទម្រង់បញ្ចូលអវត្តមាន</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="attendanceForm">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">ម៉ោងសិក្សា <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0 text-primary"><i class="fi fi-rr-clock"></i></span>
+                                    <select class="form-select border-start-0 ps-0" id="att_studyTime" required>
+                                        <option value="">-- ជ្រើសរើសម៉ោងសិក្សា --</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label fw-bold">គ្រូបន្ទុកថ្នាក់ <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0 text-primary"><i class="fi fi-rr-chalkboard-user"></i></span>
+                                    <select class="form-select border-start-0 ps-0" id="att_teacher" required>
+                                        <option value="">-- ជ្រើសរើសគ្រូ --</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold" style="color: #4a5568;">ចំនួនសិស្សក្នុងថ្នាក់រៀន <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0 text-primary"><i class="fi fi-rr-users"></i></span>
+                                    <input type="number" class="form-control border-start-0 ps-0 fw-bold text-primary" id="att_totalStudents" required min="0" value="0">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold" style="color: #4a5568;">ចំនួនសិស្សមករៀន <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0 text-success"><i class="fi fi-rr-user-check"></i></span>
+                                    <input type="number" class="form-control border-start-0 ps-0 fw-bold text-success" id="att_presentStudents" required min="0" value="0">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold" style="color: #4a5568;">ចំនួនអវត្តមាន</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0 text-danger"><i class="fi fi-rr-user-xmark"></i></span>
+                                    <input type="number" class="form-control border-start-0 ps-0 fw-bold text-danger" id="att_absentStudents" required min="0" value="0">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        <h6 class="fw-bold mb-3" style="color: var(--bs-pink-primary);"><i class="fi fi-rr-info me-2"></i>ព័ត៌មានសិស្សអវត្តមាន (មូលហេតុ)</h6>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">ឈ្មោះសិស្សអវត្តមាន (អាចរើសច្រើននាក់)</label>
+                                <select class="form-select select2-student" id="att_studentName" multiple="multiple" style="width: 100%;">
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Placeholder when no student is selected -->
+                        <div id="noStudentSelectedPlaceholder" class="p-4 rounded-4 border border-dashed text-center text-muted bg-white mb-4" style="border-color: rgba(0,0,0,0.12) !important;">
+                            <i class="fi fi-rr-info mb-2 text-primary animate__animated animate__pulse animate__infinite" style="font-size: 1.8rem; opacity: 0.7; display: inline-block;"></i>
+                            <div class="fw-bold" style="font-size: 14px;">សូមជ្រើសរើសឈ្មោះសិស្សអវត្តមាន ដើម្បីកំណត់មូលហេតុ និងប្រភេទច្បាប់</div>
+                            <div class="small text-muted mt-1" style="font-size: 11px;">(Please select absent students to configure their individual leave status and reasons)</div>
+                        </div>
+
+                        <!-- Dynamic Student Absence Cards Section -->
+                        <div id="dynamicStudentSection" class="mt-4 d-none">
+                            <label class="form-label fw-bold mb-3 d-block" style="color: var(--bs-pink-primary);">
+                                <i class="fi fi-rr-settings-sliders text-pink-dark me-1"></i> កំណត់ព័ត៌មានអវត្តមានតាមសិស្សនីមួយៗ (Individual Absence Status & Reason)
+                            </label>
+                            <div id="dynamicStudentsList" class="d-flex flex-column gap-3 mb-4">
+                                <!-- Dynamic student cards will be rendered here -->
+                            </div>
+                        </div>
+
+                        <!-- Hidden elements for backward compatibility -->
+                        <div class="d-none">
+                            <input type="text" id="att_reason" value="">
+                            <input type="checkbox" id="att_leaveBought" value="ទិញច្បាប់មុន">
+                            <input type="checkbox" id="att_leaveCalled" value="ខលសុំច្បាប់មុន">
+                            <input type="checkbox" id="att_leaveNone" value="អត់មានច្បាប់">
+                        </div>
+
+                        <div class="text-end mt-4">
+                            <button type="button" class="btn-reset-form me-2" id="btnResetForm">សម្អាត</button>
+                            <button type="submit" class="btn-save-form"><i class="fi fi-rr-disk me-1"></i> រក្សាទុកទិន្នន័យ</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.0/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.print.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="/js/core/firebase-config.js"></script>
+    <script src="/js/core/auth-check.js"></script>
+    <script src="/js/core/receiver-utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="/js/utils/khmer-font.js"></script>
+    <script src="/js/utils/kantumruy-font.js"></script>
+    <script src="/js/pages/student-attendance.js"></script>
+</body>
+</html>

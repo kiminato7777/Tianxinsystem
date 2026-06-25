@@ -459,6 +459,9 @@ async function showAdditionalPaymentModal(key) {
                         </div>
                         <div class="col-auto">
                             <div class="d-flex gap-2">
+                                <button type="button" class="btn-v5-util text-warning border-warning" onclick="if(typeof markAsSuspended === 'function') { markAsSuspended('${s.key}'); }">
+                                    <i class="fi fi-rr-pause-circle me-2"></i>ផ្អាក
+                                </button>
                                 <button type="button" class="btn-v5-util" onclick="if(typeof showEditModal === 'function') { additionalPaymentModal.hide(); setTimeout(() => showEditModal('${s.key}'), 500); }">
                                     <i class="fi fi-rr-edit me-2"></i>កែប្រែ
                                 </button>

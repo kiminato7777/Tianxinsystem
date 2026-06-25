@@ -853,7 +853,7 @@
 
         <div class="main-header animate__animated animate__fadeInDown">
             <div class="header-title">
-                <i class="fi fi-rr-user-remove text-pink-dark"></i> <span class="ms-2">បញ្ជីសិស្សបោះបង់ការសិក្សា
+                <i class="fi fi-rr-user-remove text-pink-dark"></i> <span class="ms-2">បញ្ជីសិស្សបោះបង់ការសិក្សានិងពន្យា
                     (Dropout List)</span>
             </div>
 
@@ -864,6 +864,57 @@
                 <i class="fi fi-rr-home"></i> ត្រឡប់ទៅដើម
             </a>
         </div>
+
+        <ul class="nav nav-pills mb-4 bg-white p-2 shadow-sm animate__animated animate__fadeIn" style="border-radius: 16px;" id="dropoutTabs" role="tablist">
+            <li class="nav-item flex-fill text-center" role="presentation">
+                <button class="nav-link active w-100 fw-bold py-3 rounded-4 d-flex justify-content-center align-items-center gap-2" id="tab-dropout" data-bs-toggle="pill" type="button" role="tab" onclick="setDropoutFilter('dropout')" style="transition: all 0.3s;">
+                    <i class="fi fi-rr-user-remove"></i>សិស្សបោះបង់ការសិក្សា (Dropout)
+                </button>
+            </li>
+            <li class="nav-item flex-fill text-center" role="presentation">
+                <button class="nav-link w-100 fw-bold py-3 rounded-4 d-flex justify-content-center align-items-center gap-2" id="tab-suspended" data-bs-toggle="pill" type="button" role="tab" onclick="setDropoutFilter('suspended')" style="transition: all 0.3s;">
+                    <i class="fi fi-rr-pause-circle"></i>សិស្សផ្អាកការសិក្សា (Suspended)
+                </button>
+            </li>
+        </ul>
+
+        <script>
+            window.DROPOUT_FILTER = 'dropout'; // Default filter
+            function setDropoutFilter(filterType) {
+                window.DROPOUT_FILTER = filterType;
+                
+                // Update text to reflect active tab
+                const titleEl = document.querySelector('.header-title span.ms-2');
+                const tableTitleEl = document.querySelector('.card-header-pink span');
+                
+                if(filterType === 'suspended') {
+                    if(titleEl) titleEl.innerHTML = 'បញ្ជីសិស្សផ្អាកការសិក្សា <br><span style="font-size: 0.9rem">(Suspended List)</span>';
+                    if(tableTitleEl) tableTitleEl.innerHTML = '<i class="fi fi-rr-list-check me-2"></i>តារាងសិស្សផ្អាកការសិក្សា';
+                    // Optional style tweak for suspended
+                    document.getElementById('tab-suspended').style.backgroundColor = '#ff69b4';
+                    document.getElementById('tab-suspended').style.color = 'white';
+                    document.getElementById('tab-dropout').style.backgroundColor = 'transparent';
+                    document.getElementById('tab-dropout').style.color = '#495057';
+                } else {
+                    if(titleEl) titleEl.innerHTML = 'បញ្ជីសិស្សបោះបង់ការសិក្សា <br><span style="font-size: 0.9rem">(Dropout List)</span>';
+                    if(tableTitleEl) tableTitleEl.innerHTML = '<i class="fi fi-rr-list-check me-2"></i>តារាងសិស្សបោះបង់ការសិក្សា';
+                    document.getElementById('tab-dropout').style.backgroundColor = '#ff69b4';
+                    document.getElementById('tab-dropout').style.color = 'white';
+                    document.getElementById('tab-suspended').style.backgroundColor = 'transparent';
+                    document.getElementById('tab-suspended').style.color = '#495057';
+                }
+
+                if (typeof window.renderFilteredTable === 'function') {
+                    window.renderFilteredTable();
+                }
+            }
+            
+            // Set initial active style
+            document.addEventListener("DOMContentLoaded", () => {
+                setTimeout(() => setDropoutFilter('dropout'), 100);
+            });
+        </script>
+
         <div class="row g-4 mb-4 animate__animated animate__fadeIn">
             <!-- Total Dropout -->
             <div class="col-md-6 col-xl-2">
@@ -1010,7 +1061,7 @@
         <!-- Data Table Card -->
         <div class="card animate__animated animate__fadeInUp border-0 shadow-sm">
             <div class="card-header-pink d-flex justify-content-between align-items-center">
-                <span><i class="fi fi-rr-list-check me-2"></i>តារាងសិស្សបោះបង់ការសិក្សា</span>
+                <span><i class="fi fi-rr-list-check me-2"></i>តារាងសិស្សបោះបង់ការសិក្សានិងពន្យា</span>
                 <span class="badge bg-white text-pink-dark px-3 py-2" style="border-radius: 50px;">
                     បង្ហាញ: <span id="displayCount" class="fw-bold">0</span> នាក់
                 </span>
@@ -1042,7 +1093,7 @@
 
         <!-- Student Details Modal -->
         <div class="modal fade" id="studentDetailsModal" tabindex="-1" >
-            <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
                 <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
                     <div class="modal-header bg-pink text-white"
                         style="background: linear-gradient(135deg, #8a0e5b, #c71585);">

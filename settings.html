@@ -29,6 +29,7 @@
 
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -63,7 +64,7 @@
                 </div>
                 <div>
                     <h4 class="fw-bold mb-1 d-flex align-items-center" style="color: #8a0e5b; font-size: 1.6rem; letter-spacing: 0.5px;">
-                        <i class="fi fi-rr-school me-2"></i>ប្រព័ន្ធគ្រប់គ្រងសាលាអន្តរជាតិ បានស៊ិន
+                        <i class="fi fi-rr-school me-2"></i>ប្រព័ន្ធគ្រប់គ្រងសាលាអន្តរជាតិ ធានស៊ីន
                     </h4>
                     <p class="mb-0" style="font-size: 0.95rem; color: #64748b;">
                         សួស្ដី! លោកគ្រូ <span id="welcome-user-name" class="fw-bold" style="color: #8a0e5b;">User</span> សូមស្វាគមន៍មកកាន់ផ្ទាំងគ្រប់គ្រងទិន្នន័យ។
@@ -71,71 +72,7 @@
                 </div>
             </div>
             
-            <div class="d-flex align-items-center gap-3">
-                <!-- Pink Decorative Blob -->
-                <div class="butterfly-blob d-none d-md-block"></div>
 
-                <!-- Theme Toggle -->
-                <button class="theme-toggle-pill" onclick="toggleTheme()" title="ប្តូររចនាប័ទ្ម (Change Theme)" style="width: 50px; height: 30px;">
-                    <div class="theme-toggle-circle">
-                        <i class="fi fi-rr-settings-sliders"></i>
-                    </div>
-                </button>
-
-                <!-- Notification -->
-                <button class="header-icon-btn d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: #f1f5f9; border-radius: 50%; border: none;">
-                    <i class="fi fi-rr-bell" style="font-size: 1.1rem; color: #64748b;"></i>
-                </button>
-
-                <!-- Messages -->
-                <button class="header-icon-btn position-relative d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: #f1f5f9; border-radius: 50%; border: none;">
-                    <i class="fi fi-rr-comment-alt" style="font-size: 1.1rem; color: #64748b;"></i>
-                    <div class="header-icon-dot" style="top: 8px; right: 8px; border-color: #f1f5f9;"></div>
-                </button>
-
-                <!-- Profile Dropdown -->
-                <div class="dropdown ms-3">
-                    <button class="profile-trigger border-0 bg-transparent text-start p-0 m-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="display: flex; align-items: center; gap: 12px;">
-                        <div class="profile-info text-end d-none d-md-block">
-                            <div class="profile-name" id="user-display-name" style="font-weight: 700; color: #1e293b; font-size: 0.95rem; margin-bottom: 2px;">...</div>
-                            <div class="profile-role badge bg-warning text-dark rounded-pill" id="user-role-badge" style="font-size: 0.75rem; padding: 4px 10px; font-weight: 700;">...</div>
-                        </div>
-                        <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" id="user-display-image" class="profile-avatar" alt="Profile" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                        <i class="fi fi-rr-angle-small-down profile-caret" style="color: #64748b;"></i>
-                    </button>
-
-                    <!-- Custom Dropdown Menu -->
-                    <div class="dropdown-menu dropdown-menu-end custom-profile-menu">
-                        <div class="dropdown-layout">
-                            <!-- Left Panel -->
-                            <div class="dropdown-left-panel">
-                                <div class="panel-icon-wrapper">
-                                    <i class="fi fi-rr-users"></i>
-                                </div>
-                                <div class="panel-stat-value" id="header-total-users">0</div>
-                                <div class="panel-stat-label">Total Users</div>
-                            </div>
-                            
-                            <!-- Right Panel (Menu) -->
-                            <div class="dropdown-right-panel">
-                                <a class="dropdown-item" href="/profile.html">
-                                    <i class="fi fi-rr-user"></i> My Profile
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fi fi-rr-address-book"></i> My Contacts
-                                </a>
-                                <a class="dropdown-item" href="/settings.html">
-                                    <i class="fi fi-rr-settings"></i> Account Settings
-                                </a>
-                                <div class="dropdown-divider-custom"></div>
-                                <a class="dropdown-item" href="#" onclick="handleLogout(event)">
-                                    <i class="fi fi-rr-sign-out-alt"></i> Log Out
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Settings UI -->
@@ -462,6 +399,7 @@
                 if (!user) throw new Error("No user logged in");
 
                 const updates = {
+                    name: document.getElementById('settingFullName').value,
                     displayName: document.getElementById('settingFullName').value,
                     phone: document.getElementById('settingPhone').value,
                     username: document.getElementById('settingUsername').value,
@@ -479,11 +417,27 @@
                 session.name = updates.displayName;
                 localStorage.setItem('userSession', JSON.stringify(session));
 
-                alert('Personal Information Saved Successfully!');
-                window.location.reload();
+                Swal.fire({
+                    title: 'ជោគជ័យ! (Success)',
+                    text: 'រក្សាទុកព័ត៌មានផ្ទាល់ខ្លួនដោយជោគជ័យ! (Personal Information Saved Successfully!)',
+                    icon: 'success',
+                    confirmButtonText: 'យល់ព្រម (OK)',
+                    confirmButtonColor: '#8a0e5b',
+                    customClass: {
+                        popup: 'rounded-4'
+                    }
+                }).then(() => {
+                    window.location.reload();
+                });
             } catch (error) {
                 console.error(error);
-                alert('Error saving data: ' + error.message);
+                Swal.fire({
+                    title: 'កំហុស! (Error)',
+                    text: 'มีបញ្ហាក្នុងការរក្សាទុក៖ ' + error.message,
+                    icon: 'error',
+                    confirmButtonText: 'យល់ព្រម (OK)',
+                    confirmButtonColor: '#8a0e5b'
+                });
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
@@ -492,7 +446,13 @@
 
         async function savePhoto() {
             if (!newPhotoFile) {
-                alert('Please select a photo to upload first.');
+                Swal.fire({
+                    title: 'ព័ត៌មាន! (Info)',
+                    text: 'សូមជ្រើសរើសរូបថតជាមុនសិន! (Please select a photo to upload first.)',
+                    icon: 'info',
+                    confirmButtonText: 'យល់ព្រម (OK)',
+                    confirmButtonColor: '#8a0e5b'
+                });
                 return;
             }
 
@@ -505,18 +465,34 @@
                 const user = firebase.auth().currentUser;
                 if (!user) throw new Error("No user logged in");
 
-                const storageRef = firebase.storage().ref('profile_pictures/' + user.uid + '_' + Date.now());
-                const snapshot = await storageRef.put(newPhotoFile);
-                const downloadURL = await snapshot.ref.getDownloadURL();
+                // Use centralized uploadImage utility → auto-compresses via HTML5 Canvas (max 800px, 75% JPEG quality)
+                const downloadURL = await window.uploadImage(newPhotoFile, user.uid, 'profile_pictures');
+                if (!downloadURL) throw new Error('Image upload failed or returned null.');
 
                 await firebase.database().ref('users/' + user.uid).update({ imageUrl: downloadURL });
                 await user.updateProfile({ photoURL: downloadURL });
 
-                alert('Photo Updated Successfully!');
-                window.location.reload();
+                Swal.fire({
+                    title: 'ជោគជ័យ! (Success)',
+                    text: 'កែប្រែរូបថតប្រវត្តិរូបដោយជោគជ័យ! (Photo Updated Successfully!)',
+                    icon: 'success',
+                    confirmButtonText: 'យល់ព្រម (OK)',
+                    confirmButtonColor: '#8a0e5b',
+                    customClass: {
+                        popup: 'rounded-4'
+                    }
+                }).then(() => {
+                    window.location.reload();
+                });
             } catch (error) {
                 console.error(error);
-                alert('Error saving photo: ' + error.message);
+                Swal.fire({
+                    title: 'កំហុស! (Error)',
+                    text: 'មានបញ្ហាក្នុងការរក្សាទុករូបថត៖ ' + error.message,
+                    icon: 'error',
+                    confirmButtonText: 'យល់ព្រម (OK)',
+                    confirmButtonColor: '#8a0e5b'
+                });
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;

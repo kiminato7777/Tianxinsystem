@@ -27,7 +27,7 @@
 }
 
 body {
-  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 50%, #e0f2fe 100%);
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -42,37 +42,37 @@ body {
   border-radius: 50%;
   filter: blur(60px);
   z-index: -1;
-  opacity: 0.8;
+  opacity: 0.6;
   animation: floating 8s ease-in-out infinite alternate;
 }
 
 .shape-1 {
   width: 400px;
   height: 400px;
-  background: #a18cd1;
+  background: #38bdf8; /* Sky blue matching banner details */
   top: -100px;
   left: -100px;
-  opacity: 0.4;
+  opacity: 0.35;
   animation-delay: 0s;
 }
 
 .shape-2 {
   width: 350px;
   height: 350px;
-  background: #ffdde1;
+  background: #4ade80; /* Mint green matching banner leaves */
   bottom: -80px;
   right: -80px;
-  opacity: 0.5;
+  opacity: 0.3;
   animation-delay: -2s;
 }
 
 .shape-3 {
   width: 200px;
   height: 200px;
-  background: #fbc2eb;
+  background: #fde047; /* Yellow/Gold matching school logo */
   top: 40%;
   right: 20%;
-  opacity: 0.3;
+  opacity: 0.2;
   animation-delay: -4s;
   filter: blur(40px);
 }
@@ -87,36 +87,112 @@ body {
   }
 }
 
-/* Glassmorphism Card */
-.login-card {
-  width: 420px;
+/* Split Layout Glassmorphism Container */
+.login-container {
+  display: flex;
+  width: 980px;
+  max-width: 95%;
+  min-height: 580px;
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  padding: 50px 40px;
   border-radius: 30px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.8);
-  text-align: center;
+  overflow: hidden;
   position: relative;
-  max-width: 90%;
+  z-index: 10;
 }
 
-.login-header {
-  margin-bottom: 35px;
-}
-
-.logo-container {
-  width: 110px;
-  height: 110px;
-  margin: 0 auto 20px;
-  background: white;
-  padding: 0;
-  border-radius: 50%;
-  box-shadow: 0 10px 25px rgba(255, 105, 135, 0.2);
+/* Left Side Image */
+.login-image-side {
+  flex: 1.2;
+  position: relative;
+  background: #ffffff;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Modern Shine Sweep Reflection */
+.login-image-side::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 30%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(25deg);
+  animation: shine 5s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 3;
+}
+
+@keyframes shine {
+  0% { left: -60%; }
+  15% { left: 130%; }
+  100% { left: 130%; }
+}
+
+.side-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.login-container:hover .side-banner-img {
+  transform: scale(1.03);
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(214, 51, 132, 0.15) 0%, rgba(56, 189, 248, 0.15) 100%),
+              linear-gradient(to right, rgba(255, 255, 255, 0) 85%, rgba(255, 255, 255, 0.08) 100%);
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Right Side Form */
+.login-form-side {
+  flex: 1;
+  padding: 45px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.login-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.logo-container {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 15px;
+  background: white;
+  padding: 3px;
+  border-radius: 50%;
+  box-shadow: 0 10px 25px rgba(214, 51, 132, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(214, 51, 132, 0.1);
 }
 
 .logo-img {
@@ -126,17 +202,40 @@ body {
   border-radius: 50%;
 }
 
-.login-header h2 {
-  color: #444;
+.school-title {
+  font-family: 'Kantumruy Pro', sans-serif;
   font-weight: 700;
-  font-size: 26px;
-  margin-bottom: 8px;
-  letter-spacing: -0.5px;
+  font-size: 22px;
+  margin-bottom: 4px;
+  background: linear-gradient(
+    to right,
+    #d63384 0%,
+    #d63384 35%,
+    #ffd700 50%, /* Gold reflection sweep */
+    #d63384 65%,
+    #d63384 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShine 5s infinite linear;
+  display: inline-block;
 }
 
-.login-header p {
-  color: #888;
-  font-size: 15px;
+@keyframes textShine {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: 0 center;
+  }
+}
+
+.school-subtitle {
+  font-size: 18px;
+  color: #64748b;
+  margin-top: 5px;
   font-weight: 400;
 }
 
@@ -167,7 +266,7 @@ body {
   /* Pill shape */
   font-size: 15px;
   background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
   transition: all 0.3s ease;
   color: #555;
 }
@@ -175,12 +274,12 @@ body {
 .input-group input:focus {
   background: #fff;
   outline: none;
-  box-shadow: 0 8px 25px rgba(255, 105, 135, 0.15);
+  box-shadow: 0 8px 25px rgba(214, 51, 132, 0.12);
   transform: translateY(-2px);
 }
 
 .input-group input:focus+.input-icon {
-  color: #ff6b81;
+  color: #d63384;
 }
 
 .input-group input::placeholder {
@@ -200,7 +299,7 @@ body {
 }
 
 .toggle-password:hover {
-  color: #ff6b81;
+  color: #d63384;
 }
 
 /* Button */
@@ -208,7 +307,7 @@ body {
   width: 100%;
   padding: 16px;
   border: none;
-  background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fad0c4);
+  background: linear-gradient(135deg, #d63384 0%, #e24a8d 50%, #f472b6 100%);
   background-size: 200% auto;
   color: white;
   font-size: 16px;
@@ -216,14 +315,15 @@ body {
   border-radius: 50px;
   cursor: pointer;
   transition: all 0.4s ease;
-  box-shadow: 0 10px 30px rgba(255, 154, 158, 0.4);
+  box-shadow: 0 10px 25px rgba(214, 51, 132, 0.3);
   margin-top: 10px;
+  font-family: 'Kantumruy Pro', sans-serif;
 }
 
 .btn-login:hover {
   background-position: right center;
   transform: translateY(-3px);
-  box-shadow: 0 15px 35px rgba(255, 154, 158, 0.5);
+  box-shadow: 0 15px 30px rgba(214, 51, 132, 0.4);
 }
 
 .btn-login:active {
@@ -236,12 +336,31 @@ body {
   cursor: not-allowed;
 }
 
+/* Responsive adjustments */
+@media (max-width: 868px) {
+  .login-container {
+    flex-direction: column;
+    width: 440px;
+    min-height: auto;
+  }
+
+  .login-image-side {
+    display: none;
+  }
+
+  .login-form-side {
+    padding: 40px 30px;
+    background: rgba(255, 255, 255, 0.45);
+  }
+}
+
 /* Footer */
 .footer-text {
   margin-top: 30px;
-  font-size: 12px;
+  font-size: 16px;
   color: #999;
   letter-spacing: 0.5px;
+  text-align: center;
 }
 
 /* Alert */
