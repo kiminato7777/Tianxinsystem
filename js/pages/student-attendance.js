@@ -1094,7 +1094,17 @@ function initDataTable() {
                 next: "បន្ទាប់",
                 previous: "ថយក្រោយ"
             },
-            emptyTable: "មិនមានទិន្នន័យក្នុងតារាងទេ"
+            emptyTable: `
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 20px; gap:12px;">
+                    <div style="width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,#fdf4f8,#fce7f3); display:flex; align-items:center; justify-content:center; animation: emptyPulse 2.5s ease-in-out infinite;">
+                        <i class="fi fi-rr-folder-open" style="font-size:1.8rem; color:#8a0e5b;"></i>
+                    </div>
+                    <div style="font-size:1.05rem; font-weight:700; color:#374151;">មិនមានទិន្នន័យក្នុងតារាងទេ</div>
+                    <div style="font-size:0.82rem; color:#9ca3af; max-width:320px; text-align:center; line-height:1.6;">
+                        សូមជ្រើសរើសថ្ងៃខែឆ្នាំ ម៉ោងសិក្សា និងគ្រូបន្ទុក ដើម្បីបង្ហាញទិន្នន័យអវត្តមាន
+                    </div>
+                </div>
+            `
         },
         order: [], // Disable initial sorting
         pageLength: 50,

@@ -32,6 +32,11 @@
     <link rel="stylesheet" href="/css/style.css">
 
     <style>
+        /* --- Empty table pulse animation --- */
+        @keyframes emptyPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.08); opacity: 0.85; }
+        }
         /* --- Premium UI Enhancements --- */
         .search-filter-section {
             background: var(--bs-card-bg, white);
