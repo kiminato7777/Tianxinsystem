@@ -129,7 +129,7 @@
             <div class="profile-card mx-auto">
                 <!-- Cover Image -->
                 <div class="profile-cover">
-                    <button class="profile-edit-cover-btn" onclick="openEditProfileModal()">
+                    <button class="profile-edit-cover-btn">
                         <i class="fi fi-rr-edit"></i>
                         <span>កែប្រែព័ត៌មាន</span>
                     </button>
@@ -667,9 +667,9 @@
             }, 1000); // Wait for auth check
         });
 
-        // Open edit modal on avatar camera btn click
+        // Both edit buttons redirect to settings.html for editing
         document.querySelectorAll('.profile-avatar-edit-btn, .profile-edit-cover-btn').forEach(btn => {
-            btn.addEventListener('click', () => openEditProfileModal());
+            btn.addEventListener('click', () => window.location.href = '/settings.html');
         });
 
         /** Open Edit Profile Modal and pre-fill with current data from Firebase */
