@@ -14,6 +14,33 @@
     --bs-preview-border: #8a0e5b;
 }
 
+/* ─── Global Header Shimmer / Gold Reflection Sweep (10s loop, left → right) ─── */
+@keyframes shimmerSweep {
+    0%   { background-position: -300% center; }
+    28%  { background-position:  300% center; }
+    100% { background-position:  300% center; }
+}
+.header-shimmer-text {
+    background: linear-gradient(
+        90deg,
+        #a06000   0%,
+        #d4940e  20%,
+        #f7d060  38%,
+        #ffffff  50%,
+        #f7d060  62%,
+        #d4940e  80%,
+        #a06000 100%
+    );
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: shimmerSweep 10s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    display: inline-block;
+    filter: drop-shadow(0 1px 3px rgba(200,134,10,0.35));
+}
+
 /* --- IMAGE HOVER PREVIEW --- */
 .img-hover-preview {
     position: fixed;
