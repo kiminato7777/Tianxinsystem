@@ -303,7 +303,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const filteredStudents = window.allStudentsData.filter(student => {
             const matchTeacher = (student.teacherName === selectedTeacher || student.homeroomTeacher === selectedTeacher);
             const matchTime = hasTime ? (student.studyTime === selectedTime) : true;
-            return matchTeacher && matchTime;
+            const notExcluded = !student.attendanceExcluded;  // skip soft-excluded students
+            return matchTeacher && matchTime && notExcluded;
         });
 
         // Set Total Students
@@ -323,6 +324,8 @@ document.addEventListener('DOMContentLoaded', function () {
         // Trigger change to update Select2 UI and recalculate
         $(studentSelect).trigger('change');
     }
+    // Make filterStudents globally accessible for real-time listener
+    window._attFilterStudents = filterStudents;
 
     const stTimeEl = document.getElementById('att_studyTime');
     const teacherEl = document.getElementById('att_teacher');
@@ -733,7 +736,8 @@ function populateStudentMapsFromData(studentsData) {
             studyTime: student.studyTime || '',
             teacherName: student.teacherName || '',
             homeroomTeacher: student.homeroomTeacher || '',
-            gender: student.gender || ''
+            gender: student.gender || '',
+            attendanceExcluded: student.attendanceExcluded === true  // soft-exclude flag
         };
 
         window.allStudentsData.push(studentObj);
@@ -805,6 +809,22 @@ async function loadDropdownData() {
 
         // Initially clear the student dropdown until Teacher & Time are selected
         $('#att_studentName').empty();
+
+        // ─── Real-time listener: auto-refresh student maps when data changes ───
+        // This makes attendance exclude/include dynamic without page reload
+        firebase.database().ref('students').on('value', (snap) => {
+            if (snap.exists()) {
+                const updatedData = snap.val();
+                setIndexedDBCache('tx_cachedAllStudentsData', updatedData);
+                populateStudentMapsFromData(updatedData);
+
+                // Auto-refresh the student dropdown if teacher is already selected
+                if (typeof window._attFilterStudents === 'function') {
+                    window._attFilterStudents();
+                }
+            }
+        });
+
     } catch (error) {
         console.error("Error loading dropdown data:", error);
     }
@@ -1526,7 +1546,8 @@ window.editAttendance = async function (key) {
         const filteredStudents = window.allStudentsData.filter(student => {
             const matchTeacher = (student.teacherName === selectedTeacher || student.homeroomTeacher === selectedTeacher);
             const matchTime = hasTime ? (student.studyTime === selectedTime) : true;
-            return matchTeacher && matchTime;
+            const notExcluded = !student.attendanceExcluded;  // skip soft-excluded students
+            return matchTeacher && matchTime && notExcluded;
         });
 
         // Set Total Students

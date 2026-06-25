@@ -2249,6 +2249,7 @@ ${status.text}
                 (remaining > 0 ? `<button class="btn btn-sm btn-outline-success border-0 rounded-3 px-2 py-1" onclick="showAdditionalPaymentModal('${s.key}')" title="បង់ប្រាក់"><i class="fi fi-rr-receipt"></i></button>` : '')
             }
                     <button class="btn btn-sm btn-outline-primary border-0 rounded-3 px-2 py-1" onclick="openAddScoreModal('${s.key}')" title="បញ្ចូលពិន្ទុ (Add Score)"><i class="fi fi-rr-journal-alt"></i></button>
+                    <button class="btn btn-sm border-0 rounded-3 px-2 py-1" onclick="toggleAttendanceExclude('${s.key}', '${s.displayId}')" title="${s.attendanceExcluded ? 'បញ្ចូលក្នុងបញ្ជីវត្តមានវិញ' : 'លាក់ពីបញ្ជីវត្តមាន'}" style="color: ${s.attendanceExcluded ? '#dc3545' : '#0d9488'};"><i class="fi ${s.attendanceExcluded ? 'fi-rr-eye-crossed' : 'fi-rr-eye'}"></i></button>
                     <button class="btn btn-sm btn-outline-danger border-0 rounded-3 px-2 py-1 delete-btn btn-premium-delete" data-key="${s.key}" data-display-id="${s.displayId}" title="លុប"><i class="fi fi-rr-user-delete"></i> លុប</button>
                 </div>
             </td>`;
@@ -8909,6 +8910,25 @@ function deleteStudent(key, displayId) {
     studentsRef.child(key).remove()
         .then(() => showAlert(`លុប ID: ${displayId} ជោគជ័យ`, 'success'))
         .catch(e => showAlert(e.message, 'danger'));
+}
+
+/**
+ * Toggle attendanceExcluded flag in Firebase.
+ * Students with attendanceExcluded=true will NOT show in daily attendance list,
+ * but remain fully visible in data-tracking.
+ */
+function toggleAttendanceExclude(key, displayId) {
+    const ref = studentsRef.child(key).child('attendanceExcluded');
+    ref.once('value').then(snap => {
+        const currentVal = snap.val() === true;
+        const newVal = !currentVal;
+        const actionText = newVal
+            ? `សិស្ស ID: ${displayId} ត្រូវបានលាក់ពីបញ្ជីអវត្តមានប្រចាំថ្ងៃ`
+            : `សិស្ស ID: ${displayId} ត្រូវបានបញ្ចូលក្នុងបញ្ជីអវត្តមានវិញ`;
+        ref.set(newVal).then(() => {
+            showAlert(actionText, newVal ? 'warning' : 'success');
+        }).catch(e => showAlert(e.message, 'danger'));
+    });
 }
 
 
