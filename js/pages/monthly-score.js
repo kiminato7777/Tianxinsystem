@@ -166,6 +166,35 @@ function renderTable() {
     const programFilter = document.getElementById('filterProgram').value;
     const searchFilter = (document.getElementById('searchStudent').value || '').toLowerCase();
     
+    // Filter allStudents to populate filteredStudents
+    filteredStudents = allStudents.filter(s => {
+        // Teacher Filter
+        if (teacherFilter !== 'all' && s.teacherName !== teacherFilter && s.homeroomTeacher !== teacherFilter) {
+            return false;
+        }
+        // Time Filter
+        if (timeFilter !== 'all' && s.studyTime !== timeFilter) {
+            return false;
+        }
+        // Program Filter
+        const p = (s.studyType || s.courseType || '').toLowerCase();
+        const isCh = p.includes('chinese-fulltime') || p.includes('cfulltime') || p.includes('ចិនពេញម៉ោង');
+        const type = isCh ? 'chinese-fulltime' : 'general';
+        if (programFilter !== 'all' && type !== programFilter) {
+            return false;
+        }
+        // Search Filter
+        if (searchFilter) {
+            const fullName = `${s.lastName || ''} ${s.firstName || ''}`.toLowerCase();
+            const chName = (s.chineseName || '').toLowerCase();
+            const dispId = (s.displayId || '').toLowerCase();
+            if (!fullName.includes(searchFilter) && !chName.includes(searchFilter) && !dispId.includes(searchFilter)) {
+                return false;
+            }
+        }
+        return true;
+    });
+    
     // 1. Calculate GLOBAL ranks for the month BEFORE rendering
     // Rank should be calculated within the SAME program type
     const calculateRanksForProgram = (progType) => {
@@ -503,6 +532,7 @@ async function saveAllScores() {
         const updates = {};
         for (const row of rows) {
             const key = row.getAttribute('data-key');
+            const pType = row.getAttribute('data-program') || 'chinese-fulltime';
             const student = allStudents.find(s => s.key === key);
             if (!student) continue;
 

@@ -18,36 +18,41 @@
     <script src="/js/core/system-core-standard.js"></script>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Moul&family=Kantumruy+Pro:wght@100..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Moul&family=Kantumruy+Pro:wght@100..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
     <style>
         :root {
             --primary-color: #8a0e5b;
             --primary-light: #fdf2f8;
-            --primary-gradient: linear-gradient(135deg, #8a0e5b 0%, #c71585 100%);
+            --primary-gradient: linear-gradient(135deg, #8a0e5b 0%, #b31d7e 100%);
             --secondary-gradient: linear-gradient(135deg, #6e0b49 0%, #8a0e5b 100%);
             --accent-color: #ffc107;
-            --bg-color: #f0f2f5;
+            --bg-color: #f8fafc;
             --card-bg: #ffffff;
             --text-main: #1e293b;
             --text-muted: #64748b;
-            --glass-bg: rgba(255, 255, 255, 0.95);
-            --glass-border: rgba(255, 255, 255, 0.3);
-            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 20px;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 10px 25px rgba(138, 14, 91, 0.05);
+            --shadow-lg: 0 20px 40px rgba(138, 14, 91, 0.08);
+            --radius-sm: 12px;
+            --radius-md: 20px;
+            --radius-lg: 28px;
         }
 
         body {
-            font-family: 'Kantumruy Pro', sans-serif;
+            font-family: 'Kantumruy Pro', 'Inter', sans-serif;
             background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(252, 228, 236, 0.35) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(243, 229, 245, 0.35) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(255, 253, 240, 0.4) 0px, transparent 50%);
             color: var(--text-main);
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
         }
 
         .khmer-muol { font-family: 'Moul', serif; font-weight: 400; }
@@ -109,23 +114,26 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 30px;
-            background: white;
+            padding: 22px 32px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 25px;
-            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 30px;
+            border: 1px solid var(--glass-border);
         }
 
         .header-title {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             color: var(--primary-color);
+            letter-spacing: -0.02em;
         }
 
         .btn-back-home {
-            background: var(--primary-light);
+            background: rgba(138, 14, 91, 0.05);
             color: var(--primary-color);
-            padding: 10px 20px;
+            padding: 10px 22px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
@@ -133,22 +141,28 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1.5px solid rgba(138, 14, 91, 0.1);
         }
 
         .btn-back-home:hover {
-            background: var(--primary-color);
+            background: var(--primary-gradient);
             color: white;
-            transform: translateX(-5px);
+            transform: translateX(-4px);
+            box-shadow: 0 8px 20px rgba(138, 14, 91, 0.25);
+            border-color: transparent;
         }
 
         /* Premium Table Design */
         .score-table-card {
-            background: white;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            border: none;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--glass-border);
             overflow: hidden;
+            margin-bottom: 30px;
         }
 
         .table-responsive {
@@ -157,12 +171,12 @@
         }
 
         .table-score thead th {
-            background: #f8f9fa;
+            background: rgba(248, 250, 252, 0.9);
             color: #475569;
             font-weight: 700;
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             text-transform: uppercase;
-            padding: 18px 12px;
+            padding: 20px 14px;
             position: sticky;
             top: 0;
             z-index: 20;
@@ -174,53 +188,60 @@
         .student-info-cell {
             position: sticky;
             left: 0;
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             z-index: 10;
-            min-width: 250px;
+            min-width: 260px;
             text-align: left !important;
             padding-left: 25px !important;
             border-right: 2px solid #edf2f7 !important;
+            backdrop-filter: blur(10px);
         }
 
         .table-score tr:hover .student-info-cell {
-            background: var(--primary-light);
+            background: var(--primary-light) !important;
         }
 
         .score-input {
             width: 60px;
             height: 38px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            border: 1.5px solid #cbd5e1;
             text-align: center;
             font-weight: 700;
-            font-size: 0.9rem;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: white;
         }
 
         .score-input:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(138, 14, 91, 0.15);
+            box-shadow: 0 0 0 5px rgba(138, 14, 91, 0.18);
             outline: none;
-            transform: scale(1.15);
+            transform: scale(1.18);
             z-index: 5;
             position: relative;
+            background: white;
         }
 
         /* Stats Cards */
         .stat-card-premium {
-            background: white;
-            border-radius: var(--radius-lg);
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: var(--radius-md);
             padding: 24px;
-            border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
 
         .stat-card-premium:hover {
-            transform: translateY(-5px);
+            transform: translateY(-6px);
             box-shadow: var(--shadow-lg);
+            border-color: rgba(138, 14, 91, 0.2);
         }
 
         .stat-card-premium::before {
@@ -228,14 +249,20 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 4px;
+            width: 5px;
             height: 100%;
-            background: var(--primary-color);
+            background: var(--primary-gradient);
         }
 
-        .stat-card-premium.success::before { background: #10b981; }
-        .stat-card-premium.warning::before { background: #f59e0b; }
-        .stat-card-premium.info::before { background: #3b82f6; }
+        .stat-card-premium.success::before { background: linear-gradient(180deg, #10b981 0%, #059669 100%); }
+        .stat-card-premium.warning::before { background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%); }
+        .stat-card-premium.info::before { background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%); }
+
+        .stat-card-premium .h3 {
+            font-family: 'Inter', 'Kantumruy Pro', sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
 
         /* Animation */
         .animate-slide-up {
@@ -293,13 +320,19 @@
 
         /* Filters */
         .filter-pill {
-            background: #f8f9fa;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 50px;
-            padding: 8px 18px;
-            border: 1px solid #edf2f7;
+            padding: 8px 20px;
+            border: 1.5px solid rgba(226, 232, 240, 0.8);
             display: flex;
             align-items: center;
             gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+        .filter-pill:focus-within {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(138, 14, 91, 0.12);
         }
         .filter-select {
             border: none;
@@ -309,6 +342,52 @@
             color: var(--text-main);
             outline: none;
             cursor: pointer;
+        }
+        .filter-select::placeholder {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Filter Card Styling */
+        .filter-bar-card {
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--radius-md) !important;
+            border: 1px solid var(--glass-border) !important;
+            box-shadow: var(--shadow-md) !important;
+        }
+        .filter-input-group {
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1.5px solid #e2e8f0;
+            background: rgba(248, 250, 252, 0.8);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+        }
+        .filter-input-group:focus-within {
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(138, 14, 91, 0.12);
+        }
+        .filter-input-group .input-group-text {
+            background: transparent !important;
+            border: none !important;
+            color: var(--text-muted);
+            padding-left: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .filter-input-group .form-select {
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            font-weight: 600;
+            color: var(--text-main);
+            padding-top: 10px;
+            padding-bottom: 10px;
         }
 
         /* Animations */
@@ -337,14 +416,15 @@
                 left: 0;
                 right: 0;
                 height: 75px;
-                background: rgba(255, 255, 255, 0.95);
+                background: rgba(255, 255, 255, 0.85);
                 backdrop-filter: blur(20px);
-                border-top: 1px solid rgba(0, 0, 0, 0.05);
+                -webkit-backdrop-filter: blur(20px);
+                border-top: 1px solid rgba(255, 255, 255, 0.5);
                 z-index: 1050;
                 justify-content: space-around;
                 align-items: center;
                 padding: 0 10px;
-                box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.03);
+                box-shadow: 0 -10px 30px rgba(138, 14, 91, 0.08);
             }
 
             .nav-item-mobile {
@@ -356,13 +436,18 @@
                 text-decoration: none;
                 font-size: 0.65rem;
                 font-weight: 600;
-                transition: all 0.2s;
+                transition: all 0.25s ease;
                 flex: 1;
             }
 
             .nav-item-mobile i {
                 font-size: 1.4rem;
                 margin-bottom: 4px;
+                transition: transform 0.2s ease;
+            }
+
+            .nav-item-mobile:hover i {
+                transform: translateY(-2px);
             }
 
             .nav-item-mobile.active {
@@ -378,9 +463,15 @@
                 align-items: center;
                 justify-content: center;
                 color: white;
-                margin-top: -40px;
-                box-shadow: 0 8px 20px rgba(138, 14, 91, 0.3);
-                border: 5px solid var(--bg-color);
+                margin-top: -35px;
+                box-shadow: 0 8px 25px rgba(138, 14, 91, 0.35);
+                border: 4px solid var(--bg-color);
+                transition: all 0.25s ease;
+            }
+
+            .nav-center-btn:hover {
+                transform: scale(1.1);
+                box-shadow: 0 12px 30px rgba(138, 14, 91, 0.45);
             }
         }
 
@@ -439,31 +530,31 @@
         <div id="alertContainer"></div>
 
         <!-- Filter Bar -->
-        <div class="card border-0 shadow-sm rounded-4 mb-4 p-3 animate__animated animate__fadeIn">
+        <div class="card filter-bar-card mb-4 p-3 animate__animated animate__fadeIn">
             <div class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label small fw-bold text-muted text-uppercase mb-1">គ្រូបន្ទុកថ្នាក់ (Teacher)</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><i class="fi fi-rr-user-trust"></i></span>
-                        <select id="filterTeacher" class="form-select border-0 bg-light rounded-end-3 py-2" onchange="renderTable()">
+                    <div class="filter-input-group">
+                        <span class="input-group-text"><i class="fi fi-rr-user-trust"></i></span>
+                        <select id="filterTeacher" class="form-select" onchange="renderTable()">
                             <option value="all">គ្រូទាំងអស់ (All Teachers)</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small fw-bold text-muted text-uppercase mb-1">ម៉ោងសិក្សា (Study Time)</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><i class="fi fi-rr-clock"></i></span>
-                        <select id="filterTime" class="form-select border-0 bg-light rounded-end-3 py-2" onchange="renderTable()">
+                    <div class="filter-input-group">
+                        <span class="input-group-text"><i class="fi fi-rr-clock"></i></span>
+                        <select id="filterTime" class="form-select" onchange="renderTable()">
                             <option value="all">គ្រប់ម៉ោង (All Times)</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small fw-bold text-muted text-uppercase mb-1">កម្មវិធីសិក្សា (Program)</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><i class="fi fi-rr-notebook"></i></span>
-                        <select id="filterProgram" class="form-select border-0 bg-light rounded-end-3 py-2" onchange="renderTable()">
+                    <div class="filter-input-group">
+                        <span class="input-group-text"><i class="fi fi-rr-notebook"></i></span>
+                        <select id="filterProgram" class="form-select" onchange="renderTable()">
                             <option value="all">គ្រប់កម្មវិធី (All Programs)</option>
                             <option value="chinese-fulltime">ចិនពេញម៉ោង (Chinese Full-time)</option>
                             <option value="general">ចំណេះដឹងទូទៅ (General Knowledge)</option>
@@ -471,7 +562,7 @@
                     </div>
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
-                    <button class="btn btn-primary w-100 rounded-pill py-2 fw-bold" onclick="loadStudents()" style="background: var(--primary-color); border: none;">
+                    <button class="btn btn-premium w-100 rounded-pill py-2 fw-bold" onclick="loadStudents()">
                         <i class="fi fi-rr-refresh me-2"></i> ទាញទិន្នន័យ (Reload)
                     </button>
                 </div>

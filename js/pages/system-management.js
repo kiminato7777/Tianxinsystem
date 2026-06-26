@@ -749,6 +749,7 @@ async function syncTeachersFromStudentsInner() {
                     teachingHours: studyTimesList,
                     status: 'active',
                     createdAt: new Date().toISOString(),
+                    pin: '2024',
                     notes: 'ទាញយកស្វ័យប្រវត្តិពីទិន្នន័យសិស្ស'
                 };
             }

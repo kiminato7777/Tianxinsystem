@@ -14,6 +14,7 @@ let historyModal = null;
 let settingsModal = null;
 let isSessionChecked = false;
 let isRankingView = false;
+let gradeChart = null;
 
 // Periods State (Editable by user)
 let scoringPeriods = [
@@ -46,13 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (_historyEl) historyModal = bootstrap.Modal.getOrCreateInstance(_historyEl);
     if (_settingsEl) settingsModal = bootstrap.Modal.getOrCreateInstance(_settingsEl);
     
-    // Subscribe to Settings from Firebase
-    subscribeToSettings();
-
-    // Check for existing session
-    checkTeacherSession();
-    
-    loadTeachers();
     setupAutoCalculations();
 
     // Smart Date Picker Listener (New selects)
@@ -73,6 +67,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('programLoginSelect')) {
         document.getElementById('programLoginSelect').addEventListener('change', filterTeachersByProgramLogin);
     }
+
+    // Wait for Auth state to resolve before requesting database data
+    let isInitialized = false;
+    firebase.auth().onAuthStateChanged((user) => {
+        if (isInitialized) return;
+        isInitialized = true;
+
+        // Subscribe to Settings from Firebase
+        subscribeToSettings();
+
+        // Check for existing session
+        checkTeacherSession();
+        
+        loadTeachers();
+    });
 });
 
 function updateProgramDisplay() {
@@ -133,6 +142,36 @@ function checkTeacherSession() {
     isSessionChecked = true;
 }
 
+// Check if current user is admin/superadmin to bypass redirect
+async function checkIsAdmin() {
+    return new Promise((resolve) => {
+        const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+            unsubscribe(); // Clean up listener immediately
+            if (!user) {
+                resolve(false);
+                return;
+            }
+            try {
+                const adminEmail = window.ADMIN_EMAIL || 'admin@school.com';
+                const superAdminEmails = window.SUPER_ADMIN_EMAILS || [adminEmail];
+                if (superAdminEmails.includes(user.email)) {
+                    resolve(true);
+                    return;
+                }
+                
+                const snapshot = await firebase.database().ref('users/' + user.uid).once('value');
+                const userData = snapshot.val() || {};
+                const userRole = (userData.role || '').toLowerCase();
+                const isAdmin = userRole === 'admin' || userData.isAdmin === true;
+                resolve(isAdmin);
+            } catch (e) {
+                console.error("Error checking admin role:", e);
+                resolve(false);
+            }
+        });
+    });
+}
+
 // 1. Load Teachers for Login Dropdown
 async function loadTeachers() {
     try {
@@ -154,6 +193,12 @@ async function loadTeachers() {
     } catch (error) {
         console.error("Error loading teachers:", error);
         if (error.message.includes('permission_denied')) {
+            const isAdmin = await checkIsAdmin();
+            if (isAdmin) {
+                console.warn("Permission denied for admin. Bypassing Swal block.");
+                return;
+            }
+            
             Swal.fire({
                 title: 'ការចូលប្រើត្រូវបានបដិសេធ',
                 text: 'សូមចូលប្រើប្រាស់គណនីបុគ្គលិកជាមុនសិន ទើបអាចប្រើប្រាស់ផ្នែកនេះបាន។',
@@ -277,6 +322,11 @@ function logout() {
             currentTeacher = null;
             currentTeacherData = null;
             allMyStudents = [];
+            
+            if (gradeChart) {
+                gradeChart.destroy();
+                gradeChart = null;
+            }
             
             document.getElementById('loginForm').reset();
             document.getElementById('portalSection').classList.add('d-none');
@@ -735,6 +785,105 @@ function updateDashboardStats() {
     }
 
     updateTopStudents(currentYear, currentMonth);
+
+    // Calculate Grade Distribution
+    let gradeCounts = { 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'E': 0, 'F': 0 };
+    allMyStudents.forEach(s => {
+        if (s.academicRecords && Array.isArray(s.academicRecords)) {
+            const record = s.academicRecords.find(r => r.year == currentYear && r.month == currentMonth);
+            if (record && record.grade) {
+                const g = (record.grade || 'F').toString().toUpperCase();
+                if (gradeCounts[g] !== undefined) {
+                    gradeCounts[g]++;
+                }
+            }
+        }
+    });
+    updateGradeDistributionChart(gradeCounts);
+}
+
+function updateGradeDistributionChart(gradeCounts) {
+    const ctx = document.getElementById('gradeDistributionChart');
+    if (!ctx) return;
+
+    const dataValues = [
+        gradeCounts['A'],
+        gradeCounts['B'],
+        gradeCounts['C'],
+        gradeCounts['D'],
+        gradeCounts['E'],
+        gradeCounts['F']
+    ];
+
+    // If chart instance exists, just update its data values
+    if (gradeChart) {
+        gradeChart.data.datasets[0].data = dataValues;
+        gradeChart.update();
+        return;
+    }
+
+    // Create a new Chart.js bar chart
+    gradeChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['A', 'B', 'C', 'D', 'E', 'F'],
+            datasets: [{
+                label: 'ចំនួនសិស្ស (Students)',
+                data: dataValues,
+                backgroundColor: [
+                    'rgba(40, 167, 69, 0.75)',  // A - Green
+                    'rgba(40, 167, 69, 0.55)',  // B - Light Green
+                    'rgba(0, 123, 255, 0.75)',  // C - Blue
+                    'rgba(0, 123, 255, 0.55)',  // D - Light Blue
+                    'rgba(255, 193, 7, 0.75)',   // E - Yellow
+                    'rgba(220, 53, 69, 0.75)'    // F - Red
+                ],
+                borderColor: [
+                    '#28a745',
+                    'rgba(40, 167, 69, 0.8)',
+                    '#007bff',
+                    'rgba(0, 123, 255, 0.8)',
+                    '#ffc107',
+                    '#dc3545'
+                ],
+                borderWidth: 1.5,
+                borderRadius: 4,
+                barPercentage: 0.6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return ` សិស្ស: ${context.parsed.y} នាក់`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0,
+                        color: '#64748b',
+                        font: { size: 9 }
+                    },
+                    grid: { color: 'rgba(0,0,0,0.03)' }
+                },
+                x: {
+                    ticks: {
+                        color: '#475569',
+                        font: { size: 10, weight: 'bold' }
+                    },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
 }
 
 function updateTopStudents(year, month) {
@@ -746,12 +895,21 @@ function updateTopStudents(year, month) {
     // Update Ranking Background Image based on Program
     if (container && currentTeacherData) {
         const program = currentTeacherData.program;
-        if (program === 'chinese') {
-            container.style.backgroundImage = "url('/img/Chinese Full-time.png')";
-        } else if (program === 'general') {
+        const position = (currentTeacherData.position || '').toLowerCase();
+        const studyType = (currentTeacherData.studyType || '').toLowerCase();
+        
+        // Detect if General program
+        const isGeneral = program === 'general' ||
+                          position.includes('ទូទៅ') ||
+                          position.includes('general') ||
+                          studyType.includes('general') ||
+                          studyType.includes('three-languages');
+
+        if (isGeneral) {
             container.style.backgroundImage = "url('/img/General Knowledge.png')";
         } else {
-            container.style.backgroundImage = "url('/img/IG.png')";
+            // Default to Chinese Full-time as the primary program background
+            container.style.backgroundImage = "url('/img/Chinese Full-time.png')";
         }
     }
 

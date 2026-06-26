@@ -488,8 +488,8 @@
                                     <i class="fi fi-rr-plus-circle me-2"></i>បន្ថែមថ្មី
                                 </button>
                                 <ul class="dropdown-menu shadow-sm border-0 rounded-4 p-2 mt-1">
-                                    <li><a class="dropdown-item rounded-3 py-2 fw-bold text-success" href="#" data-bs-toggle="modal" data-bs-target="#transactionModal" data-type="income"><i class="fi fi-rr-arrow-trend-up me-2"></i>ចំណូល (Income)</a></li>
-                                    <li><a class="dropdown-item rounded-3 py-2 fw-bold text-danger" href="#" data-bs-toggle="modal" data-bs-target="#transactionModal" data-type="expense"><i class="fi fi-rr-arrow-trend-down me-2"></i>ចំណាយ (Expense)</a></li>
+                                    <li><a class="dropdown-item rounded-3 py-2 fw-bold text-success" href="#" data-bs-toggle="modal" data-bs-target="#incomeModal"><i class="fi fi-rr-arrow-trend-up me-2"></i>ចំណូល (Income)</a></li>
+                                    <li><a class="dropdown-item rounded-3 py-2 fw-bold text-danger" href="#" data-bs-toggle="modal" data-bs-target="#expenseModal"><i class="fi fi-rr-arrow-trend-down me-2"></i>ចំណាយ (Expense)</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -784,7 +784,7 @@
             --input-radius: 1rem;
         }
 
-        #transactionModal .modal-content {
+        #incomeModal .modal-content, #expenseModal .modal-content {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.5);
@@ -794,37 +794,38 @@
         }
 
         /* Thematic Headers - Soft & Floating */
-        #transactionModal.income-theme .modal-header {
+        #incomeModal .modal-header {
             background: var(--modal-grad-income) !important;
             border-bottom: none;
             padding: 1.5rem 2rem;
         }
 
-        #transactionModal.expense-theme .modal-header {
+        #expenseModal .modal-header {
             background: var(--modal-grad-expense) !important;
             border-bottom: none;
             padding: 1.5rem 2rem;
         }
 
-        #transactionModal.income-theme .btn-primary.bg-pink-primary {
+        #incomeModal .btn-primary.bg-pink-primary {
             background: var(--modal-grad-income) !important;
             border: none !important;
             box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4) !important;
             transition: all 0.3s;
         }
 
-        #transactionModal.expense-theme .btn-primary.bg-pink-primary {
+        #expenseModal .btn-primary.bg-pink-primary {
             background: var(--modal-grad-expense) !important;
             border: none !important;
             box-shadow: 0 8px 20px rgba(225, 29, 72, 0.4) !important;
             transition: all 0.3s;
         }
 
-        #transactionModal .btn-primary.bg-pink-primary:hover {
+        #incomeModal .btn-primary.bg-pink-primary:hover,
+        #expenseModal .btn-primary.bg-pink-primary:hover {
             transform: translateY(-2px) scale(1.02);
         }
 
-        #transactionModal .card {
+        #incomeModal .card, #expenseModal .card {
             border: 1px solid var(--ui-border) !important;
             background: #ffffff;
             border-radius: var(--card-radius) !important;
@@ -832,18 +833,18 @@
             transition: all 0.3s ease;
         }
         
-        #transactionModal .card:hover {
+        #incomeModal .card:hover, #expenseModal .card:hover {
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             transform: translateY(-2px);
         }
 
-        #transactionModal .card-header {
+        #incomeModal .card-header, #expenseModal .card-header {
             background: transparent !important;
             padding: 1.5rem 1.5rem 0.5rem 1.5rem;
             border-bottom: none !important;
         }
 
-        #transactionModal .form-label {
+        #incomeModal .form-label, #expenseModal .form-label {
             color: var(--ui-text-muted);
             font-size: 0.75rem;
             font-weight: 700;
@@ -852,7 +853,8 @@
             margin-bottom: 0.5rem;
         }
 
-        #transactionModal .form-control, #transactionModal .form-select {
+        #incomeModal .form-control, #incomeModal .form-select,
+        #expenseModal .form-control, #expenseModal .form-select {
             background-color: #f8fafc;
             border: 2px solid transparent !important;
             color: var(--ui-text-main);
@@ -863,7 +865,8 @@
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
 
-        #transactionModal .form-control:focus, #transactionModal .form-select:focus {
+        #incomeModal .form-control:focus, #incomeModal .form-select:focus,
+        #expenseModal .form-control:focus, #expenseModal .form-select:focus {
             background-color: #ffffff;
             border-color: #3b82f6 !important;
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), inset 0 1px 2px rgba(0,0,0,0.01) !important;
@@ -882,12 +885,12 @@
             transform: scale(1.01);
         }
 
-        .income-theme .money-block-cash {
+        #incomeModal .money-block-cash {
             background-color: var(--income-bg);
             border-left: 4px solid var(--income-color);
         }
 
-        .expense-theme .money-block-cash {
+        #expenseModal .money-block-cash {
             background-color: var(--expense-bg);
             border-left: 4px solid var(--expense-color);
         }
@@ -920,12 +923,12 @@
             pointer-events: none;
         }
 
-        #transactionModal.income-theme .summary-card-premium {
+        #incomeModal .summary-card-premium {
             background: linear-gradient(135deg, #047857 0%, #064e3b 100%) !important;
             box-shadow: 0 15px 35px rgba(6, 78, 59, 0.4), inset 0 2px 0 rgba(255,255,255,0.2) !important;
         }
 
-        #transactionModal.expense-theme .summary-card-premium {
+        #expenseModal .summary-card-premium {
             background: linear-gradient(135deg, #be123b 0%, #881337 100%) !important;
             box-shadow: 0 15px 35px rgba(136, 19, 55, 0.4), inset 0 2px 0 rgba(255,255,255,0.2) !important;
         }
@@ -937,49 +940,58 @@
             letter-spacing: 0.1em;
         }
 
-        #transactionModal.income-theme #transTotalKHR {
+        #incomeModal #incomeTotalKHR {
             color: #6ee7b7 !important;
         }
 
-        #transactionModal.expense-theme #transTotalKHR {
+        #expenseModal #expenseTotalKHR {
             color: #fda4af !important;
         }
 
         /* Custom Toggle Buttons - Pill shape with fluid animation */
+        .p-1.bg-light.rounded-3.d-flex.gap-1 {
+            background-color: #f1f5f9 !important;
+            border-radius: 1.25rem !important;
+            padding: 0.35rem !important;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
         .type-toggle-btn {
             border: none !important;
             background: transparent;
             color: var(--ui-text-muted);
             font-weight: 700;
-            border-radius: 1rem !important;
+            border-radius: 0.9rem !important;
+            padding: 0.5rem 1rem !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.85rem;
         }
 
-        .btn-check:checked+.type-toggle-btn.income-choice {
+        #incomeModal .btn-check:checked+.type-toggle-btn {
             background: var(--income-color) !important;
-            color: white;
-            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
-            transform: scale(1.05);
+            color: white !important;
+            box-shadow: 0 8px 16px rgba(5, 150, 105, 0.3);
+            transform: scale(1.03);
         }
 
-        .btn-check:checked+.type-toggle-btn.expense-choice {
+        #expenseModal .btn-check:checked+.type-toggle-btn {
             background: var(--expense-color) !important;
-            color: white;
-            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
-            transform: scale(1.05);
+            color: white !important;
+            box-shadow: 0 8px 16px rgba(225, 29, 72, 0.3);
+            transform: scale(1.03);
         }
         
         .btn-check:checked+.type-toggle-btn {
             background: #3b82f6 !important;
-            color: white;
+            color: white !important;
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-            transform: scale(1.05);
+            transform: scale(1.03);
         }
 
         @keyframes fadeInScale {
             0% {
                 opacity: 0;
-                transform: scale(0.9) translateY(20px);
+                transform: scale(0.95) translateY(30px);
             }
             100% {
                 opacity: 1;
@@ -988,7 +1000,7 @@
         }
 
         .modal.show .modal-dialog {
-            animation: fadeInScale 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeInScale 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
         
         .input-group-text.bg-white {
@@ -1002,9 +1014,243 @@
             border-color: #3b82f6 !important;
             border-right: none !important;
         }
+
+        /* Premium Micro-animations & active glows */
+        @keyframes totalPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); filter: brightness(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .total-updating {
+            animation: totalPulse 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Specific glows for focus within */
+        #incomeModal .money-block, #expenseModal .money-block {
+            border: 2px solid transparent !important;
+            border-radius: 1.2rem;
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Default backgrounds for specific money blocks */
+        #incomeCashBlock {
+            background: rgba(5, 150, 105, 0.03) !important;
+        }
+        #expenseCashBlock {
+            background: rgba(225, 29, 72, 0.03) !important;
+        }
+        #incomeAbaBlock, #expenseAbaBlock {
+            background: rgba(2, 132, 199, 0.03) !important;
+        }
+        #incomeDebtBlock, #expenseDebtBlock {
+            background: rgba(217, 119, 6, 0.03) !important;
+        }
+
+        /* Cash blocks glow */
+        #incomeCashBlock:focus-within,
+        #incomeCashBlock.active-stream {
+            background-color: #ffffff !important;
+            border-color: var(--income-color) !important;
+            box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.15) !important;
+            transform: translateY(-2px);
+        }
+        #expenseCashBlock:focus-within,
+        #expenseCashBlock.active-stream {
+            background-color: #ffffff !important;
+            border-color: var(--expense-color) !important;
+            box-shadow: 0 10px 25px -5px rgba(225, 29, 72, 0.15) !important;
+            transform: translateY(-2px);
+        }
+
+        /* ABA blocks glow - Sky Blue */
+        #incomeAbaBlock:focus-within,
+        #incomeAbaBlock.active-stream,
+        #expenseAbaBlock:focus-within,
+        #expenseAbaBlock.active-stream {
+            background-color: #ffffff !important;
+            border-color: #0284c7 !important;
+            box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.15) !important;
+            transform: translateY(-2px);
+        }
+
+        /* Debt blocks glow - Amber */
+        #incomeDebtBlock:focus-within,
+        #incomeDebtBlock.active-stream,
+        #expenseDebtBlock:focus-within,
+        #expenseDebtBlock.active-stream {
+            background-color: #ffffff !important;
+            border-color: #d97706 !important;
+            box-shadow: 0 10px 25px -5px rgba(217, 119, 6, 0.15) !important;
+            transform: translateY(-2px);
+        }
+
+        .money-block .small {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s;
+        }
+
+        .money-block:focus-within .small {
+            font-weight: 800;
+        }
+
+        #incomeCashBlock:focus-within .small {
+            color: var(--income-color) !important;
+        }
+        #expenseCashBlock:focus-within .small {
+            color: var(--expense-color) !important;
+        }
+        #incomeAbaBlock:focus-within .small, #expenseAbaBlock:focus-within .small {
+            color: #0284c7 !important;
+        }
+        #incomeDebtBlock:focus-within .small, #expenseDebtBlock:focus-within .small {
+            color: #d97706 !important;
+        }
+
+        /* Modern Quick select Category Pills */
+        .btn-xs {
+            font-size: 0.7rem;
+            padding: 0.35rem 0.8rem;
+            border-radius: 50px;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0 !important;
+            color: #64748b !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.01);
+        }
+        
+        #incomeModal .btn-xs:hover {
+            background-color: var(--income-bg);
+            border-color: var(--income-color) !important;
+            color: var(--income-color) !important;
+            transform: translateY(-1.5px);
+            box-shadow: 0 4px 10px rgba(5, 150, 105, 0.15);
+        }
+
+        #expenseModal .btn-xs:hover {
+            background-color: var(--expense-bg);
+            border-color: var(--expense-color) !important;
+            color: var(--expense-color) !important;
+            transform: translateY(-1.5px);
+            box-shadow: 0 4px 10px rgba(225, 29, 72, 0.15);
+        }
+
+        /* Modern interactive date hint bubbles */
+        #incomeDateHint, #expenseDateHint {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.08);
+            color: #059669 !important;
+            padding: 0.25rem 0.65rem;
+            border-radius: 8px;
+            font-size: 0.7rem !important;
+            margin-top: 0.45rem;
+            font-weight: 700;
+            border: 1.5px solid rgba(16, 185, 129, 0.15);
+            transition: all 0.3s;
+        }
+        #expenseDateHint {
+            background: rgba(225, 29, 72, 0.08);
+            color: #e11d48 !important;
+            border: 1.5px solid rgba(225, 29, 72, 0.15);
+        }
+
+        /* Scrollbars */
+        .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #cbd5e1;
+        }
+
+        /* New premium style overrides for Expense Modal */
+        #expenseModal .btn-quick-cat {
+            background-color: #f8fafc;
+            border: 1px solid rgba(226, 232, 240, 0.8) !important;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.35rem 0.85rem;
+            border-radius: 50px !important;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        #expenseModal .btn-quick-cat:hover {
+            background-color: var(--expense-bg);
+            color: var(--expense-color);
+            border-color: var(--expense-color) !important;
+            transform: translateY(-1px);
+        }
+        #expenseModal .form-control, #expenseModal .form-select {
+            background-color: #f8fafc;
+            border: 1.5px solid #e2e8f0 !important;
+            color: var(--ui-text-main);
+            font-weight: 600;
+            border-radius: 0.75rem !important;
+            padding: 0.65rem 1rem;
+            transition: all 0.2s ease;
+            box-shadow: none;
+        }
+        #expenseModal .form-control:focus, #expenseModal .form-select:focus {
+            background-color: #ffffff;
+            border-color: var(--expense-color) !important;
+            box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.1) !important;
+        }
+        #expenseModal .input-group {
+            transition: all 0.2s ease;
+        }
+        #expenseModal .input-group-text {
+            background-color: #f8fafc;
+            border: 1.5px solid #e2e8f0 !important;
+            border-right: none !important;
+            color: #94a3b8;
+            transition: all 0.2s ease;
+        }
+        #expenseModal .input-group:focus-within .input-group-text {
+            border-color: var(--expense-color) !important;
+            color: var(--expense-color);
+        }
+        #expenseModal .input-group:focus-within .form-control {
+            border-color: var(--expense-color) !important;
+        }
+        #expenseModal .type-toggle-btn {
+            border: none !important;
+            background: transparent;
+            color: var(--ui-text-muted);
+            font-weight: 700;
+            border-radius: 0.65rem !important;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+        #expenseModal .btn-check:checked+.type-toggle-btn {
+            background: var(--expense-color) !important;
+            color: white !important;
+            box-shadow: 0 4px 10px rgba(225, 29, 72, 0.25);
+        }
+        @keyframes pulse-total {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        .total-updating {
+            animation: pulse-total 0.3s ease-in-out;
+        }
     </style>
-    <div class="modal fade income-theme" id="transactionModal" tabindex="-1" 
-        data-bs-backdrop="static">
+    <!-- 1. Income Modal -->
+    <div class="modal fade income-theme" id="incomeModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
                 <!-- Premium Header -->
@@ -1014,17 +1260,17 @@
                             <i class="fi fi-rr-edit-alt fs-4"></i>
                         </div>
                         <div>
-                            <h5 class="modal-title fw-bold mb-0" id="modalTitle">ប្រព័ន្ធគ្រប់គ្រងប្រតិបត្តិការ</h5>
-                            <p class="small mb-0 opacity-75">សូមបំពេញព័ត៌មានលម្អិតខាងក្រោម</p>
+                            <h5 class="modal-title fw-bold mb-0" id="incomeModalTitle">បន្ថែមចំណូល (Income)</h5>
+                            <p class="small mb-0 opacity-75">សូមបំពេញព័ត៌មានលម្អិតចំណូលខាងក្រោម</p>
                         </div>
                     </div>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body p-4 bg-light bg-opacity-30">
-                    <form id="transactionForm">
-                        <input type="hidden" id="editTransactionId">
+                    <form id="incomeForm">
+                        <input type="hidden" id="editIncomeId">
+                        <input type="hidden" id="incomeType" value="income">
 
                         <div class="row g-4">
                             <!-- Column 1: Config -->
@@ -1037,56 +1283,31 @@
                                     </div>
                                     <div class="card-body px-4 pb-4 pt-0">
                                         <div class="mb-4">
-                                            <label class="form-label">ប្រតិបត្តិការ</label>
-                                            <div class="p-1 bg-light rounded-3 d-flex gap-1">
-                                                <input type="radio" class="btn-check" name="transType" id="typeIncome"
-                                                    value="income" checked>
-                                                <label
-                                                    class="btn type-toggle-btn income-choice flex-grow-1 py-2 rounded-2"
-                                                    for="typeIncome">ចំណូល</label>
-                                                <input type="radio" class="btn-check" name="transType" id="typeExpense"
-                                                    value="expense">
-                                                <label
-                                                    class="btn type-toggle-btn expense-choice flex-grow-1 py-2 rounded-2"
-                                                    for="typeExpense">ចំណាយ</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-4">
                                             <label class="form-label">មធ្យោបាយចម្បង</label>
                                             <div class="p-1 bg-light rounded-3 d-flex gap-1">
-                                                <input type="radio" class="btn-check" name="paymentMethod"
-                                                    id="methodCash" value="cash" checked>
-                                                <label class="btn type-toggle-btn flex-grow-1 py-2 rounded-2"
-                                                    for="methodCash"><i class="fi fi-rr-money-bill-wave"></i></label>
-                                                <input type="radio" class="btn-check" name="paymentMethod"
-                                                    id="methodABA" value="aba">
-                                                <label class="btn type-toggle-btn flex-grow-1 py-2 rounded-2"
-                                                    for="methodABA"><i class="fi fi-rr-bank"></i></label>
+                                                <input type="radio" class="btn-check" name="incomePaymentMethod" id="incomeMethodCash" value="cash" checked>
+                                                <label class="btn type-toggle-btn flex-grow-1 py-2 rounded-2" for="incomeMethodCash"><i class="fi fi-rr-money-bill-wave"></i></label>
+                                                <input type="radio" class="btn-check" name="incomePaymentMethod" id="incomeMethodABA" value="aba">
+                                                <label class="btn type-toggle-btn flex-grow-1 py-2 rounded-2" for="incomeMethodABA"><i class="fi fi-rr-bank"></i></label>
                                             </div>
                                         </div>
 
                                         <div class="mb-4">
                                             <div class="d-flex justify-content-between mb-1">
                                                 <label class="form-label m-0">កាលបរិច្ឆេទ</label>
-                                                <button type="button"
-                                                    class="btn btn-link btn-sm p-0 text-primary fw-bold text-decoration-none"
-                                                    id="btnSetToday" style="font-size: 0.65rem;">ថ្ងៃនេះ</button>
+                                                <button type="button" class="btn btn-link btn-sm p-0 text-primary fw-bold text-decoration-none" id="btnIncomeSetToday" style="font-size: 0.65rem;">ថ្ងៃនេះ</button>
                                             </div>
                                             <div class="input-group">
-                                                <span class="input-group-text bg-white border-0"><i
-                                                        class="fi fi-rr-calendar text-primary"></i></span>
-                                                <input type="date" class="form-control fw-bold" id="transDate" style="font-size: 14px !important;" required>
+                                                <span class="input-group-text bg-white border-0"><i class="fi fi-rr-calendar text-primary"></i></span>
+                                                <input type="date" class="form-control fw-bold" id="incomeDate" style="font-size: 14px !important;" required>
                                             </div>
-                                            <div id="transDateHint" class="small text-success mt-1 fw-bold"
-                                                style="font-size: 0.6rem;"></div>
+                                            <div id="incomeDateHint" class="small text-success mt-1 fw-bold" style="font-size: 0.6rem;"></div>
                                         </div>
 
                                         <div class="mb-0">
-                                            <label class="form-label">ចំណាត់ថ្នាក់ (Category)</label>
+                                            <label class="form-label">ប្រភពចំណូល</label>
                                             <div id="incomeInputContainer">
-                                                <input type="text" class="form-control mb-2" id="transIncomeSource"
-                                                    placeholder="ប្រភពចំណូល..." list="incomeCategories">
+                                                <input type="text" class="form-control mb-2" id="incomeSource" placeholder="ប្រភពចំណូល..." list="incomeCategories" required>
                                                 <datalist id="incomeCategories">
                                                     <option value="សិស្សចុះឈ្មោះថ្មី">
                                                     <option value="សិស្សបង់ប្រាក់បន្ថែម">
@@ -1097,60 +1318,11 @@
                                                     <option value="ចំណូលផ្សេងៗ">
                                                 </datalist>
                                                 <div class="d-flex flex-wrap gap-1">
-                                                    <button type="button"
-                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
-                                                        style="font-size:0.65rem"
-                                                        onclick="setIncomeSource('សិស្សចុះឈ្មោះថ្មី')">🎓
-                                                        សិស្សថ្មី</button>
-                                                    <button type="button"
-                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
-                                                        style="font-size:0.65rem"
-                                                        onclick="setIncomeSource('សិស្សបង់ប្រាក់បន្ថែម')">💵
-                                                        បង់បន្ថែម</button>
-                                                    <button type="button"
-                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
-                                                        style="font-size:0.65rem"
-                                                        onclick="setIncomeSource('ថ្លៃផ្ញើរម៉ូតូ')">🏍️
-                                                        ថ្លៃម៉ូតូ</button>
-                                                    <button type="button"
-                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
-                                                        style="font-size:0.65rem"
-                                                        onclick="setIncomeSource('បង់ថ្លៃស្នាក់នៅ (ជំណាក់)')">🏠
-                                                        ជំណាក់</button>
-                                                    <button type="button"
-                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
-                                                        style="font-size:0.65rem"
-                                                        onclick="setIncomeSource('ថ្លៃលក់សម្ភារៈការិយាល័យ')">📦
-                                                        លក់សម្ភារៈ</button>
-                                                </div>
-                                            </div>
-                                            <div id="expenseSelectContainer" style="display:none;">
-                                                <input type="text" class="form-control mb-2" id="transExpenseCategory"
-                                                    placeholder="ប្រភេទចំណាយ..." list="expenseCategories">
-                                                <datalist id="expenseCategories">
-                                                    <option value="ទឹក-ភ្លើង">
-                                                    <option value="ថ្លៃជួលផ្ទះ/ដី">
-                                                    <option value="ប្រាក់ខែបុគ្គលិក">
-                                                    <option value="សម្ភារៈការិយាល័យ">
-                                                    <option value="ជួសជុល">
-                                                    <option value="សាំង">
-                                                    <option value="អាហារ">
-                                                </datalist>
-                                                <div class="d-flex flex-wrap gap-1">
-                                                    <button type="button"
-                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
-                                                        style="font-size:0.65rem" onclick="setCategory('ទឹក-ភ្លើង')">🚰
-                                                        ទឹក-ភ្លើង</button>
-                                                    <button type="button"
-                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
-                                                        style="font-size:0.65rem"
-                                                        onclick="setCategory('សម្ភារៈការិយាល័យ')">📦
-                                                        សម្ភារៈ</button>
-                                                    <button type="button"
-                                                        class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill"
-                                                        style="font-size:0.65rem"
-                                                        onclick="setCategory('ប្រាក់ខែបុគ្គលិក')">👥
-                                                        ប្រាក់ខែ</button>
+                                                    <button type="button" class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill" style="font-size:0.65rem" onclick="setIncomeSource('សិស្សចុះឈ្មោះថ្មី')">🎓 សិស្សថ្មី</button>
+                                                    <button type="button" class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill" style="font-size:0.65rem" onclick="setIncomeSource('សិស្សបង់ប្រាក់បន្ថែម')">💵 បង់បន្ថែម</button>
+                                                    <button type="button" class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill" style="font-size:0.65rem" onclick="setIncomeSource('ថ្លៃផ្ញើរម៉ូតូ')">🏍️ ថ្លៃម៉ូតូ</button>
+                                                    <button type="button" class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill" style="font-size:0.65rem" onclick="setIncomeSource('បង់ថ្លៃស្នាក់នៅ (ជំណាក់)')">🏠 ជំណាក់</button>
+                                                    <button type="button" class="btn btn-xs btn-light border py-1 px-3 text-muted rounded-pill" style="font-size:0.65rem" onclick="setIncomeSource('ថ្លៃលក់សម្ភារៈការិយាល័យ')">📦 លក់សម្ភារៈ</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -1170,25 +1342,16 @@
                                         <div class="mb-4">
                                             <label class="form-label">ស្វែងរកសិស្ស (Smart Search)</label>
                                             <div class="input-group">
-                                                <span class="input-group-text bg-white border-0 py-2"><i
-                                                        class="fi fi-rr-search text-info"></i></span>
-                                                <input type="text" class="form-control fw-medium"
-                                                    id="studentSearchInModal" placeholder="វាយឈ្មោះ ឬអត្តលេខ..."
-                                                    autocomplete="off">
-                                                <button class="btn btn-white border-0 text-muted" type="button"
-                                                    id="btnClearStudentSearch" style="display:none;"><i
-                                                        class="fi fi-rr-cross-small"></i></button>
+                                                <span class="input-group-text bg-white border-0 py-2"><i class="fi fi-rr-search text-info"></i></span>
+                                                <input type="text" class="form-control fw-medium" id="studentSearchInModal" placeholder="វាយឈ្មោះ ឬអត្តលេខ..." autocomplete="off">
+                                                <button class="btn btn-white border-0 text-muted" type="button" id="btnClearStudentSearch" style="display:none;"><i class="fi fi-rr-cross-small"></i></button>
                                             </div>
-                                            <div id="studentSearchResults"
-                                                class="list-group shadow-lg border rounded-3 overflow-auto mt-2"
-                                                style="max-height: 180px; display: none; position: absolute; width: calc(100% - 3rem); z-index: 2000; background: white;">
+                                            <div id="studentSearchResults" class="list-group shadow-lg border rounded-3 overflow-auto mt-2" style="max-height: 180px; display: none; position: absolute; width: calc(100% - 3rem); z-index: 2000; background: white;">
                                             </div>
                                         </div>
 
                                         <div class="mb-4 p-3 bg-light bg-opacity-50 rounded-4 border">
-                                            <div class="small fw-bold text-muted mb-2 d-flex align-items-center"><i
-                                                    class="fi fi-rr-clock-three me-2 text-info"></i>
-                                                សិស្សថ្មីៗដែលទើបចុះឈ្មោះ</div>
+                                            <div class="small fw-bold text-muted mb-2 d-flex align-items-center"><i class="fi fi-rr-clock-three me-2 text-info"></i> សិស្សថ្មីៗដែលទើបចុះឈ្មោះ</div>
                                             <div class="d-flex flex-wrap gap-1" id="recentStudentButtons">
                                                 <span class="text-muted small italic">កំពុងទាញយក...</span>
                                             </div>
@@ -1196,26 +1359,20 @@
 
                                         <div class="row g-3 mt-1">
                                             <div class="col-6">
-                                                <label class="form-label" id="labelPayer">អ្នកបង់ប្រាក់</label>
-                                                <input type="text" class="form-control px-3" id="transPayer"
-                                                    placeholder="ឈ្មោះអ្នកផ្ដល់...">
+                                                <label class="form-label" id="labelIncomePayer">អ្នកបង់ប្រាក់ <i class="fi fi-rr-user-tag ms-1 text-success"></i></label>
+                                                <input type="text" class="form-control px-3" id="incomePayer" placeholder="ឈ្មោះអ្នកផ្ដល់...">
                                             </div>
                                             <div class="col-6">
-                                                <label class="form-label" id="labelReceiver">អ្នកទទួលប្រាក់</label>
-                                                <select class="form-select px-3" id="transReceiver" required>
+                                                <label class="form-label" id="labelIncomeReceiver">អ្នកទទួលប្រាក់ <i class="fi fi-rr-bank ms-1 text-primary"></i></label>
+                                                <select class="form-select px-3" id="incomeReceiver" required>
                                                     <option value="">ជ្រើសរើសអ្នកទទួល...</option>
                                                 </select>
                                             </div>
                                         </div>
 
                                         <div class="mt-4" id="boardingPlaceSection">
-                                            <label
-                                                class="form-label d-flex align-items-center mb-2 fw-bold text-dark"><i
-                                                    class="fa-solid fa-hotel me-2 text-warning"></i> កន្លែងស្នាក់នៅ /
-                                                ជំណាក់ (Boarding Place)</label>
-                                            <input type="text"
-                                                class="form-control px-3 py-2 border-warning border-opacity-25"
-                                                id="transBoardingPlace" placeholder="បន្ទប់លេខ ឬ ទីតាំងស្នាក់នៅ...">
+                                            <label class="form-label d-flex align-items-center mb-2 fw-bold text-dark"><i class="fa-solid fa-hotel me-2 text-warning"></i> កន្លែងស្នាក់នៅ / ជំណាក់ (Boarding Place)</label>
+                                            <input type="text" class="form-control px-3 py-2 border-warning border-opacity-25" id="incomeBoardingPlace" placeholder="បន្ទប់លេខ ឬ ទីតាំងស្នាក់នៅ...">
                                         </div>
                                     </div>
                                 </div>
@@ -1231,81 +1388,63 @@
                                     </div>
                                     <div class="card-body px-4 pb-4 pt-0 d-flex flex-column">
                                         <!-- Source Row 1: Cash -->
-                                        <div class="money-block money-block-cash">
-                                            <div class="small fw-bold mb-2 d-flex align-items-center">
+                                        <div class="money-block money-block-cash" id="incomeCashBlock">
+                                            <div class="small fw-bold mb-2 d-flex align-items-center text-success">
                                                 <i class="fi fi-rr-money-bill-wave me-2"></i> សាច់ប្រាក់ (Cash)
                                             </div>
                                             <div class="row g-2">
                                                 <div class="col-6">
                                                     <div class="input-group input-group-sm bg-white overflow-hidden">
-                                                        <span
-                                                            class="input-group-text bg-white border-0 text-success fw-bold">$</span>
-                                                        <input type="number" step="0.01"
-                                                            class="form-control border-0 fw-bold py-2"
-                                                            id="transAmountCash" placeholder="0.00">
+                                                        <span class="input-group-text bg-white border-0 text-success fw-bold">$</span>
+                                                        <input type="number" step="0.01" class="form-control border-0 fw-bold py-2" id="incomeAmountCash" placeholder="0.00">
                                                     </div>
                                                 </div>
                                                 <div class="col-6">
                                                     <div class="input-group input-group-sm bg-white overflow-hidden">
-                                                        <span
-                                                            class="input-group-text bg-white border-0 text-info fw-bold">៛</span>
-                                                        <input type="number" step="100"
-                                                            class="form-control border-0 fw-bold py-2"
-                                                            id="transAmountCashKHR" placeholder="0">
+                                                        <span class="input-group-text bg-white border-0 text-info fw-bold">៛</span>
+                                                        <input type="number" step="100" class="form-control border-0 fw-bold py-2" id="incomeAmountCashKHR" placeholder="0">
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <!-- Source Row 2: ABA -->
-                                        <div class="money-block" style="background: #f0f9ff; border-color: #bae6fd;">
+                                        <div class="money-block" id="incomeAbaBlock">
                                             <div class="small fw-bold text-info mb-2 d-flex align-items-center">
                                                 <i class="fi fi-rr-bank me-2"></i> តាមរយៈ ABA
                                             </div>
                                             <div class="row g-2">
                                                 <div class="col-6">
                                                     <div class="input-group input-group-sm bg-white overflow-hidden">
-                                                        <span
-                                                            class="input-group-text bg-white border-0 text-info fw-bold">$</span>
-                                                        <input type="number" step="0.01"
-                                                            class="form-control border-0 fw-bold py-2"
-                                                            id="transAmountAba" placeholder="0.00">
+                                                        <span class="input-group-text bg-white border-0 text-info fw-bold">$</span>
+                                                        <input type="number" step="0.01" class="form-control border-0 fw-bold py-2" id="incomeAmountAba" placeholder="0.00">
                                                     </div>
                                                 </div>
                                                 <div class="col-6">
                                                     <div class="input-group input-group-sm bg-white overflow-hidden">
-                                                        <span
-                                                            class="input-group-text bg-white border-0 text-info fw-bold">៛</span>
-                                                        <input type="number" step="100"
-                                                            class="form-control border-0 fw-bold py-2"
-                                                            id="transAmountAbaKHR" placeholder="0">
+                                                        <span class="input-group-text bg-white border-0 text-info fw-bold">៛</span>
+                                                        <input type="number" step="100" class="form-control border-0 fw-bold py-2" id="incomeAmountAbaKHR" placeholder="0">
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <!-- Source Row 3: Debt -->
-                                        <div class="money-block" style="background: #fff7ed; border-color: #fed7aa;">
+                                        <div class="money-block" id="incomeDebtBlock">
                                             <div class="small fw-bold text-warning mb-2 d-flex align-items-center">
                                                 <i class="fi fi-rr-time-past me-2"></i> ជំពាក់ (Debt)
                                             </div>
                                             <div class="row g-2">
                                                 <div class="col-6">
                                                     <div class="input-group input-group-sm bg-white overflow-hidden">
-                                                        <span
-                                                            class="input-group-text bg-white border-0 text-warning fw-bold">$</span>
-                                                        <input type="number" step="0.01"
-                                                            class="form-control border-0 fw-bold py-2"
-                                                            id="transAmountDebt" placeholder="0.00">
+                                                        <span class="input-group-text bg-white border-0 text-warning fw-bold">$</span>
+                                                        <input type="number" step="0.01" class="form-control border-0 fw-bold py-2" id="incomeAmountDebt" placeholder="0.00">
                                                     </div>
                                                 </div>
                                                 <div class="col-6">
                                                     <div class="input-group input-group-sm bg-white overflow-hidden">
-                                                        <span
-                                                            class="input-group-text bg-white border-0 text-warning fw-bold">៛</span>
-                                                        <input type="number" step="100"
-                                                            class="form-control border-0 fw-bold py-2"
-                                                            id="transAmountDebtKHR" placeholder="0">
+                                                        <span class="input-group-text bg-white border-0 text-warning fw-bold">៛</span>
+                                                        <input type="number" step="100" class="form-control border-0 fw-bold py-2" id="incomeAmountDebtKHR" placeholder="0">
                                                     </div>
                                                 </div>
                                             </div>
@@ -1313,20 +1452,16 @@
 
                                         <div class="mb-3">
                                             <label class="form-label">បរិយាយ</label>
-                                            <textarea class="form-control px-3" id="transDescription" rows="1"
-                                                placeholder="ពណ៌នាខ្លីៗ..."></textarea>
+                                            <textarea class="form-control px-3" id="incomeDescription" rows="1" placeholder="ពណ៌នាខ្លីៗ..."></textarea>
                                         </div>
 
                                         <!-- Grand Total Dashboard Style -->
                                         <div class="summary-card-premium p-4 mt-auto text-center position-relative">
-                                            <div class="small fw-bold mb-1 position-relative"
-                                                style="color: rgba(255,255,255,0.6); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                                            <div class="small fw-bold mb-1 position-relative" style="color: rgba(255,255,255,0.6); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;">
                                                 <i class="fi fi-rr-calculator me-1"></i> ទឹកប្រាក់សរុប (Grand Total)
                                             </div>
-                                            <h2 id="transTotalDisplay" class="fw-bold text-white mb-0 position-relative"
-                                                style="letter-spacing: -1px; font-size: 2.25rem;">$0.00</h2>
-                                            <div id="transTotalKHR" class="fw-bold position-relative mt-1 fs-5">0 ៛
-                                            </div>
+                                            <h2 id="incomeTotalDisplay" class="fw-bold text-white mb-0 position-relative" style="letter-spacing: -1px; font-size: 2.25rem;">$0.00</h2>
+                                            <div id="incomeTotalKHR" class="fw-bold position-relative mt-1 fs-5">0 ៛</div>
                                         </div>
                                     </div>
                                 </div>
@@ -1347,6 +1482,366 @@
                                 </button>
                                 <button type="submit" class="btn btn-primary bg-pink-primary px-5 fw-bold text-white border-0 rounded-pill py-2 d-flex align-items-center justify-content-center">
                                     <i class="fi fi-rr-check-circle me-2"></i>រក្សាទុកប្រតិបត្តិការ
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Expense Modal -->
+    <div class="modal fade expense-theme" id="expenseModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <!-- Premium Header -->
+                <div class="modal-header border-0 py-3 px-4" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                    <div class="d-flex align-items-center justify-content-between w-100">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-danger bg-opacity-10 p-2 rounded-4 me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px;">
+                                <i class="fi fi-rr-arrow-trend-down text-danger fs-4"></i>
+                            </div>
+                            <div>
+                                <h5 class="modal-title fw-bolder text-dark mb-0" id="expenseModalTitle" style="letter-spacing: -0.5px; font-family: 'Kantumruy Pro', sans-serif;">បន្ថែមការចំណាយ (Expense)</h5>
+                                <p class="small mb-0 text-muted">សូមបំពេញព័ត៌មានលម្អិតការចំណាយខាងក្រោម</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close ms-2 rounded-circle shadow-sm bg-white" data-bs-dismiss="modal" aria-label="Close" style="font-size: 0.65rem; padding: 10px; border: 1px solid #f1f5f9;"></button>
+                    </div>
+                </div>
+
+                <div class="modal-body p-4" style="background: #f8fafc;">
+                    <style>
+                        #expenseForm .form-label {
+                            font-size: 13px !important;
+                            color: #475569 !important; /* Slate 600 */
+                            letter-spacing: 0.3px;
+                            font-weight: 600;
+                        }
+                        #expenseForm .form-control {
+                            font-size: 14px !important;
+                            color: #0f172a !important; /* Slate 900 */
+                            font-weight: 500;
+                            transition: all 0.3s ease;
+                        }
+                        #expenseForm .form-control:focus {
+                            border-color: #f43f5e;
+                            box-shadow: 0 0 0 0.25rem rgba(244, 63, 94, 0.15);
+                            transform: translateY(-2px);
+                        }
+                        #expenseForm .input-group-text {
+                            color: #64748b !important;
+                            transition: all 0.3s ease;
+                        }
+                        #expenseForm .input-group:focus-within .input-group-text {
+                            color: #e11d48 !important;
+                            background-color: rgba(225, 29, 72, 0.05) !important;
+                        }
+                        #expenseForm button, #expenseForm .btn {
+                            font-size: 14px !important;
+                        }
+
+                        /* =========================================
+                           PREMIUM DYNAMIC EFFECTS & ANIMATIONS 
+                           ========================================= */
+                        @keyframes slideUpFade {
+                            from { opacity: 0; transform: translateY(20px); }
+                            to { opacity: 1; transform: translateY(0); }
+                        }
+                        
+                        /* Staggered entrance animations */
+                        #expenseForm .card, #expenseForm .money-block, #expenseForm .summary-card-premium {
+                            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                            opacity: 0;
+                        }
+                        #expenseForm .col-lg-6:nth-child(1) .card:nth-child(1) { animation-delay: 0.05s; }
+                        #expenseForm .col-lg-6:nth-child(1) .card:nth-child(2) { animation-delay: 0.15s; }
+                        #expenseForm .col-lg-6:nth-child(1) .card:nth-child(3) { animation-delay: 0.25s; }
+                        
+                        #expenseForm .col-lg-6:nth-child(2) .money-block:nth-child(1) { animation-delay: 0.1s; }
+                        #expenseForm .col-lg-6:nth-child(2) .money-block:nth-child(2) { animation-delay: 0.2s; }
+                        #expenseForm .col-lg-6:nth-child(2) .money-block:nth-child(3) { animation-delay: 0.3s; }
+                        #expenseForm .summary-card-premium { animation-delay: 0.4s; }
+
+                        /* Hover Effects */
+                        #expenseForm .card {
+                            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                        }
+                        #expenseForm .card:hover {
+                            box-shadow: 0 10px 30px rgba(0,0,0,0.06) !important;
+                            transform: translateY(-2px);
+                        }
+                        
+                        #expenseForm .money-block {
+                            transition: all 0.3s ease;
+                        }
+                        #expenseForm .money-block:hover {
+                            transform: translateX(6px) scale(1.01);
+                            background: rgba(255, 255, 255, 1) !important;
+                            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05) !important;
+                            border-color: rgba(225, 29, 72, 0.3) !important;
+                        }
+                        
+                        #expenseForm .summary-card-premium {
+                            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                            cursor: pointer;
+                        }
+                        #expenseForm .summary-card-premium:hover {
+                            transform: translateY(-5px) scale(1.02);
+                            box-shadow: 0 20px 40px -5px rgba(225, 29, 72, 0.6) !important;
+                        }
+                        
+                        /* Icon pulse on hover */
+                        #expenseForm .card:hover .card-header i, 
+                        #expenseForm .money-block:hover i {
+                            animation: pulse-icon 1s infinite alternate;
+                        }
+                        @keyframes pulse-icon {
+                            from { transform: scale(1); }
+                            to { transform: scale(1.2); }
+                        }
+                    </style>
+                    <form id="expenseForm">
+                        <input type="hidden" id="editExpenseId">
+                        <input type="hidden" id="expenseType" value="expense">
+
+                        <div class="row g-4">
+                            <!-- Left Column: Details & Config -->
+                            <div class="col-lg-6">
+                                <!-- Card 1: General Info & Categorization -->
+                                <div class="card border-0 rounded-4 mb-4 overflow-hidden" style="box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+                                    <div class="card-header bg-white py-3 border-0">
+                                        <h6 class="fw-bold m-0 text-dark d-flex align-items-center">
+                                            <i class="fi fi-rr-settings-sliders text-danger me-2"></i> ព័ត៌មានទូទៅ និង ប្រភេទចំណាយ
+                                        </h6>
+                                    </div>
+                                    <div class="card-body px-4 pb-4 pt-0">
+                                        <div class="row g-3">
+                                            <!-- Payment Method Selection -->
+                                            <div class="col-12">
+                                                <label class="form-label text-muted small fw-bold text-uppercase" style="letter-spacing: 0.5px;">មធ្យោបាយចម្បង</label>
+                                                <div class="p-1 bg-light rounded-3 d-flex gap-1 border">
+                                                    <input type="radio" class="btn-check" name="expensePaymentMethod" id="expenseMethodCash" value="cash" checked>
+                                                    <label class="btn btn-outline-danger border-0 flex-grow-1 py-2 rounded-2 fw-medium" for="expenseMethodCash">
+                                                        <i class="fi fi-rr-money-bill-wave me-1"></i> សាច់ប្រាក់ (Cash)
+                                                    </label>
+                                                    <input type="radio" class="btn-check" name="expensePaymentMethod" id="expenseMethodABA" value="aba">
+                                                    <label class="btn btn-outline-primary border-0 flex-grow-1 py-2 rounded-2 fw-medium" for="expenseMethodABA">
+                                                        <i class="fi fi-rr-bank me-1"></i> ធនាគារ (ABA)
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Date Picker -->
+                                            <div class="col-12">
+                                                <div class="d-flex justify-content-between mb-1 align-items-center">
+                                                    <label class="form-label text-muted small fw-bold text-uppercase m-0" style="letter-spacing: 0.5px;">កាលបរិច្ឆេទ</label>
+                                                    <button type="button" class="btn btn-sm py-0 px-2 bg-danger text-white border-0 rounded-pill fw-bold text-decoration-none shadow-sm hover-scale" id="btnExpenseSetToday" style="font-size: 0.7rem;">+ ថ្ងៃនេះ</button>
+                                                </div>
+                                                <div class="input-group shadow-sm rounded-3 overflow-hidden border bg-white focus-ring-danger">
+                                                    <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="fi fi-rr-calendar text-danger"></i></span>
+                                                    <input type="date" class="form-control border-start-0 ps-1 fw-bold bg-transparent" id="expenseDate" style="font-size: 14px !important;" required>
+                                                </div>
+                                                <div id="expenseDateHint" class="small text-danger mt-1 fw-bold" style="font-size: 0.65rem;"></div>
+                                            </div>
+
+                                            <!-- Expense Category -->
+                                            <div class="col-12">
+                                                <label class="form-label text-muted small fw-bold text-uppercase" style="letter-spacing: 0.5px;">ប្រភេទចំណាយ</label>
+                                                <div id="expenseSelectContainer">
+                                                    <div class="input-group shadow-sm rounded-3 overflow-hidden border bg-white focus-ring-danger mb-2">
+                                                        <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="fi fi-rr-tags text-danger"></i></span>
+                                                        <input type="text" class="form-control border-start-0 ps-1 bg-transparent" id="expenseCategory" placeholder="ជ្រើសរើស ឬវាយបញ្ចូលប្រភេទ..." list="expenseCategories" required>
+                                                    </div>
+                                                    <datalist id="expenseCategories">
+                                                        <option value="ទឹក-ភ្លើង">
+                                                        <option value="ថ្លៃជួលផ្ទះ/ដី">
+                                                        <option value="ប្រាក់ខែបុគ្គលិក">
+                                                        <option value="សម្ភារៈការិយាល័យ">
+                                                        <option value="ជួសជុល">
+                                                        <option value="សាំង">
+                                                        <option value="អាហារ">
+                                                    </datalist>
+                                                    <div class="d-flex flex-wrap gap-2 mt-2">
+                                                        <button type="button" class="btn btn-sm bg-white border shadow-sm rounded-pill hover-bg-light px-3 py-1 text-muted" onclick="document.getElementById('expenseCategory').value='ទឹក-ភ្លើង'" style="font-size: 0.75rem;">🚰 ទឹក-ភ្លើង</button>
+                                                        <button type="button" class="btn btn-sm bg-white border shadow-sm rounded-pill hover-bg-light px-3 py-1 text-muted" onclick="document.getElementById('expenseCategory').value='សម្ភារៈការិយាល័យ'" style="font-size: 0.75rem;">📦 សម្ភារៈ</button>
+                                                        <button type="button" class="btn btn-sm bg-white border shadow-sm rounded-pill hover-bg-light px-3 py-1 text-muted" onclick="document.getElementById('expenseCategory').value='ប្រាក់ខែបុគ្គលិក'" style="font-size: 0.75rem;">👥 ប្រាក់ខែ</button>
+                                                        <button type="button" class="btn btn-sm bg-white border shadow-sm rounded-pill hover-bg-light px-3 py-1 text-muted" onclick="document.getElementById('expenseCategory').value='សាំង'" style="font-size: 0.75rem;">⛽ សាំង</button>
+                                                        <button type="button" class="btn btn-sm bg-white border shadow-sm rounded-pill hover-bg-light px-3 py-1 text-muted" onclick="document.getElementById('expenseCategory').value='អាហារ'" style="font-size: 0.75rem;">🍔 អាហារ</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Card 2: Parties Involved -->
+                                <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" style="box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+                                    <div class="card-header bg-white py-3 border-0">
+                                        <h6 class="fw-bold m-0 text-dark d-flex align-items-center">
+                                            <i class="fi fi-rr-users text-danger me-2"></i> ភាគីពាក់ព័ន្ធ (Parties)
+                                        </h6>
+                                    </div>
+                                    <div class="card-body px-4 pb-4 pt-0">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label text-muted small fw-bold text-uppercase" style="letter-spacing: 0.5px;" id="labelExpensePayer">អ្នកចំណាយ (Payer)</label>
+                                                <div class="input-group shadow-sm rounded-3 overflow-hidden border bg-white">
+                                                    <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="fi fi-rr-shopping-cart text-danger"></i></span>
+                                                    <input type="text" class="form-control border-start-0 ps-1 fw-bold bg-transparent" id="expensePayer" value="សាលា (School)" placeholder="ឈ្មោះអ្នកផ្ដល់...">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label text-muted small fw-bold text-uppercase" style="letter-spacing: 0.5px;" id="labelExpenseReceiver">អ្នកទទួលប្រាក់ (Receiver)</label>
+                                                <div class="input-group shadow-sm rounded-3 overflow-hidden border bg-white">
+                                                    <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="fi fi-rr-user-check text-warning"></i></span>
+                                                    <input type="text" class="form-control border-start-0 ps-1 fw-bold bg-transparent" id="expenseReceiver" placeholder="ឈ្មោះអ្នកទទួល..." list="expenseReceiverDatalist" required>
+                                                    <datalist id="expenseReceiverDatalist"></datalist>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Card 3: Additional Details -->
+                                <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+                                    <div class="card-header bg-white py-3 border-0">
+                                        <h6 class="fw-bold m-0 text-dark d-flex align-items-center">
+                                            <i class="fi fi-rr-document-signed text-danger me-2"></i> ព័ត៌មានបន្ថែម
+                                        </h6>
+                                    </div>
+                                    <div class="card-body px-4 pb-4 pt-0">
+                                        <div>
+                                            <label class="form-label text-muted small fw-bold text-uppercase" style="letter-spacing: 0.5px;">បរិយាយ (Description)</label>
+                                            <textarea class="form-control px-3 border shadow-sm rounded-3 focus-ring-danger bg-white" id="expenseDescription" rows="2" placeholder="ពណ៌នាការចំណាយខ្លីៗ..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column: Financial Streams & Totals -->
+                            <div class="col-lg-6">
+                                <!-- Card 4: Financial Input Streams -->
+                                <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden h-100 d-flex flex-column" style="box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+                                    <div class="card-header bg-white py-3 border-0">
+                                        <h6 class="fw-bold m-0 text-dark d-flex align-items-center">
+                                            <i class="fi fi-rr-wallet text-danger me-2"></i> ចែករំលែកទឹកប្រាក់ទូទាត់ (Payment Allocation)
+                                        </h6>
+                                    </div>
+                                    <div class="card-body px-4 pb-4 pt-0 d-flex flex-column gap-3">
+                                        <!-- Source Row 1: Cash -->
+                                        <div class="money-block money-block-cash border rounded-4 p-3 bg-white hover-shadow-sm transition-all" id="expenseCashBlock" style="border-color: rgba(220,53,69,0.2) !important;">
+                                            <div class="fw-bold mb-2 d-flex align-items-center text-danger" style="font-size: 14px; letter-spacing: 0.5px;">
+                                                <div class="bg-danger text-white p-2 rounded-3 me-2 d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;">
+                                                    <i class="fi fi-rr-money-bill-wave"></i>
+                                                </div>
+                                                សាច់ប្រាក់ (Cash Payment)
+                                            </div>
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <label class="text-muted mb-1 fw-medium" style="font-size: 14px;">ដុល្លារ ($)</label>
+                                                    <div class="input-group input-group-sm bg-light rounded-3 overflow-hidden border">
+                                                        <span class="input-group-text bg-transparent border-0 text-danger fw-bold" style="font-size: 14px;">$</span>
+                                                        <input type="number" step="0.01" class="form-control border-0 fw-bold py-2 bg-transparent text-dark" id="expenseAmountCash" placeholder="0.00" style="font-size: 14px !important;">
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="text-muted mb-1 fw-medium" style="font-size: 14px;">រៀល (៛)</label>
+                                                    <div class="input-group input-group-sm bg-light rounded-3 overflow-hidden border">
+                                                        <span class="input-group-text bg-transparent border-0 text-info fw-bold" style="font-size: 14px;">៛</span>
+                                                        <input type="number" step="100" class="form-control border-0 fw-bold py-2 bg-transparent text-dark" id="expenseAmountCashKHR" placeholder="0" style="font-size: 14px !important;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Source Row 2: ABA -->
+                                        <div class="money-block border rounded-4 p-3 bg-white hover-shadow-sm transition-all" id="expenseAbaBlock" style="border-color: rgba(13,110,253,0.2) !important;">
+                                            <div class="fw-bold mb-2 d-flex align-items-center text-primary" style="font-size: 14px; letter-spacing: 0.5px;">
+                                                <div class="bg-primary text-white p-2 rounded-3 me-2 d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;">
+                                                    <i class="fi fi-rr-bank"></i>
+                                                </div>
+                                                គណនីធនាគារ (ABA Bank)
+                                            </div>
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <label class="text-muted mb-1 fw-medium" style="font-size: 14px;">ដុល្លារ ($)</label>
+                                                    <div class="input-group input-group-sm bg-light rounded-3 overflow-hidden border">
+                                                        <span class="input-group-text bg-transparent border-0 text-danger fw-bold" style="font-size: 14px;">$</span>
+                                                        <input type="number" step="0.01" class="form-control border-0 fw-bold py-2 bg-transparent text-dark" id="expenseAmountAba" placeholder="0.00" style="font-size: 14px !important;">
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="text-muted mb-1 fw-medium" style="font-size: 14px;">រៀល (៛)</label>
+                                                    <div class="input-group input-group-sm bg-light rounded-3 overflow-hidden border">
+                                                        <span class="input-group-text bg-transparent border-0 text-info fw-bold" style="font-size: 14px;">៛</span>
+                                                        <input type="number" step="100" class="form-control border-0 fw-bold py-2 bg-transparent text-dark" id="expenseAmountAbaKHR" placeholder="0" style="font-size: 14px !important;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Source Row 3: Debt -->
+                                        <div class="money-block border rounded-4 p-3 bg-white hover-shadow-sm transition-all" id="expenseDebtBlock" style="border-color: rgba(255,193,7,0.3) !important;">
+                                            <div class="fw-bold mb-2 d-flex align-items-center text-warning" style="font-size: 14px; letter-spacing: 0.5px; color: #d97706 !important;">
+                                                <div class="bg-warning text-white p-2 rounded-3 me-2 d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;">
+                                                    <i class="fi fi-rr-time-past"></i>
+                                                </div>
+                                                ជំពាក់សិន (Debt / Accounts Payable)
+                                            </div>
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <label class="text-muted mb-1 fw-medium" style="font-size: 14px;">ដុល្លារ ($)</label>
+                                                    <div class="input-group input-group-sm bg-light rounded-3 overflow-hidden border">
+                                                        <span class="input-group-text bg-transparent border-0 text-warning fw-bold" style="font-size: 14px;">$</span>
+                                                        <input type="number" step="0.01" class="form-control border-0 fw-bold py-2 bg-transparent text-dark" id="expenseAmountDebt" placeholder="0.00" style="font-size: 14px !important;">
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="text-muted mb-1 fw-medium" style="font-size: 14px;">រៀល (៛)</label>
+                                                    <div class="input-group input-group-sm bg-light rounded-3 overflow-hidden border">
+                                                        <span class="input-group-text bg-transparent border-0 text-warning fw-bold" style="font-size: 14px;">៛</span>
+                                                        <input type="number" step="100" class="form-control border-0 fw-bold py-2 bg-transparent text-dark" id="expenseAmountDebtKHR" placeholder="0" style="font-size: 14px !important;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Spacer -->
+                                        <div class="flex-grow-1"></div>
+
+                                        <!-- Grand Total Card -->
+                                        <div class="summary-card-premium p-4 text-center rounded-4 overflow-hidden position-relative mt-3" style="background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); box-shadow: 0 15px 30px -5px rgba(225,29,72,0.4);">
+                                            <!-- Decorative elements inside card -->
+                                            <div class="position-absolute top-0 end-0 opacity-10 pointer-events-none" style="transform: translate(10%, -10%);">
+                                                <i class="fi fi-rr-calculator" style="font-size: 9rem; color: #fff;"></i>
+                                            </div>
+                                            <div class="small fw-bold mb-1 position-relative" style="color: rgba(255,255,255,0.8); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.15em;">
+                                                <i class="fi fi-rr-calculator me-1"></i> ទឹកប្រាក់សរុប (Grand Total Expense)
+                                            </div>
+                                            <h2 id="expenseTotalDisplay" class="fw-bolder text-white mb-0 position-relative" style="letter-spacing: -1px; font-size: 3rem; font-family: 'Outfit', sans-serif;">$0.00</h2>
+                                            <div id="expenseTotalKHR" class="fw-bold position-relative mt-2 text-white text-opacity-75 fs-5">0 ៛</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Bar -->
+                        <div class="mt-2 pt-4 border-top d-flex justify-content-between align-items-center">
+                            <div class="text-muted small d-none d-md-flex align-items-center">
+                                <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-1 me-2 d-flex shadow-sm">
+                                    <i class="fi fi-rr-info" style="font-size: 0.8rem;"></i>
+                                </div>
+                                <span class="fw-medium">សូមពិនិត្យព័ត៌មានឱ្យបានត្រឹមត្រូវ មុនពេលរក្សាទុក។</span>
+                            </div>
+                            <div class="d-flex gap-3">
+                                <button type="button" class="btn bg-white border px-4 fw-bold rounded-pill py-2 shadow-sm text-muted" style="transition: all 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#ffffff'" data-bs-dismiss="modal">
+                                    បោះបង់ (Cancel)
+                                </button>
+                                <button type="submit" class="btn btn-danger px-5 fw-bold text-white border-0 rounded-pill py-2 shadow d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 20px -5px rgba(225,29,72,0.4)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 0.5rem 1rem rgba(0, 0, 0, 0.15)'">
+                                    <i class="fi fi-rr-check-circle me-2"></i>រក្សាទុកការចំណាយ
                                 </button>
                             </div>
                         </div>

@@ -14545,24 +14545,117 @@ ${statusObj.text}
 
 window.updateDebtRemark = (key, currentRemark) => {
     Swal.fire({
-        title: 'គ្រប់គ្រងការសម្គាល់ (Manage Remark)',
-        text: 'កែសម្រួល ឬលុបសម្គាល់សម្រាប់សិស្សនេះ៖',
+        html: `
+            <style>
+                @keyframes sweepReflection {
+                    0% { transform: translateX(-150%) skewX(-25deg); }
+                    20% { transform: translateX(250%) skewX(-25deg); }
+                    100% { transform: translateX(250%) skewX(-25deg); }
+                }
+                .sweep-effect {
+                    position: relative;
+                    overflow: hidden;
+                }
+                .sweep-effect::before {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 30%;
+                    height: 100%;
+                    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
+                    animation: sweepReflection 5s infinite;
+                    pointer-events: none;
+                    z-index: 10;
+                }
+                .modern-swal-header {
+                    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                    color: white;
+                    padding: 30px 20px;
+                    border-radius: 20px 20px 0 0;
+                    margin: -1.25em -1.25em 1.5em -1.25em;
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                }
+                .modern-swal-icon {
+                    font-size: 3.5rem;
+                    background: linear-gradient(135deg, #60a5fa, #c084fc);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    margin-bottom: 10px;
+                    display: inline-block;
+                    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+                }
+                .modern-swal-title {
+                    font-family: 'Moul', cursive;
+                    font-size: 1.4rem;
+                    margin-bottom: 8px;
+                    letter-spacing: 0.5px;
+                }
+                .modern-swal-desc {
+                    font-size: 0.95rem;
+                    opacity: 0.8;
+                    margin-bottom: 0;
+                    font-family: 'Kantumruy Pro', sans-serif;
+                }
+                .swal2-textarea.modern-textarea {
+                    border: 2px solid #e2e8f0;
+                    border-radius: 12px;
+                    padding: 15px;
+                    font-family: 'Kantumruy Pro', sans-serif;
+                    font-size: 1rem;
+                    transition: all 0.3s ease;
+                    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+                }
+                .swal2-textarea.modern-textarea:focus {
+                    border-color: #3b82f6;
+                    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+                }
+                .modern-swal-popup {
+                    border-radius: 20px !important;
+                    padding: 0 0 1.25em 0 !important;
+                    overflow: hidden;
+                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+                }
+                .modern-btn {
+                    border-radius: 10px !important;
+                    padding: 12px 25px !important;
+                    font-weight: 600 !important;
+                    letter-spacing: 0.5px;
+                    transition: all 0.3s ease !important;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                }
+                .modern-btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+                }
+            </style>
+            <div class="modern-swal-header sweep-effect">
+                <i class="fi fi-rr-comment-edit modern-swal-icon"></i>
+                <div class="modern-swal-title">គ្រប់គ្រងការសម្គាល់</div>
+                <p class="modern-swal-desc">កែសម្រួល ឬលុបសម្គាល់សម្រាប់សិស្សនេះ៖</p>
+            </div>
+        `,
         input: 'textarea',
         inputValue: currentRemark || '',
         inputPlaceholder: 'បញ្ជាក់អំពីមូលហេតុជំពាក់ ឬការសន្យាបង់ប្រាក់...',
         showCancelButton: true,
         showDenyButton: currentRemark ? true : false,
-        confirmButtonText: 'រក្សាទុក (Save)',
-        denyButtonText: 'លុបចេញ (Delete)',
-        cancelButtonText: 'បោះបង់',
-        confirmButtonColor: '#28a745',
-        denyButtonColor: '#dc3545',
-        inputAttributes: {
-            'style': 'font-family: Battambang; font-size: 0.9rem; border-radius: 12px;'
-        },
+        confirmButtonText: '<i class="fi fi-rr-disk"></i> រក្សាទុក (Save)',
+        denyButtonText: '<i class="fi fi-rr-trash"></i> លុបចេញ (Delete)',
+        cancelButtonText: '<i class="fi fi-rr-cross"></i> បោះបង់',
+        confirmButtonColor: '#3b82f6',
+        denyButtonColor: '#ef4444',
+        cancelButtonColor: '#64748b',
         customClass: {
-            popup: 'rounded-4 shadow-lg border-0',
-            title: 'fw-bold moul-font',
+            popup: 'modern-swal-popup',
+            input: 'modern-textarea',
+            confirmButton: 'modern-btn',
+            denyButton: 'modern-btn',
+            cancelButton: 'modern-btn',
+            actions: 'mb-3'
         }
     }).then((result) => {
         if (result.isConfirmed) {

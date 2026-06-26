@@ -632,6 +632,11 @@ async function displayStaffDetails(staff, staffId) {
                     </div>
                 ` : ''}
 
+                <div class="info-item">
+                    <div class="info-label"><i class="fi fi-rr-key"></i> លេខកូដសម្ងាត់ (PIN)</div>
+                    <div class="info-value"><span class="badge bg-warning text-dark fw-bold">${staff.pin || '2024'}</span></div>
+                </div>
+
                 ${staff.contract ? `
                     <div class="info-item" style="grid-column: 1 / -1;">
                         <div class="info-label"><i class="fi fi-rr-document"></i> កុងត្រា</div>
@@ -889,6 +894,7 @@ function openAddStaffModal() {
     document.getElementById('staff-level').value = '';
     document.getElementById('staff-homeroom').value = '';
     document.getElementById('staff-notes').value = '';
+    document.getElementById('staff-pin').value = '2024';
 
     // Reset custom position
     document.getElementById('custom-position-container').classList.add('d-none');
@@ -950,6 +956,7 @@ function editStaff(staffId) {
     document.getElementById('staff-level').value = staff.level || '';
     document.getElementById('staff-study-type').value = staff.studyType || '';
     document.getElementById('staff-notes').value = staff.notes || '';
+    document.getElementById('staff-pin').value = staff.pin || '2024';
     
     // Load image preview
     const imgContainer = document.getElementById('staffImagePreviewContainer');
@@ -1025,6 +1032,7 @@ async function saveStaff() {
         homeroomClass: document.getElementById('staff-homeroom').value,
         teachingHours: selectedHours.join(', '),
         notes: document.getElementById('staff-notes').value.trim(),
+        pin: document.getElementById('staff-pin').value.trim() || '2024',
         updatedAt: new Date().toISOString()
     };
 
@@ -1378,6 +1386,7 @@ async function syncTeachersFromStudents() {
                     status: 'active',
                     hireDate: new Date().toISOString().split('T')[0],
                     createdAt: new Date().toISOString(),
+                    pin: '2024',
                     notes: 'ទាញយកស្វ័យប្រវត្តិពីទិន្នន័យសិស្ស'
                 };
                 newCount++;
@@ -2629,6 +2638,7 @@ async function syncTeachersFromStudentsInner() {
                     teachingHours: studyTimesList,
                     status: 'active',
                     createdAt: new Date().toISOString(),
+                    pin: '2024',
                     notes: 'ទាញយកស្វ័យប្រវត្តិពីទិន្នន័យសិស្ស'
                 };
             }
@@ -2756,6 +2766,16 @@ function resetStaffImagePreview() {
     }
 }
 
+// Generate a random 4-digit PIN for staff portal
+function generateStaffPin() {
+    const pin = Math.floor(1000 + Math.random() * 9000).toString();
+    const pinInput = document.getElementById('staff-pin');
+    if (pinInput) {
+        pinInput.value = pin;
+    }
+}
+window.generateStaffPin = generateStaffPin;
+
 // Ensure reset on "Add Staff"
 window.openAddStaffModal = function() {
     document.getElementById('staffForm').reset();
@@ -2763,6 +2783,24 @@ window.openAddStaffModal = function() {
     document.getElementById('staffModalTitle').innerHTML = '<i class="fi fi-rr-user-add"></i> បន្ថែមបុគ្គលិកថ្មី';
     
     resetStaffImagePreview();
+    
+    // Also reset pin to default
+    const pinInput = document.getElementById('staff-pin');
+    if (pinInput) pinInput.value = '2024';
+    
+    // Reset custom position
+    const customContainer = document.getElementById('custom-position-container');
+    if (customContainer) customContainer.classList.add('d-none');
+    const customInput = document.getElementById('staff-position-custom');
+    if (customInput) {
+        customInput.value = '';
+        customInput.removeAttribute('required');
+    }
+    
+    // Reset teaching hours checkboxes
+    if (typeof renderTeachingHoursCheckboxes === 'function') {
+        renderTeachingHoursCheckboxes();
+    }
     
     const modal = new bootstrap.Modal(document.getElementById('staffModal'));
     modal.show();

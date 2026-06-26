@@ -39,9 +39,12 @@ document.addEventListener('DOMContentLoaded', () => {
     initRealtimeListeners();
     loadDynamicSettings();
 
-    // Set default date to today in Modal (using local time)
-    if (document.getElementById('transDate')) {
-        document.getElementById('transDate').value = toLocalISO(new Date());
+    // Set default date to today in Modals (using local time)
+    if (document.getElementById('incomeDate')) {
+        document.getElementById('incomeDate').value = toLocalISO(new Date());
+    }
+    if (document.getElementById('expenseDate')) {
+        document.getElementById('expenseDate').value = toLocalISO(new Date());
     }
 
     // Initialization for Report Date Range (Default: This Month)
@@ -67,8 +70,33 @@ document.addEventListener('DOMContentLoaded', () => {
         // Alt + N for New Transaction
         if (e.altKey && e.key.toLowerCase() === 'n') {
             e.preventDefault();
-            const type = currentFilter === 'all' ? 'income' : currentFilter;
-            openTransactionModal(type);
+            const modalId = currentFilter === 'expense' ? 'expenseModal' : 'incomeModal';
+            const modalEl = document.getElementById(modalId);
+            if (modalEl) {
+                // Since this is for a new transaction, reset the form first!
+                const formId = currentFilter === 'expense' ? 'expenseForm' : 'incomeForm';
+                const formEl = document.getElementById(formId);
+                if (formEl) {
+                    formEl.reset();
+                    const hiddenIdField = currentFilter === 'expense' ? 'editExpenseId' : 'editIncomeId';
+                    document.getElementById(hiddenIdField).value = '';
+                }
+                // Set default date
+                const dateId = currentFilter === 'expense' ? 'expenseDate' : 'incomeDate';
+                const dateInput = document.getElementById(dateId);
+                if (dateInput) {
+                    dateInput.value = toLocalISO(new Date());
+                }
+                // Update live totals
+                if (currentFilter === 'expense') {
+                    updateExpenseLiveTotal();
+                    updateExpenseDateHint();
+                } else {
+                    updateIncomeLiveTotal();
+                    updateIncomeDateHint();
+                }
+                bootstrap.Modal.getOrCreateInstance(modalEl).show();
+            }
         }
         // Escape to clear search
         if (e.key === 'Escape' && document.activeElement.id === 'searchDescription') {
@@ -77,24 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchTransactions();
         }
     });
-
-    // Modal Theme Switcher
-    const radioIncome = document.getElementById('typeIncome');
-    const radioExpense = document.getElementById('typeExpense');
-    const modalContent = document.querySelector('#transactionModal .modal-content');
-
-    if (radioIncome && radioExpense) {
-        radioIncome.addEventListener('change', () => {
-            document.getElementById('transactionModal').classList.add('modal-income');
-            document.getElementById('transactionModal').classList.remove('modal-expense');
-            document.getElementById('modalTitle').innerHTML = '<i class="fi fi-rr-plus-circle me-2"></i>បន្ថែមចំណូលថ្មី (Add Income)';
-        });
-        radioExpense.addEventListener('change', () => {
-            document.getElementById('transactionModal').classList.remove('modal-income');
-            document.getElementById('transactionModal').classList.add('modal-expense');
-            document.getElementById('modalTitle').innerHTML = '<i class="fi fi-rr-minus-circle me-2"></i>បន្ថែមចំណាយថ្មី (Add Expense)';
-        });
-    }
 });
 
 // ==========================================
@@ -257,10 +267,21 @@ function loadDynamicSettings() {
 
     // Load Users for Receivers (Dynamic Dropdown via Central Utility)
     document.addEventListener('receiversUpdated', (event) => {
-        const select = document.getElementById('transReceiver');
+        const select = document.getElementById('incomeReceiver');
         if (select) {
             const currentVal = select.value;
             populateReceiverSelect(select, currentVal);
+        }
+
+        // Populate Expense receiver datalist
+        const expenseReceiverDatalist = document.getElementById('expenseReceiverDatalist');
+        if (expenseReceiverDatalist && window.SYSTEM_RECEIVERS) {
+            expenseReceiverDatalist.innerHTML = '';
+            window.SYSTEM_RECEIVERS.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                expenseReceiverDatalist.appendChild(opt);
+            });
         }
 
         // Dynamic Reporter Datalist & Pills
@@ -712,9 +733,9 @@ function renderTable(resetPage = false) {
         // Type Badge with Icon
         let typeBadge;
         if (item.type === 'income') {
-            typeBadge = `<span class="badge rounded-pill bg-success bg-opacity-10 text-success px-3 py-2 fw-bold"><i class="fi fi-rr-arrow-trend-up me-1"></i>ចំណូល</span>`;
+            typeBadge = `<span class="badge rounded-pill px-3 py-2 fw-bold shadow-sm" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(52, 211, 153, 0.05) 100%); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); backdrop-filter: blur(8px); letter-spacing: 0.5px;"><i class="fi fi-rr-arrow-trend-up me-1"></i>ចំណូល</span>`;
         } else {
-            typeBadge = `<span class="badge rounded-pill bg-danger bg-opacity-10 text-danger px-3 py-2 fw-bold"><i class="fi fi-rr-arrow-trend-down me-1"></i>ចំណាយ</span>`;
+            typeBadge = `<span class="badge rounded-pill px-3 py-2 fw-bold shadow-sm" style="background: linear-gradient(135deg, rgba(225, 29, 72, 0.15) 0%, rgba(244, 63, 94, 0.05) 100%); color: #e11d48; border: 1px solid rgba(225, 29, 72, 0.2); backdrop-filter: blur(8px); letter-spacing: 0.5px;"><i class="fi fi-rr-arrow-trend-down me-1"></i>ចំណាយ</span>`;
         }
 
         // Amount Styling
@@ -789,10 +810,10 @@ function renderTable(resetPage = false) {
             <td class="text-start">
                 <div class="fw-bold text-dark text-truncate" style="max-width: 150px;" title="${item.category}">${item.category}</div>
             </td>
-            <td class="text-start text-secondary small">${payerName}</td>
-            <td class="text-start text-secondary small">${receiverName}</td>
+            <td class="text-start text-secondary small fw-bold">${payerName}</td>
+            <td class="text-start text-secondary small fw-bold">${receiverName}</td>
             <td class="text-start">
-                <div class="text-muted small text-wrap description-text" style="max-width: 300px; line-height: 1.4;">
+                <div class="text-muted small fw-bold text-wrap description-text" style="max-width: 300px; line-height: 1.4;">
                     ${item.description || '-'}
                 </div>
             </td>
@@ -1001,46 +1022,49 @@ function setupEventListeners() {
         });
     }
 
-    // Set Today Button in Modal
-    const btnSetToday = document.getElementById('btnSetToday');
-    if (btnSetToday) {
-        btnSetToday.addEventListener('click', () => {
-            const dateInput = document.getElementById('transDate');
+    // Set Today Button in Income Modal
+    const btnIncomeSetToday = document.getElementById('btnIncomeSetToday');
+    if (btnIncomeSetToday) {
+        btnIncomeSetToday.addEventListener('click', () => {
+            const dateInput = document.getElementById('incomeDate');
             if (dateInput) {
                 dateInput.value = toLocalISO(new Date());
-                updateDateHint(); // Update hint immediately
+                updateIncomeDateHint();
+            }
+        });
+    }
+
+    // Set Today Button in Expense Modal
+    const btnExpenseSetToday = document.getElementById('btnExpenseSetToday');
+    if (btnExpenseSetToday) {
+        btnExpenseSetToday.addEventListener('click', () => {
+            const dateInput = document.getElementById('expenseDate');
+            if (dateInput) {
+                dateInput.value = toLocalISO(new Date());
+                updateExpenseDateHint();
             }
         });
     }
 
     // Dynamic Date Hint
-    const transDateInput = document.getElementById('transDate');
-    if (transDateInput) {
-        transDateInput.addEventListener('input', updateDateHint);
+    const incomeDateInput = document.getElementById('incomeDate');
+    if (incomeDateInput) {
+        incomeDateInput.addEventListener('input', updateIncomeDateHint);
     }
+    const expenseDateInput = document.getElementById('expenseDate');
+    if (expenseDateInput) {
+        expenseDateInput.addEventListener('input', updateExpenseDateHint);
+    }
+
     // Modal Form Submit
-    document.getElementById('transactionForm').addEventListener('submit', handleFormSubmit);
-
-    // Type Toggle in Modal (Switch Categories & Theme)
-    const typeRadios = document.getElementsByName('transType');
-    const transModalEl = document.getElementById('transactionModal');
-    typeRadios.forEach(radio => {
-        radio.addEventListener('change', (e) => {
-            const val = e.target.value;
-            toggleCategoryOptions(val);
-
-            // Dynamic Theme Switching
-            if (transModalEl) {
-                if (val === 'income') {
-                    transModalEl.classList.remove('expense-theme');
-                    transModalEl.classList.add('income-theme');
-                } else {
-                    transModalEl.classList.remove('income-theme');
-                    transModalEl.classList.add('expense-theme');
-                }
-            }
-        });
-    });
+    const incomeForm = document.getElementById('incomeForm');
+    if (incomeForm) {
+        incomeForm.addEventListener('submit', handleIncomeFormSubmit);
+    }
+    const expenseForm = document.getElementById('expenseForm');
+    if (expenseForm) {
+        expenseForm.addEventListener('submit', handleExpenseFormSubmit);
+    }
 
     // Filter Button
     const btnFilter = document.getElementById('btnFilter');
@@ -1055,10 +1079,16 @@ function setupEventListeners() {
     }
 
     // --- Live Amount Calculation (Multi-Source: Cash & ABA & Debt) ---
-    const fieldIds = ['transAmountCash', 'transAmountCashKHR', 'transAmountAba', 'transAmountAbaKHR', 'transAmountDebt', 'transAmountDebtKHR'];
-    fieldIds.forEach(id => {
+    const incomeFields = ['incomeAmountCash', 'incomeAmountCashKHR', 'incomeAmountAba', 'incomeAmountAbaKHR', 'incomeAmountDebt', 'incomeAmountDebtKHR'];
+    incomeFields.forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.addEventListener('input', () => updateLiveTotal());
+        if (el) el.addEventListener('input', () => updateIncomeLiveTotal());
+    });
+
+    const expenseFields = ['expenseAmountCash', 'expenseAmountCashKHR', 'expenseAmountAba', 'expenseAmountAbaKHR', 'expenseAmountDebt', 'expenseAmountDebtKHR'];
+    expenseFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => updateExpenseLiveTotal());
     });
 
     // Intelligent Modal Student Search (Advance)
@@ -1080,7 +1110,6 @@ function setupEventListeners() {
             const matches = [];
             const uniqueNames = new Set();
 
-            // Note: studentsData is the global object from Firebase
             if (studentsData) {
                 Object.values(studentsData).forEach(s => {
                     if (!s) return;
@@ -1140,57 +1169,65 @@ function setupEventListeners() {
         });
     }
 
-    // Reset Modal on Open (if adding new)
-    const modal = document.getElementById('transactionModal');
-    modal.addEventListener('show.bs.modal', (event) => {
-        if (event.relatedTarget && event.relatedTarget.getAttribute('data-bs-target') === '#transactionModal') {
-            const button = event.relatedTarget;
-            const type = button.getAttribute('data-type') || 'income';
+    // Reset Income Modal on Open (if adding new)
+    const incomeModal = document.getElementById('incomeModal');
+    if (incomeModal) {
+        incomeModal.addEventListener('show.bs.modal', (event) => {
+            if (event.relatedTarget && event.relatedTarget.getAttribute('data-bs-target') === '#incomeModal') {
+                const dateInput = document.getElementById('incomeDate');
+                const preservedDate = dateInput ? dateInput.value : null;
 
-            // Preserve transDate value before resetting
-            const dateInput = document.getElementById('transDate');
-            const preservedDate = dateInput ? dateInput.value : null;
+                document.getElementById('incomeForm').reset();
+                document.getElementById('editIncomeId').value = '';
 
-            // Reset Form
-            document.getElementById('transactionForm').reset();
-            document.getElementById('editTransactionId').value = '';
-
-            // Set Type based on button clicked
-            const radio = document.getElementById('type' + type.charAt(0).toUpperCase() + type.slice(1));
-            if (radio) radio.checked = true;
-
-            toggleCategoryOptions(type);
-
-            // Set Date to preserved Date OR Today
-            if (dateInput) {
-                dateInput.value = preservedDate || toLocalISO(new Date());
-                updateDateHint();
+                if (dateInput) {
+                    dateInput.value = preservedDate || toLocalISO(new Date());
+                    updateIncomeDateHint();
+                }
+                updateIncomeLiveTotal();
             }
+        });
+    }
 
-            // Initial Total
-            updateLiveTotal();
-        }
-    });
+    // Reset Expense Modal on Open (if adding new)
+    const expenseModal = document.getElementById('expenseModal');
+    if (expenseModal) {
+        expenseModal.addEventListener('show.bs.modal', (event) => {
+            if (event.relatedTarget && event.relatedTarget.getAttribute('data-bs-target') === '#expenseModal') {
+                const dateInput = document.getElementById('expenseDate');
+                const preservedDate = dateInput ? dateInput.value : null;
+
+                document.getElementById('expenseForm').reset();
+                document.getElementById('editExpenseId').value = '';
+
+                if (dateInput) {
+                    dateInput.value = preservedDate || toLocalISO(new Date());
+                    updateExpenseDateHint();
+                }
+                updateExpenseLiveTotal();
+            }
+        });
+    }
 }
 
-function handleFormSubmit(e) {
+function handleIncomeFormSubmit(e) {
     e.preventDefault();
 
-    const id = document.getElementById('editTransactionId').value;
-    const type = document.querySelector('input[name="transType"]:checked').value;
-    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-    const date = document.getElementById('transDate').value;
+    const id = document.getElementById('editIncomeId').value;
+    const type = 'income';
+    const paymentMethod = document.querySelector('input[name="incomePaymentMethod"]:checked').value;
+    const date = document.getElementById('incomeDate').value;
 
-    const cashUSD = parseFloat(document.getElementById('transAmountCash').value) || 0;
-    const cashKHR = parseFloat(document.getElementById('transAmountCashKHR').value) || 0;
-    const abaUSD = parseFloat(document.getElementById('transAmountAba').value) || 0;
-    const abaKHR = parseFloat(document.getElementById('transAmountAbaKHR').value) || 0;
-    const debtUSD = parseFloat(document.getElementById('transAmountDebt').value) || 0;
-    const debtKHR = parseFloat(document.getElementById('transAmountDebtKHR').value) || 0;
+    const cashUSD = parseFloat(document.getElementById('incomeAmountCash').value) || 0;
+    const cashKHR = parseFloat(document.getElementById('incomeAmountCashKHR').value) || 0;
+    const abaUSD = parseFloat(document.getElementById('incomeAmountAba').value) || 0;
+    const abaKHR = parseFloat(document.getElementById('incomeAmountAbaKHR').value) || 0;
+    const debtUSD = parseFloat(document.getElementById('incomeAmountDebt').value) || 0;
+    const debtKHR = parseFloat(document.getElementById('incomeAmountDebtKHR').value) || 0;
 
-    const rate = type === 'income' ? EXCHANGE_RATE_INCOME : EXCHANGE_RATE_EXPENSE;
+    const rate = EXCHANGE_RATE_INCOME;
     let finalAmountUSD = cashUSD + abaUSD + debtUSD + ((cashKHR + abaKHR + debtKHR) / rate);
-    if (type === 'income' && (cashKHR > 0 || abaKHR > 0 || debtKHR > 0)) {
+    if (cashKHR > 0 || abaKHR > 0 || debtKHR > 0) {
         finalAmountUSD = Math.round(finalAmountUSD);
     }
 
@@ -1199,28 +1236,17 @@ function handleFormSubmit(e) {
         return;
     }
 
-    // New Fields
-    const payer = document.getElementById('transPayer').value;
-    const receiver = document.getElementById('transReceiver').value;
-    const boardingPlace = document.getElementById('transBoardingPlace') ? document.getElementById('transBoardingPlace').value.trim() : '';
+    const payer = document.getElementById('incomePayer').value.trim();
+    const receiver = document.getElementById('incomeReceiver').value;
+    const boardingPlace = document.getElementById('incomeBoardingPlace') ? document.getElementById('incomeBoardingPlace').value.trim() : '';
 
-    // Category/Description Logic
-    let category = '';
-    if (type === 'income') {
-        category = document.getElementById('transIncomeSource').value.trim();
-        if (!category) {
-            alert("សូមបញ្ចូលប្រភពចំណូល (Please enter income source)");
-            return;
-        }
-    } else {
-        category = document.getElementById('transExpenseCategory').value;
-        if (!category) {
-            alert("សូមជ្រើសរើសប្រភេទចំណាយ (Please select expense category)");
-            return;
-        }
+    const category = document.getElementById('incomeSource').value.trim();
+    if (!category) {
+        alert("សូមបញ្ចូលប្រភពចំណូល (Please enter income source)");
+        return;
     }
 
-    const description = document.getElementById('transDescription').value;
+    const description = document.getElementById('incomeDescription').value;
 
     const transactionData = {
         type: type,
@@ -1237,8 +1263,8 @@ function handleFormSubmit(e) {
         debtKHR,
         category,
         description,
-        payer,
-        receiver,
+        payer: payer || 'សិស្ស/អាណាព្យាបាល',
+        receiver: receiver || 'សាលា',
         boardingPlace,
         recorder: firebase.auth().currentUser ? (firebase.auth().currentUser.displayName || firebase.auth().currentUser.email) : 'System/Admin',
         updatedAt: firebase.database.ServerValue.TIMESTAMP
@@ -1277,24 +1303,141 @@ function handleFormSubmit(e) {
         transactionData.createdAt = firebase.database.ServerValue.TIMESTAMP;
         transactionsRef.push(transactionData)
             .then(() => {
-                // Preserve Date & Type to keep modal open for next entry
-                const dateInput = document.getElementById('transDate');
+                // Preserve Date
+                const dateInput = document.getElementById('incomeDate');
                 const preservedDate = dateInput ? dateInput.value : null;
 
-                document.getElementById('transactionForm').reset();
-                document.getElementById('editTransactionId').value = '';
+                document.getElementById('incomeForm').reset();
+                document.getElementById('editIncomeId').value = '';
 
                 if (dateInput && preservedDate) {
                     dateInput.value = preservedDate;
                 }
-                const radio = document.getElementById('type' + type.charAt(0).toUpperCase() + type.slice(1));
-                if (radio) radio.checked = true;
-                if (typeof toggleCategoryOptions === 'function') {
-                    toggleCategoryOptions(type);
+                updateIncomeLiveTotal();
+
+                fetchTransactions(true); // Refresh and go to page 1
+                Swal.fire({
+                    icon: 'success',
+                    title: 'រក្សាទុកបានជោគជ័យ',
+                    text: 'ទិន្នន័យត្រូវបានរក្សាទុក! អ្នកអាចបញ្ចូលបន្តទៀតបាន។',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    background: '#fff',
+                    color: '#000',
+                    iconColor: '#10b981'
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                showLoading(false);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'កំហុសក្នុងការរក្សាទុក',
+                    text: 'សូមព្យាយាមម្ដងទៀត!',
+                });
+            });
+    }
+}
+
+function handleExpenseFormSubmit(e) {
+    e.preventDefault();
+
+    const id = document.getElementById('editExpenseId').value;
+    const type = 'expense';
+    const paymentMethod = document.querySelector('input[name="expensePaymentMethod"]:checked').value;
+    const date = document.getElementById('expenseDate').value;
+
+    const cashUSD = parseFloat(document.getElementById('expenseAmountCash').value) || 0;
+    const cashKHR = parseFloat(document.getElementById('expenseAmountCashKHR').value) || 0;
+    const abaUSD = parseFloat(document.getElementById('expenseAmountAba').value) || 0;
+    const abaKHR = parseFloat(document.getElementById('expenseAmountAbaKHR').value) || 0;
+    const debtUSD = parseFloat(document.getElementById('expenseAmountDebt').value) || 0;
+    const debtKHR = parseFloat(document.getElementById('expenseAmountDebtKHR').value) || 0;
+
+    const rate = EXCHANGE_RATE_EXPENSE;
+    const finalAmountUSD = cashUSD + abaUSD + debtUSD + ((cashKHR + abaKHR + debtKHR) / rate);
+
+    if (finalAmountUSD <= 0) {
+        alert("សូមបញ្ចូលចំនួនទឹកប្រាក់ត្រឹមត្រូវ (Please enter valid amount)");
+        return;
+    }
+
+    const payer = document.getElementById('expensePayer').value.trim();
+    const receiver = document.getElementById('expenseReceiver').value.trim();
+
+    const category = document.getElementById('expenseCategory').value.trim();
+    if (!category) {
+        alert("សូមជ្រើសរើសប្រភេទចំណាយ (Please select expense category)");
+        return;
+    }
+
+    const description = document.getElementById('expenseDescription').value;
+
+    const transactionData = {
+        type: type,
+        paymentMethod: paymentMethod,
+        date: date,
+        amount: finalAmountUSD,
+        amountUSD: cashUSD + abaUSD + debtUSD,
+        amountKHR: cashKHR + abaKHR + debtKHR,
+        cashUSD,
+        cashKHR,
+        abaUSD,
+        abaKHR,
+        debtUSD,
+        debtKHR,
+        category,
+        description,
+        payer: payer || 'សាលា',
+        receiver: receiver || 'បុគ្គលិក/អ្នកលក់',
+        recorder: firebase.auth().currentUser ? (firebase.auth().currentUser.displayName || firebase.auth().currentUser.email) : 'System/Admin',
+        updatedAt: firebase.database.ServerValue.TIMESTAMP
+    };
+
+    showLoading(true);
+
+    if (id) {
+        // Update
+        transactionsRef.child(id).update(transactionData)
+            .then(() => {
+                closeModal();
+                fetchTransactions(); // Refresh data
+                Swal.fire({
+                    icon: 'success',
+                    title: 'កែប្រែបានជោគជ័យ',
+                    text: 'ទិន្នន័យត្រូវបានធ្វើបច្ចុប្បន្នភាពរួចរាល់!',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    background: '#fff',
+                    color: '#000',
+                    iconColor: '#10b981'
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                showLoading(false);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'កំហុសក្នុងការកែប្រែ',
+                    text: 'សូមព្យាយាមម្ដងទៀត!',
+                });
+            });
+    } else {
+        // Create
+        transactionData.createdAt = firebase.database.ServerValue.TIMESTAMP;
+        transactionsRef.push(transactionData)
+            .then(() => {
+                // Preserve Date
+                const dateInput = document.getElementById('expenseDate');
+                const preservedDate = dateInput ? dateInput.value : null;
+
+                document.getElementById('expenseForm').reset();
+                document.getElementById('editExpenseId').value = '';
+
+                if (dateInput && preservedDate) {
+                    dateInput.value = preservedDate;
                 }
-                if (typeof updateLiveTotal === 'function') {
-                    updateLiveTotal();
-                }
+                updateExpenseLiveTotal();
 
                 fetchTransactions(true); // Refresh and go to page 1
                 Swal.fire({
@@ -1324,83 +1467,103 @@ function editTransaction(id) {
     const item = transactionsData.find(t => t.id === id);
     if (!item) return;
 
-    // Set Values
-    document.getElementById('editTransactionId').value = id;
-    document.getElementById('transDate').value = item.date;
+    if (item.type === 'income') {
+        document.getElementById('editIncomeId').value = id;
+        document.getElementById('incomeDate').value = item.date;
 
-    // Set Amounts correctly
-    if (item.cashUSD !== undefined || item.abaUSD !== undefined || item.cashKHR !== undefined || item.abaKHR !== undefined || item.debtUSD !== undefined) {
-        document.getElementById('transAmountCash').value = item.cashUSD || '';
-        document.getElementById('transAmountCashKHR').value = item.cashKHR || '';
-        document.getElementById('transAmountAba').value = item.abaUSD || '';
-        document.getElementById('transAmountAbaKHR').value = item.abaKHR || '';
-        document.getElementById('transAmountDebt').value = item.debtUSD || '';
-        document.getElementById('transAmountDebtKHR').value = item.debtKHR || '';
-    } else {
-        // Fallback for old dual-field format
-        if (item.amountUSD !== undefined || item.amountKHR !== undefined) {
-            document.getElementById('transAmountCash').value = item.amountUSD || '';
-            document.getElementById('transAmountCashKHR').value = item.amountKHR || '';
-            document.getElementById('transAmountAba').value = '';
-            document.getElementById('transAmountAbaKHR').value = '';
-            document.getElementById('transAmountDebt').value = '';
-            document.getElementById('transAmountDebtKHR').value = '';
-        } else if (item.originalCurrency === 'KHR') {
-            document.getElementById('transAmountCash').value = '';
-            document.getElementById('transAmountCashKHR').value = item.originalAmount;
-            document.getElementById('transAmountAba').value = '';
-            document.getElementById('transAmountAbaKHR').value = '';
-            document.getElementById('transAmountDebt').value = '';
-            document.getElementById('transAmountDebtKHR').value = '';
+        if (item.cashUSD !== undefined || item.abaUSD !== undefined || item.cashKHR !== undefined || item.abaKHR !== undefined || item.debtUSD !== undefined) {
+            document.getElementById('incomeAmountCash').value = item.cashUSD || '';
+            document.getElementById('incomeAmountCashKHR').value = item.cashKHR || '';
+            document.getElementById('incomeAmountAba').value = item.abaUSD || '';
+            document.getElementById('incomeAmountAbaKHR').value = item.abaKHR || '';
+            document.getElementById('incomeAmountDebt').value = item.debtUSD || '';
+            document.getElementById('incomeAmountDebtKHR').value = item.debtKHR || '';
         } else {
-            document.getElementById('transAmountCash').value = item.originalAmount || item.amount;
-            document.getElementById('transAmountCashKHR').value = '';
-            document.getElementById('transAmountAba').value = '';
-            document.getElementById('transAmountAbaKHR').value = '';
-            document.getElementById('transAmountDebt').value = '';
-            document.getElementById('transAmountDebtKHR').value = '';
+            // Fallback for old dual-field format
+            if (item.amountUSD !== undefined || item.amountKHR !== undefined) {
+                document.getElementById('incomeAmountCash').value = item.amountUSD || '';
+                document.getElementById('incomeAmountCashKHR').value = item.amountKHR || '';
+            } else if (item.originalCurrency === 'KHR') {
+                document.getElementById('incomeAmountCash').value = '';
+                document.getElementById('incomeAmountCashKHR').value = item.originalAmount;
+            } else {
+                document.getElementById('incomeAmountCash').value = item.originalAmount || item.amount;
+                document.getElementById('incomeAmountCashKHR').value = '';
+            }
+            document.getElementById('incomeAmountAba').value = '';
+            document.getElementById('incomeAmountAbaKHR').value = '';
+            document.getElementById('incomeAmountDebt').value = '';
+            document.getElementById('incomeAmountDebtKHR').value = '';
         }
-    }
 
-    document.getElementById('transDescription').value = item.description || '';
+        document.getElementById('incomeDescription').value = item.description || '';
+        document.getElementById('incomePayer').value = item.payer || '';
+        document.getElementById('incomeReceiver').value = item.receiver || '';
+        if (document.getElementById('incomeBoardingPlace')) {
+            document.getElementById('incomeBoardingPlace').value = item.boardingPlace || '';
+        }
 
-    // Set New Fields
-    document.getElementById('transPayer').value = item.payer || '';
-    document.getElementById('transReceiver').value = item.receiver || '';
-    if (document.getElementById('transBoardingPlace')) {
-        document.getElementById('transBoardingPlace').value = item.boardingPlace || '';
-    }
+        if (item.paymentMethod === 'aba') {
+            document.getElementById('incomeMethodABA').checked = true;
+        } else {
+            document.getElementById('incomeMethodCash').checked = true;
+        }
 
-    // Set Type
-    if (item.type === 'income') {
-        document.getElementById('typeIncome').checked = true;
+        document.getElementById('incomeSource').value = item.category || '';
+
+        const modalEl = document.getElementById('incomeModal');
+        if (modalEl) {
+            bootstrap.Modal.getOrCreateInstance(modalEl).show();
+            updateIncomeLiveTotal();
+            updateIncomeDateHint();
+        }
     } else {
-        document.getElementById('typeExpense').checked = true;
-    }
+        document.getElementById('editExpenseId').value = id;
+        document.getElementById('expenseDate').value = item.date;
 
-    if (item.paymentMethod === 'aba') {
-        document.getElementById('methodABA').checked = true;
-    } else {
-        document.getElementById('methodCash').checked = true;
-    }
-    toggleCategoryOptions(item.type);
+        if (item.cashUSD !== undefined || item.abaUSD !== undefined || item.cashKHR !== undefined || item.abaKHR !== undefined || item.debtUSD !== undefined) {
+            document.getElementById('expenseAmountCash').value = item.cashUSD || '';
+            document.getElementById('expenseAmountCashKHR').value = item.cashKHR || '';
+            document.getElementById('expenseAmountAba').value = item.abaUSD || '';
+            document.getElementById('expenseAmountAbaKHR').value = item.abaKHR || '';
+            document.getElementById('expenseAmountDebt').value = item.debtUSD || '';
+            document.getElementById('expenseAmountDebtKHR').value = item.debtKHR || '';
+        } else {
+            // Fallback for old dual-field format
+            if (item.amountUSD !== undefined || item.amountKHR !== undefined) {
+                document.getElementById('expenseAmountCash').value = item.amountUSD || '';
+                document.getElementById('expenseAmountCashKHR').value = item.amountKHR || '';
+            } else if (item.originalCurrency === 'KHR') {
+                document.getElementById('expenseAmountCash').value = '';
+                document.getElementById('expenseAmountCashKHR').value = item.originalAmount;
+            } else {
+                document.getElementById('expenseAmountCash').value = item.originalAmount || item.amount;
+                document.getElementById('expenseAmountCashKHR').value = '';
+            }
+            document.getElementById('expenseAmountAba').value = '';
+            document.getElementById('expenseAmountAbaKHR').value = '';
+            document.getElementById('expenseAmountDebt').value = '';
+            document.getElementById('expenseAmountDebtKHR').value = '';
+        }
 
-    // Set Category (after toggling options)
-    if (item.type === 'income') {
-        document.getElementById('transIncomeSource').value = item.category || '';
-    } else {
-        document.getElementById('transExpenseCategory').value = item.category || '';
-    }
+        document.getElementById('expenseDescription').value = item.description || '';
+        document.getElementById('expensePayer').value = item.payer || '';
+        document.getElementById('expenseReceiver').value = item.receiver || '';
 
-    // Update Title
-    document.getElementById('modalTitle').innerHTML = '<i class="fi fi-rr-edit me-2"></i>កែប្រែទិន្នន័យ (Edit)';
+        if (item.paymentMethod === 'aba') {
+            document.getElementById('expenseMethodABA').checked = true;
+        } else {
+            document.getElementById('expenseMethodCash').checked = true;
+        }
 
-    // Open Modal
-    const _transModalEl = document.getElementById('transactionModal');
-    if (_transModalEl) {
-        bootstrap.Modal.getOrCreateInstance(_transModalEl).show();
-        // Update total display after setting values
-        updateLiveTotal();
+        document.getElementById('expenseCategory').value = item.category || '';
+
+        const modalEl = document.getElementById('expenseModal');
+        if (modalEl) {
+            bootstrap.Modal.getOrCreateInstance(modalEl).show();
+            updateExpenseLiveTotal();
+            updateExpenseDateHint();
+        }
     }
 }
 
@@ -1492,23 +1655,32 @@ function viewTransaction(id, index) {
                     
                     <div class="row g-3">
                         <div class="col-12">
-                            <div class="p-3 bg-light rounded-3 border-start border-primary border-4 shadow-sm">
-                                <label class="text-muted small d-block mb-1"><i class="fi fi-rr-tag me-1"></i> ចំណាត់ថ្នាក់ (Category)</label>
-                                <div class="fw-bolder text-primary" style="font-size: 1.15rem;">${item.category}</div>
-                            </div>
+                            ${(() => {
+                                const isIncome = item.type === 'income';
+                                const catBg = isIncome ? '#eff6ff' : '#fff1f2';
+                                const catBorder = isIncome ? '#bfdbfe' : '#fecdd3';
+                                const catIconColor = isIncome ? '#3b82f6' : '#e11d48';
+                                const catTextColor = isIncome ? '#1e3a8a' : '#be123c';
+                                return `
+                                <div class="p-3 rounded-4 shadow-sm transition-all" style="background: ${catBg}; border: 1px solid ${catBorder};">
+                                    <label class="small d-block mb-1 fw-bold" style="color: ${catIconColor}; letter-spacing: 0.3px;"><i class="fi fi-rr-tags me-1"></i> ចំណាត់ថ្នាក់ (Category)</label>
+                                    <div class="fw-bolder" style="font-size: 1.25rem; color: ${catTextColor};">${item.category}</div>
+                                </div>
+                                `;
+                            })()}
                         </div>
 
                         <div class="col-6">
-                            <div class="p-3 border rounded-3 h-100 shadow-sm hover-shadow transition-all bg-white">
-                                <label class="text-muted small d-block mb-1"><i class="fi fi-rr-user me-1 text-secondary"></i> ${item.type === 'income' ? 'អ្នកបង់ប្រាក់/ប្រភព' : 'អ្នកទូទាត់'}</label>
-                                <div class="fw-bold text-dark text-truncate fs-6" title="${item.payer || '-'}">${item.payer || '-'}</div>
+                            <div class="p-3 border rounded-4 h-100 shadow-sm bg-white" style="border-color: #e2e8f0 !important;">
+                                <label class="small d-block mb-1 text-muted"><i class="fi fi-rr-user me-1 text-secondary"></i> ${item.type === 'income' ? 'អ្នកបង់ប្រាក់/ប្រភព' : 'អ្នកចំណាយ'}</label>
+                                <div class="fw-bold text-dark text-truncate fs-6" style="color: #334155 !important;" title="${item.payer || '-'}">${item.payer || '-'}</div>
                             </div>
                         </div>
                         
                         <div class="col-6">
-                            <div class="p-3 border rounded-3 h-100 shadow-sm hover-shadow transition-all bg-white">
-                                <label class="text-muted small d-block mb-1"><i class="fi fi-rr-user-check me-1 text-secondary"></i> អ្នកទទួលប្រាក់</label>
-                                <div class="fw-bold text-dark text-truncate fs-6" title="${item.receiver || '-'}">${item.receiver || '-'}</div>
+                            <div class="p-3 border rounded-4 h-100 shadow-sm bg-white" style="border-color: #e2e8f0 !important;">
+                                <label class="small d-block mb-1 text-muted"><i class="fi fi-rr-user-check me-1 text-secondary"></i> អ្នកទទួលប្រាក់</label>
+                                <div class="fw-bold text-dark text-truncate fs-6" style="color: #334155 !important;" title="${item.receiver || '-'}">${item.receiver || '-'}</div>
                             </div>
                         </div>
 
@@ -1521,8 +1693,8 @@ function viewTransaction(id, index) {
                         </div>` : ''}
 
                         <div class="col-12 mt-4">
-                            <label class="text-muted small fw-bold d-block mb-2"><i class="fi fi-rr-comment-alt me-1"></i> ការបរិយាយបន្ថែម (Description)</label>
-                            <div class="p-3 rounded-3 small text-dark shadow-inner" style="background: #f1f5f9; min-height: 85px; line-height: 1.6; border: 1px solid #e2e8f0; border-top: 3px solid #cbd5e1;">
+                            <label class="text-muted small fw-bold d-block mb-2 text-uppercase" style="letter-spacing: 0.5px;"><i class="fi fi-rr-comment-alt me-1 text-secondary"></i> ការបរិយាយ (Description)</label>
+                            <div class="p-3 rounded-4 small text-dark shadow-sm" style="background: #f8fafc; min-height: 90px; line-height: 1.7; border: 1px solid #e2e8f0; color: #475569 !important;">
                                 ${item.description ? item.description.replace(/\n/g, '<br>') : '<span class="text-muted italic"><i class="fi fi-rr-comment-alt-slash me-1"></i> មិនមានការបរិយាយ...</span>'}
                             </div>
                         </div>
@@ -1654,8 +1826,8 @@ function toggleCategoryOptions(type) {
     }
 
     if (type === 'income') {
-        incomeContainer.style.display = 'block';
-        expenseContainer.style.display = 'none';
+        if (incomeContainer) incomeContainer.style.display = 'block';
+        if (expenseContainer) expenseContainer.style.display = 'none';
 
         if (transModalEl) {
             transModalEl.classList.remove('expense-theme');
@@ -1669,18 +1841,22 @@ function toggleCategoryOptions(type) {
         if (labelPayer) labelPayer.innerHTML = 'អ្នកផ្ដល់ប្រាក់ <i class="fi fi-rr-user-tag ms-1 text-success"></i>';
         if (labelReceiver) labelReceiver.innerHTML = 'អ្នកទទួលប្រាក់ <i class="fi fi-rr-bank ms-1 text-primary"></i>';
 
-        document.getElementById('transIncomeSource').setAttribute('required', 'required');
-        document.getElementById('transExpenseCategory').removeAttribute('required');
+        const sourceInput = document.getElementById('transIncomeSource');
+        if (sourceInput) sourceInput.setAttribute('required', 'required');
+        const expenseInput = document.getElementById('transExpenseCategory');
+        if (expenseInput) expenseInput.removeAttribute('required');
 
         // Default receiver for Income (Only if not already set to a valid name)
-        const receiverInput = document.getElementById('transReceiver');
-        const validNames = ["毛平安-សុខណាង", "倪思妮-ស្រីនីត"];
-        if (!validNames.includes(receiverInput.value)) {
-            receiverInput.value = "毛平安-សុខណាង"; // Choose first one as default
+        const receiverInput = document.getElementById('incomeReceiver') || document.getElementById('transReceiver');
+        if (receiverInput) {
+            const validNames = ["毛平安-សុខណាង", "倪思妮-ស្រីនីត"];
+            if (!validNames.includes(receiverInput.value)) {
+                receiverInput.value = "毛平安-សុខណាង"; // Choose first one as default
+            }
         }
     } else {
-        incomeContainer.style.display = 'none';
-        expenseContainer.style.display = 'block';
+        if (incomeContainer) incomeContainer.style.display = 'none';
+        if (expenseContainer) expenseContainer.style.display = 'block';
 
         if (transModalEl) {
             transModalEl.classList.remove('income-theme');
@@ -1691,15 +1867,17 @@ function toggleCategoryOptions(type) {
             modalTitle.innerHTML = '<i class="fi fi-rr-arrow-trend-down me-2"></i>បន្ថែមការចំណាយ (Expense)';
         }
 
-        if (labelPayer) labelPayer.innerHTML = 'អ្នកទូទាត់ <i class="fi fi-rr-shopping-cart ms-1 text-danger"></i>';
+        if (labelPayer) labelPayer.innerHTML = 'អ្នកចំណាយ <i class="fi fi-rr-shopping-cart ms-1 text-danger"></i>';
         if (labelReceiver) labelReceiver.innerHTML = 'អ្នកទទួលប្រាក់ <i class="fi fi-rr-user-check ms-1 text-warning"></i>';
 
-        document.getElementById('transIncomeSource').removeAttribute('required');
-        document.getElementById('transExpenseCategory').setAttribute('required', 'required');
+        const sourceInput = document.getElementById('transIncomeSource');
+        if (sourceInput) sourceInput.removeAttribute('required');
+        const expenseInput = document.getElementById('transExpenseCategory');
+        if (expenseInput) expenseInput.setAttribute('required', 'required');
 
         // Auto-payer for Expense is School
-        const payerInput = document.getElementById('transPayer');
-        if (!payerInput.value || payerInput.value === "") {
+        const payerInput = document.getElementById('expensePayer') || document.getElementById('transPayer');
+        if (payerInput && (!payerInput.value || payerInput.value === "")) {
             payerInput.value = "សាលា (School)";
         }
     }
@@ -1779,47 +1957,110 @@ function showLoading(show, msg) {
 }
 
 
-function updateLiveTotal() {
-    const cUSD = parseFloat(document.getElementById('transAmountCash')?.value) || 0;
-    const cKHR = parseFloat(document.getElementById('transAmountCashKHR')?.value) || 0;
-    const aUSD = parseFloat(document.getElementById('transAmountAba')?.value) || 0;
-    const aKHR = parseFloat(document.getElementById('transAmountAbaKHR')?.value) || 0;
-    const dUSD = parseFloat(document.getElementById('transAmountDebt')?.value) || 0;
-    const dKHR = parseFloat(document.getElementById('transAmountDebtKHR')?.value) || 0;
+function updateIncomeLiveTotal() {
+    const cUSD = parseFloat(document.getElementById('incomeAmountCash')?.value) || 0;
+    const cKHR = parseFloat(document.getElementById('incomeAmountCashKHR')?.value) || 0;
+    const aUSD = parseFloat(document.getElementById('incomeAmountAba')?.value) || 0;
+    const aKHR = parseFloat(document.getElementById('incomeAmountAbaKHR')?.value) || 0;
+    const dUSD = parseFloat(document.getElementById('incomeAmountDebt')?.value) || 0;
+    const dKHR = parseFloat(document.getElementById('incomeAmountDebtKHR')?.value) || 0;
 
-    const totalDisplay = document.getElementById('transTotalDisplay');
-    const totalKHRDisplay = document.getElementById('transTotalKHR');
-    const summaryCard = document.querySelector('.summary-card-premium');
+    const totalDisplay = document.getElementById('incomeTotalDisplay');
+    const totalKHRDisplay = document.getElementById('incomeTotalKHR');
+    const summaryCard = document.querySelector('#incomeModal .summary-card-premium');
 
     if (!totalDisplay) return;
 
-    const type = document.querySelector('input[name="transType"]:checked')?.value || 'income';
-    const rate = type === 'income' ? EXCHANGE_RATE_INCOME : EXCHANGE_RATE_EXPENSE;
+    const rate = EXCHANGE_RATE_INCOME;
 
     let totalUSD = cUSD + aUSD + dUSD + ((cKHR + aKHR + dKHR) / rate);
-    if (type === 'income' && (cKHR > 0 || aKHR > 0 || dKHR > 0)) {
+    if (cKHR > 0 || aKHR > 0 || dKHR > 0) {
         totalUSD = Math.round(totalUSD);
     }
     const totalKHR = (cUSD + aUSD + dUSD) * rate + (cKHR + aKHR + dKHR);
 
-    // Animation trigger
     if (summaryCard) {
         summaryCard.classList.remove('total-updating');
         void summaryCard.offsetWidth; // trigger reflow
         summaryCard.classList.add('total-updating');
     }
 
+    // Toggle active stream states
+    const cashBlock = document.getElementById('incomeCashBlock');
+    const abaBlock = document.getElementById('incomeAbaBlock');
+    const debtBlock = document.getElementById('incomeDebtBlock');
+
+    if (cashBlock) {
+        if (cUSD > 0 || cKHR > 0) cashBlock.classList.add('active-stream');
+        else cashBlock.classList.remove('active-stream');
+    }
+    if (abaBlock) {
+        if (aUSD > 0 || aKHR > 0) abaBlock.classList.add('active-stream');
+        else abaBlock.classList.remove('active-stream');
+    }
+    if (debtBlock) {
+        if (dUSD > 0 || dKHR > 0) debtBlock.classList.add('active-stream');
+        else debtBlock.classList.remove('active-stream');
+    }
+
     totalDisplay.textContent = '$' + totalUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     if (totalKHRDisplay) {
         totalKHRDisplay.textContent = totalKHR.toLocaleString() + ' ៛';
-        totalKHRDisplay.className = 'small fw-bold position-relative mt-1 fs-6';
     }
 }
 
+function updateExpenseLiveTotal() {
+    const cUSD = parseFloat(document.getElementById('expenseAmountCash')?.value) || 0;
+    const cKHR = parseFloat(document.getElementById('expenseAmountCashKHR')?.value) || 0;
+    const aUSD = parseFloat(document.getElementById('expenseAmountAba')?.value) || 0;
+    const aKHR = parseFloat(document.getElementById('expenseAmountAbaKHR')?.value) || 0;
+    const dUSD = parseFloat(document.getElementById('expenseAmountDebt')?.value) || 0;
+    const dKHR = parseFloat(document.getElementById('expenseAmountDebtKHR')?.value) || 0;
 
-function updateDateHint() {
-    const dateInput = document.getElementById('transDate');
-    const hint = document.getElementById('transDateHint');
+    const totalDisplay = document.getElementById('expenseTotalDisplay');
+    const totalKHRDisplay = document.getElementById('expenseTotalKHR');
+    const summaryCard = document.querySelector('#expenseModal .summary-card-premium');
+
+    if (!totalDisplay) return;
+
+    const rate = EXCHANGE_RATE_EXPENSE;
+
+    const totalUSD = cUSD + aUSD + dUSD + ((cKHR + aKHR + dKHR) / rate);
+    const totalKHR = (cUSD + aUSD + dUSD) * rate + (cKHR + aKHR + dKHR);
+
+    if (summaryCard) {
+        summaryCard.classList.remove('total-updating');
+        void summaryCard.offsetWidth; // trigger reflow
+        summaryCard.classList.add('total-updating');
+    }
+
+    // Toggle active stream states
+    const cashBlock = document.getElementById('expenseCashBlock');
+    const abaBlock = document.getElementById('expenseAbaBlock');
+    const debtBlock = document.getElementById('expenseDebtBlock');
+
+    if (cashBlock) {
+        if (cUSD > 0 || cKHR > 0) cashBlock.classList.add('active-stream');
+        else cashBlock.classList.remove('active-stream');
+    }
+    if (abaBlock) {
+        if (aUSD > 0 || aKHR > 0) abaBlock.classList.add('active-stream');
+        else abaBlock.classList.remove('active-stream');
+    }
+    if (debtBlock) {
+        if (dUSD > 0 || dKHR > 0) debtBlock.classList.add('active-stream');
+        else debtBlock.classList.remove('active-stream');
+    }
+
+    totalDisplay.textContent = '$' + totalUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (totalKHRDisplay) {
+        totalKHRDisplay.textContent = totalKHR.toLocaleString() + ' ៛';
+    }
+}
+
+function updateIncomeDateHint() {
+    const dateInput = document.getElementById('incomeDate');
+    const hint = document.getElementById('incomeDateHint');
     if (!dateInput || !hint) return;
 
     if (!dateInput.value) {
@@ -1830,15 +2071,33 @@ function updateDateHint() {
 
     const formatted = formatDate(dateInput.value);
     hint.textContent = formatted;
-    hint.classList.add('text-success'); // Change color when valid
+    hint.classList.add('text-success');
 }
 
+function updateExpenseDateHint() {
+    const dateInput = document.getElementById('expenseDate');
+    const hint = document.getElementById('expenseDateHint');
+    if (!dateInput || !hint) return;
 
+    if (!dateInput.value) {
+        hint.textContent = '(dddd-mmmm-yyyy)';
+        hint.classList.remove('text-danger');
+        return;
+    }
+
+    const formatted = formatDate(dateInput.value);
+    hint.textContent = formatted;
+    hint.classList.add('text-danger');
+}
 
 function closeModal() {
-    const modalEl = document.getElementById('transactionModal');
-    const modal = bootstrap.Modal.getInstance(modalEl);
-    if (modal) modal.hide();
+    const incomeModalEl = document.getElementById('incomeModal');
+    const incomeModal = bootstrap.Modal.getInstance(incomeModalEl);
+    if (incomeModal) incomeModal.hide();
+
+    const expenseModalEl = document.getElementById('expenseModal');
+    const expenseModal = bootstrap.Modal.getInstance(expenseModalEl);
+    if (expenseModal) expenseModal.hide();
 }
 
 // ==========================================
@@ -2546,20 +2805,20 @@ window.exportReport = exportReport;
 
 // --- Helper to set category from quick buttons ---
 function setCategory(val) {
-    const expInput = document.getElementById("transExpenseCategory");
+    const expInput = document.getElementById("expenseCategory");
     if (expInput) {
         expInput.value = val;
-        document.getElementById('transAmountCash')?.focus();
-        updateLiveTotal();
+        document.getElementById('expenseAmountCash')?.focus();
+        updateExpenseLiveTotal();
     }
 }
 
 function setIncomeSource(val) {
-    const incInput = document.getElementById("transIncomeSource");
+    const incInput = document.getElementById("incomeSource");
     if (incInput) {
         incInput.value = val;
-        document.getElementById('transAmountCash')?.focus();
-        updateLiveTotal();
+        document.getElementById('incomeAmountCash')?.focus();
+        updateIncomeLiveTotal();
     }
 }
 

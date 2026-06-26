@@ -3,6 +3,11 @@
  * Protects pages from unauthorized access.
  */
 document.addEventListener("DOMContentLoaded", () => {
+    // Bypass authentication check for teacher portal
+    if (window.location.pathname.includes('teacher-portal.html')) {
+        return;
+    }
+
     // Determine if we are on the login page
     const isLoginPage = window.location.pathname.endsWith("/login.html") || window.location.pathname.endsWith("/login") || window.location.pathname === "/";
 

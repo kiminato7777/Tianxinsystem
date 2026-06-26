@@ -17,45 +17,113 @@
     <script src="/js/core/loader-init.js"></script>
     <script src="/js/core/system-core-standard.js"></script>
 
+    <!-- Chart.js CDN for grade statistics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Moul&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Moul&family=Kantumruy+Pro:wght@100..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
+        /* ─── Header Shimmer / Gold Reflection Sweep ─── */
+        @keyframes shimmerSweep {
+            0%   { background-position: -300% center; }
+            28%  { background-position:  300% center; }
+            100% { background-position:  300% center; }
+        }
+        .header-shimmer-text {
+            background: linear-gradient(
+                90deg,
+                #a06000   0%,
+                #d4940e  20%,
+                #f7d060  35%,
+                #ffffff  50%,
+                #f7d060  65%,
+                #d4940e  80%,
+                #a06000 100%
+            );
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            animation: shimmerSweep 5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            display: inline-block;
+            filter: drop-shadow(0 1px 2px rgba(200,134,10,0.4));
+        }
+
+        /* ─── Reflection Sweep Loop 5s ─── */
+        @keyframes reflectionSweep {
+            0% { left: -150%; }
+            30% { left: 150%; }
+            100% { left: 150%; }
+        }
+        .reflection-sweep {
+            position: relative;
+            overflow: hidden;
+        }
+        .reflection-sweep::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.4) 30%,
+                rgba(255, 255, 255, 0.6) 50%,
+                rgba(255, 255, 255, 0.4) 70%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: skewX(-25deg);
+            transition: none;
+            animation: reflectionSweep 5s infinite ease-in-out;
+            pointer-events: none;
+            z-index: 5;
+        }
+
         :root {
             --primary-color: #8a0e5b;
             --primary-gradient: linear-gradient(135deg, #8a0e5b 0%, #b31d7e 100%);
             --secondary-gradient: linear-gradient(135deg, #6e0b49 0%, #8a0e5b 100%);
             --accent-color: #ffc107;
-            --bg-color: #f0f2f5;
+            --bg-color: #f8fafc;
             --card-bg: #ffffff;
-            --text-main: #2d3436;
-            --text-muted: #636e72;
-            --glass-bg: rgba(255, 255, 255, 0.8);
-            --glass-border: rgba(255, 255, 255, 0.3);
-            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.12);
-            --radius-sm: 10px;
-            --radius-md: 16px;
-            --radius-lg: 24px;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 10px 25px rgba(138, 14, 91, 0.05);
+            --shadow-lg: 0 20px 40px rgba(138, 14, 91, 0.08);
+            --radius-sm: 12px;
+            --radius-md: 20px;
+            --radius-lg: 28px;
         }
 
         body {
-            font-family: 'Kantumruy Pro', sans-serif;
+            font-family: 'Kantumruy Pro', 'Inter', sans-serif;
             background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(252, 228, 236, 0.3) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(243, 229, 245, 0.3) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(255, 253, 240, 0.35) 0px, transparent 50%);
             color: var(--text-main);
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
         }
 
         h1,
         h2,
         h3,
         h4,
+        h5,
+        h6,
         .khmer-muol {
             font-family: 'Moul', serif;
             font-weight: 400;
-            /* Moul is naturally bold */
         }
 
         /* Animations */
@@ -64,7 +132,6 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -72,7 +139,7 @@
         }
 
         .animate-fade-in-up {
-            animation: fadeInUp 0.5s ease-out forwards;
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         /* Login Section Enhancement */
@@ -81,25 +148,35 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: radial-gradient(circle at top right, #fdfcfd 0%, #f0f2f5 100%);
+            background: radial-gradient(circle at 10% 20%, rgba(253, 239, 244, 0.6) 0%, rgba(243, 244, 246, 0.8) 100%),
+                        radial-gradient(circle at 90% 80%, rgba(243, 229, 245, 0.5) 0%, rgba(255, 255, 255, 0.8) 100%);
             padding: 20px;
+            position: relative;
         }
 
         .login-card {
             width: 100%;
-            max-width: 450px;
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow-lg);
+            max-width: 460px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 25px 60px rgba(138, 14, 91, 0.12);
             overflow: hidden;
             position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .login-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 30px 70px rgba(138, 14, 91, 0.16);
         }
 
         .login-header {
-            padding: 40px 30px;
+            padding: 45px 35px;
             text-align: center;
-            background: var(--primary-gradient);
+            background: linear-gradient(135deg, #6e0b49 0%, #8a0e5b 100%);
             color: white;
             position: relative;
         }
@@ -141,19 +218,21 @@
 
         .custom-input {
             width: 100%;
-            padding: 12px 15px 12px 45px;
-            border-radius: var(--radius-sm);
-            border: 1.5px solid #e0e6ed;
-            background: #f8fafc;
-            transition: all 0.3s;
+            padding: 14px 15px 14px 48px;
+            border-radius: 14px;
+            border: 1.5px solid #e2e8f0;
+            background: rgba(248, 250, 252, 0.8);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-size: 0.95rem;
+            color: #1e293b;
+            font-weight: 500;
         }
 
         .custom-input:focus {
             outline: none;
             border-color: var(--primary-color);
             background: white;
-            box-shadow: 0 0 0 4px rgba(138, 14, 91, 0.1);
+            box-shadow: 0 0 0 4px rgba(138, 14, 91, 0.12);
         }
 
         .custom-input:focus+i {
@@ -161,55 +240,68 @@
         }
 
         .btn-premium {
-            background: var(--primary-gradient);
+            background: linear-gradient(135deg, #8a0e5b 0%, #b31d7e 100%);
             color: white;
             border: none;
-            padding: 14px;
-            border-radius: var(--radius-sm);
+            padding: 15px;
+            border-radius: 14px;
             font-weight: 600;
             width: 100%;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(138, 14, 91, 0.3);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 6px 20px rgba(138, 14, 91, 0.25);
+            font-family: 'Kantumruy Pro', sans-serif;
+            font-size: 1rem;
         }
 
         .btn-premium:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(138, 14, 91, 0.4);
+            box-shadow: 0 10px 25px rgba(138, 14, 91, 0.35);
             color: white;
+        }
+
+        .btn-premium:active {
+            transform: translateY(1px);
         }
 
         /* Navbar & Portal Body */
         .premium-nav {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--glass-border);
-            padding: 15px 0;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(138, 14, 91, 0.08);
+            padding: 12px 0;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
         }
 
         .stat-card {
-            border-radius: var(--radius-md);
-            padding: 25px;
-            border: none;
-            transition: all 0.3s;
+            border-radius: 24px;
+            padding: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             position: relative;
             overflow: hidden;
             height: 100%;
         }
 
         .stat-card.main {
-            background: var(--primary-gradient);
+            background: linear-gradient(135deg, #8a0e5b 0%, #b31d7e 100%);
             color: white;
-            box-shadow: 0 10px 20px rgba(138, 14, 91, 0.2);
+            border: 1px solid rgba(179, 29, 126, 0.15);
+            box-shadow: 0 12px 30px rgba(138, 14, 91, 0.18);
         }
 
         .stat-card.white {
-            background: white;
-            box-shadow: var(--shadow-sm);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.04);
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-6px);
+            box-shadow: 0 18px 40px rgba(138, 14, 91, 0.08);
+            border-color: rgba(138, 14, 91, 0.25);
         }
 
         .progress-premium {
@@ -227,19 +319,23 @@
 
         /* Student Cards */
         .student-item-card {
-            background: white;
-            border-radius: var(--radius-md);
-            padding: 20px;
-            border: 1px solid #f0f2f5;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 22px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.03);
         }
 
         .student-item-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary-color);
+            transform: translateY(-6px);
+            box-shadow: 0 16px 36px rgba(138, 14, 91, 0.08);
+            border-color: rgba(138, 14, 91, 0.25);
+            background: white;
         }
 
         .student-avatar {
@@ -289,27 +385,33 @@
         }
 
         .search-container {
-            background: white;
-            border-radius: var(--radius-md);
-            padding: 10px;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 15px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.03);
+            margin-bottom: 35px;
         }
 
         .filter-select {
-            border: none;
-            background: #f8fafc;
-            border-radius: var(--radius-sm);
-            padding: 10px 15px;
+            border: 1.5px solid #e2e8f0;
+            background: rgba(248, 250, 252, 0.8);
+            border-radius: 12px;
+            padding: 12px 15px;
             font-size: 0.9rem;
             font-weight: 500;
             color: var(--text-main);
             width: 100%;
+            transition: all 0.3s;
         }
 
         .filter-select:focus {
             outline: none;
-            box-shadow: 0 0 0 2px rgba(138, 14, 91, 0.1);
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(138, 14, 91, 0.1);
         }
 
         /* Settings Table Styling */
@@ -538,16 +640,16 @@
 
         /* Menu Section Styling */
         .menu-wrapper {
-            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            background: linear-gradient(135deg, #fff0f6 0%, #f8f0fc 100%);
             min-height: calc(100vh - 80px);
             padding: 40px 20px;
         }
 
         .menu-title {
-            color: #2e7d32;
+            color: var(--primary-color);
             font-size: 2.5rem;
             margin-bottom: 40px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
         }
 
         .menu-grid {
@@ -560,7 +662,7 @@
 
         .menu-card {
             background: white;
-            border-radius: 12px;
+            border-radius: 18px;
             padding: 30px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
@@ -576,8 +678,8 @@
 
         .menu-card:hover {
             transform: scale(1.05);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            border-color: #2e7d32;
+            box-shadow: 0 15px 35px rgba(138, 14, 91, 0.15);
+            border-color: var(--primary-color);
         }
 
         .menu-icon-container {
@@ -615,13 +717,13 @@
         }
 
         .month-display {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background: #fff0f6;
+            border: 1px solid rgba(138, 14, 91, 0.15);
             padding: 8px 20px;
             border-radius: 8px;
             font-size: 1.2rem;
             font-weight: bold;
-            color: #2e7d32;
+            color: var(--primary-color);
         }
 
         @media (max-width: 768px) {
@@ -751,7 +853,7 @@
             width: 100%;
             max-width: 900px;
             margin: 0 auto;
-            background: url('/img/IG.png') no-repeat center center;
+            background: url('/img/Chinese Full-time.png') no-repeat center center;
             background-size: 100% 100%;
             aspect-ratio: 1080 / 1527; /* Approximate aspect ratio of IG.png */
             position: relative;
@@ -838,7 +940,7 @@
 <body>
 
     <div id="loginSection" class="login-wrapper">
-        <div class="login-card animate-fade-in-up">
+        <div class="login-card animate-fade-in-up reflection-sweep">
             <div class="login-header">
                 <div id="teacher-login-logo-container" class="mb-4 d-flex justify-content-center">
                     <div class="logo-wrapper">
@@ -846,8 +948,8 @@
                              onerror="this.src='/img/logo.jpg'">
                     </div>
                 </div>
-                <h3 class="khmer-muol mb-1">ប្រព័ន្ធគ្រូបង្រៀន</h3>
-                <p class="mb-0 opacity-75">សាលា អន្តរជាតិ ធាន ស៊ីន</p>
+                <h3 class="khmer-muol mb-1"><span class="header-shimmer-text" style="filter: drop-shadow(0 2px 4px rgba(255,255,255,0.25));">ប្រព័ន្ធគ្រូបង្រៀន</span></h3>
+                <p class="mb-0 fw-bold text-white-50"><span class="header-shimmer-text" style="font-size: 0.95rem;">សាលា អន្តរជាតិ ធាន ស៊ីន</span></p>
                 <div class="header-decoration"></div>
             </div>
             <div class="login-body">
@@ -880,7 +982,7 @@
                                 placeholder="បញ្ចូលលេខកូដសម្ងាត់..." inputmode="numeric" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-premium">
+                    <button type="submit" class="btn btn-premium reflection-sweep">
                         ចូលប្រើប្រាស់ (Login) <i class="fi fi-rr-arrow-right ms-2"></i>
                     </button>
                 </form>
@@ -916,7 +1018,7 @@
 
         <div class="menu-wrapper">
             <div class="container text-center">
-                <h1 class="menu-title khmer-muol animate__animated animate__fadeInDown">កម្មវិធីគ្រប់គ្រងពិន្ទុសិស្ស</h1>
+                <h1 class="menu-title khmer-muol animate__animated animate__fadeInDown"><span class="header-shimmer-text">កម្មវិធីគ្រប់គ្រងពិន្ទុសិស្ស</span></h1>
                 <h4 class="text-primary khmer-muol animate__animated animate__fadeInUp mb-4" id="selectedProgramNameTitle">-</h4>
                 
                 <div class="menu-header animate__animated animate__fadeInUp">
@@ -932,37 +1034,37 @@
                 </div>
 
                 <div class="menu-grid">
-                    <div class="menu-card animate__animated animate__zoomIn" style="animation-delay: 0.1s;" onclick="openSettings()">
+                    <div class="menu-card animate__animated animate__zoomIn reflection-sweep" style="animation-delay: 0.1s;" onclick="openSettings()">
                         <div class="menu-icon-container">
                             <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Settings">
                         </div>
                         <div class="menu-label">ការកំណត់</div>
                     </div>
-                    <div class="menu-card animate__animated animate__zoomIn" style="animation-delay: 0.2s;" onclick="showStudentList()">
+                    <div class="menu-card animate__animated animate__zoomIn reflection-sweep" style="animation-delay: 0.2s;" onclick="showStudentList()">
                         <div class="menu-icon-container">
                             <img src="https://cdn-icons-png.flaticon.com/512/3024/3024500.png" alt="Input Score">
                         </div>
                         <div class="menu-label">បញ្ចូលពិន្ទុ</div>
                     </div>
-                    <div class="menu-card animate__animated animate__zoomIn" style="animation-delay: 0.3s;" onclick="showRanking()">
+                    <div class="menu-card animate__animated animate__zoomIn reflection-sweep" style="animation-delay: 0.3s;" onclick="showRanking()">
                         <div class="menu-icon-container">
                             <img src="https://cdn-icons-png.flaticon.com/512/2583/2583344.png" alt="Ranking">
                         </div>
                         <div class="menu-label">ចំណាត់ថ្នាក់</div>
                     </div>
-                    <div class="menu-card animate__animated animate__zoomIn" style="animation-delay: 0.4s;">
+                    <div class="menu-card animate__animated animate__zoomIn reflection-sweep" style="animation-delay: 0.4s;">
                         <div class="menu-icon-container">
                             <img src="https://cdn-icons-png.flaticon.com/512/2991/2991108.png" alt="Score List">
                         </div>
                         <div class="menu-label">បញ្ជីពិន្ទុ</div>
                     </div>
-                    <div class="menu-card animate__animated animate__zoomIn" style="animation-delay: 0.5s;">
+                    <div class="menu-card animate__animated animate__zoomIn reflection-sweep" style="animation-delay: 0.5s;">
                         <div class="menu-icon-container">
                             <img src="https://cdn-icons-png.flaticon.com/512/1055/1055644.png" alt="Reports">
                         </div>
                         <div class="menu-label">របាយការណ៍</div>
                     </div>
-                    <div class="menu-card animate__animated animate__zoomIn" style="animation-delay: 0.6s;">
+                    <div class="menu-card animate__animated animate__zoomIn reflection-sweep" style="animation-delay: 0.6s;">
                         <div class="menu-icon-container">
                             <img src="https://cdn-icons-png.flaticon.com/512/2436/2436702.png" alt="Certificates">
                         </div>
@@ -1025,8 +1127,8 @@
 
             <div id="inputScoreView">
                 <div class="row g-4 mb-5">
-                    <div class="col-lg-4">
-                        <div class="stat-card main">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card main reflection-sweep">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <h6 class="opacity-75 mb-3 fw-bold">សិស្សសរុបរួម</h6>
@@ -1037,8 +1139,8 @@
                             <div class="mt-4 small fw-medium">ចំនួនសិស្សសរុបទាំងអស់ក្នុងថ្នាក់សកម្ម</div>
                         </div>
                     </div>
-                    <div class="col-lg-8">
-                        <div class="stat-card white">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="stat-card white reflection-sweep">
                             <div class="d-flex flex-column h-100 justify-content-center">
                                 <div class="d-flex justify-content-between align-items-end mb-3">
                                     <div>
@@ -1065,6 +1167,16 @@
                                         <span class="small text-muted">នៅសល់: <b class="text-dark"
                                                 id="remainingCount">0</b></span>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="stat-card white reflection-sweep" style="min-height: 180px;">
+                            <div class="d-flex flex-column h-100 justify-content-center">
+                                <h6 class="khmer-muol text-primary mb-2" style="font-size: 0.95rem;"><i class="fi fi-rr-chart-pie text-warning me-1"></i> កម្រិតលទ្ធផលសិក្សា (Grade Distribution)</h6>
+                                <div class="chart-container flex-grow-1" style="position: relative; height: 110px; width: 100%;">
+                                    <canvas id="gradeDistributionChart"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -1477,7 +1589,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="/js/core/firebase-config.js"></script>
-    <script src="/js/core/auth-check.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
