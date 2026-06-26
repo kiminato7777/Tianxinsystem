@@ -1571,9 +1571,14 @@ function viewTransaction(id, index) {
     const item = transactionsData.find(t => t.id === id);
     if (!item) return;
 
-    const typeLabel = item.type === 'income' ? 'ចំណូល (Income)' : 'ចំណាយ (Expense)';
-    const typeColor = item.type === 'income' ? '#059669' : '#e11d48';
-
+    // Modern color themes based on type
+    const isIncome = item.type === 'income';
+    const themeBgStart = isIncome ? '#059669' : '#e11d48';
+    const themeBgEnd = isIncome ? '#10b981' : '#f43f5e';
+    const themeLight = isIncome ? '#ecfdf5' : '#fff1f2';
+    const themeBorder = isIncome ? '#a7f3d0' : '#fecdd3';
+    const typeLabel = isIncome ? 'ចំណូល (Income)' : 'ចំណាយ (Expense)';
+    
     // Formatted Sequential ID
     const formattedId = "TX" + String(index || 0).padStart(4, '0');
 
@@ -1590,59 +1595,79 @@ function viewTransaction(id, index) {
     const displayKHR = (item.amountKHR !== undefined ? item.amountKHR : (item.originalCurrency === 'KHR' ? item.originalAmount : 0));
 
     let detailsHtml = `
-        <div class="text-start" style="font-family: 'Kantumruy Pro', sans-serif;">
-            <!-- Modal Header -->
-            <div class="p-4 border-bottom position-relative" style="background: linear-gradient(135deg, ${typeColor}10, #ffffff);">
-                <div class="position-absolute top-0 end-0 p-3">
-                    <span class="badge bg-light text-dark border px-3 py-2 shadow-sm" style="font-family: 'Inter', sans-serif;">ID: <span class="fw-bold">${formattedId}</span></span>
-                </div>
-                <div class="d-flex align-items-center mb-2">
-                    <div class="badge rounded-pill px-3 py-2 me-3 shadow-sm" style="background: ${typeColor}; color: #fff; font-weight: 600; font-size: 0.85rem;">
-                        <i class="fi ${item.type === 'income' ? 'fi-rr-arrow-trend-up' : 'fi-rr-arrow-trend-down'} me-1"></i> ${typeLabel}
+        <div class="text-start shadow-lg" style="font-family: 'Kantumruy Pro', sans-serif; border-radius: 24px; overflow: hidden; background: #ffffff; position: relative;">
+            
+            <!-- Modern Gradient Header -->
+            <div class="p-4 position-relative" style="background: linear-gradient(135deg, ${themeBgStart}, ${themeBgEnd}); color: white;">
+                
+                <!-- Custom Close Button -->
+                <button onclick="Swal.close()" class="btn btn-sm btn-light position-absolute shadow-sm" style="top: 15px; right: 15px; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; z-index: 10; opacity: 0.9;">
+                    <i class="fi fi-rr-cross text-dark" style="font-size: 0.8rem;"></i>
+                </button>
+
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="d-flex gap-2 align-items-center">
+                        <div class="badge rounded-pill px-3 py-2 shadow-sm" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); color: #fff; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.3);">
+                            <i class="fi ${isIncome ? 'fi-rr-arrow-trend-up' : 'fi-rr-arrow-trend-down'} me-1"></i> ${typeLabel}
+                        </div>
+                        <div class="badge rounded-pill px-3 py-2 shadow-sm" style="background: rgba(0,0,0,0.15); backdrop-filter: blur(5px); color: #fff; font-weight: 500; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.15);">
+                            <i class="fi fi-rr-calendar-lines me-1"></i> ថ្ងៃទី ${formatDate(item.date).replace('ថ្ងៃទី ', '')}
+                        </div>
                     </div>
-                    <span class="text-muted small fw-bold"><i class="fi fi-rr-calendar-lines me-1 text-primary"></i> ${formatDate(item.date)}</span>
+                    <div class="badge bg-white text-dark px-3 py-2 shadow-sm" style="font-family: 'Kantumruy Pro', 'Inter', sans-serif; border-radius: 12px; margin-right: 40px; font-size: 0.85rem;">
+                        លេខវិក័យប័ត្រ: <span class="fw-bold" style="font-family: 'Inter', sans-serif;">${formattedId}</span>
+                    </div>
                 </div>
-                <h1 class="fw-bolder mb-0 mt-3" style="color: #0f172a; font-family: 'Inter', sans-serif; font-size: 2.8rem; letter-spacing: -1px;">
-                    <span style="font-size: 1.5rem; color: #64748b; vertical-align: top; margin-top: 8px; display: inline-block;">$</span>${displayUSD.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                
+                <h1 class="fw-bolder mb-0 mt-1" style="color: white; font-family: 'Inter', sans-serif; font-size: 3.2rem; letter-spacing: -1px; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <span style="font-size: 1.5rem; opacity: 0.8; vertical-align: top; margin-top: 8px; display: inline-block;">$</span>${displayUSD.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </h1>
-                <div class="text-primary fw-bold fs-5 mt-1" style="font-family: 'Inter', sans-serif;"><span style="color: #64748b; font-size: 1rem;">៛</span> ${displayKHR.toLocaleString()}</div>
+                <div class="fw-bold fs-5 mt-1" style="font-family: 'Inter', sans-serif; color: rgba(255,255,255,0.9);">
+                    <span style="font-size: 1rem; opacity: 0.7;">៛</span> ${displayKHR.toLocaleString()}
+                </div>
+                
+                <!-- Decorative Circle -->
+                <div style="position: absolute; right: -20px; bottom: -40px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; pointer-events: none;"></div>
+                <div style="position: absolute; right: 80px; top: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%; pointer-events: none;"></div>
             </div>
 
             <div class="row g-0">
                 <!-- Left Section: Financial Breakdown -->
-                <div class="col-md-5 p-4" style="background: #f8fafc; border-right: 1px dashed #e2e8f0;">
-                    <h6 class="fw-bold text-muted small mb-3 text-uppercase" style="letter-spacing: 0.05em;"><i class="fi fi-rr-chart-pie-alt me-2 text-primary"></i>បំណែងចែកប្រាក់ (Breakdown)</h6>
+                <div class="col-md-5 p-4" style="background: ${themeLight}; border-right: 1px solid rgba(0,0,0,0.05);">
+                    <h6 class="fw-bold small mb-4 text-uppercase d-flex align-items-center" style="color: ${themeBgStart}; letter-spacing: 0.05em;">
+                        <i class="fi fi-rr-chart-pie-alt me-2 fs-5"></i>បំណែងចែកប្រាក់
+                    </h6>
                     
-                    <div class="d-flex flex-column gap-2">
-                        <div class="p-3 bg-white rounded-3 border shadow-sm d-flex justify-content-between align-items-center transition-all hover-shadow">
+                    <div class="d-flex flex-column gap-3">
+                        <div class="p-3 bg-white rounded-4 border-0 shadow-sm d-flex justify-content-between align-items-center transition-all hover-shadow" style="border-left: 4px solid #10b981 !important;">
                             <div class="d-flex align-items-center">
-                                <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 38px; height: 38px;"><i class="fi fi-rr-money-bill-wave fs-5"></i></div>
+                                <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 42px; height: 42px;"><i class="fi fi-rr-money-bill-wave fs-5"></i></div>
                                 <span class="text-dark small fw-bold">សាច់ប្រាក់ (Cash)</span>
                             </div>
                             <div class="text-end">
-                                <div class="fw-bold text-dark" style="font-family: 'Inter', sans-serif; font-size: 1.1rem;">$${cUSD.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
+                                <div class="fw-bold text-dark" style="font-family: 'Inter', sans-serif; font-size: 1.15rem;">$${cUSD.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
                                 <div class="small text-muted" style="font-family: 'Inter', sans-serif; font-size: 0.8rem;">${cKHR.toLocaleString()} ៛</div>
                             </div>
                         </div>
 
-                        <div class="p-3 bg-white rounded-3 border shadow-sm d-flex justify-content-between align-items-center transition-all hover-shadow">
+                        <div class="p-3 bg-white rounded-4 border-0 shadow-sm d-flex justify-content-between align-items-center transition-all hover-shadow" style="border-left: 4px solid #0ea5e9 !important;">
                             <div class="d-flex align-items-center">
-                                <div class="bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 38px; height: 38px;"><i class="fi fi-rr-bank fs-5"></i></div>
+                                <div class="bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 42px; height: 42px;"><i class="fi fi-rr-bank fs-5"></i></div>
                                 <span class="text-dark small fw-bold">ធនាគារ (ABA)</span>
                             </div>
                             <div class="text-end">
-                                <div class="fw-bold text-dark" style="font-family: 'Inter', sans-serif; font-size: 1.1rem;">$${aUSD.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
+                                <div class="fw-bold text-dark" style="font-family: 'Inter', sans-serif; font-size: 1.15rem;">$${aUSD.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
                                 <div class="small text-muted" style="font-family: 'Inter', sans-serif; font-size: 0.8rem;">${aKHR.toLocaleString()} ៛</div>
                             </div>
                         </div>
 
-                        <div class="p-3 rounded-3 border shadow-sm d-flex justify-content-between align-items-center transition-all hover-shadow ${ (dUSD > 0 || dKHR > 0) ? 'bg-warning bg-opacity-10 border-warning' : 'bg-white border-light' }">
+                        <div class="p-3 rounded-4 border-0 shadow-sm d-flex justify-content-between align-items-center transition-all hover-shadow ${ (dUSD > 0 || dKHR > 0) ? 'bg-white' : 'bg-white' }" style="border-left: 4px solid ${ (dUSD > 0 || dKHR > 0) ? '#f59e0b' : '#cbd5e1' } !important;">
                             <div class="d-flex align-items-center">
-                                <div class="${ (dUSD > 0 || dKHR > 0) ? 'bg-warning bg-opacity-25 text-warning' : 'bg-secondary bg-opacity-10 text-secondary' } rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 38px; height: 38px;"><i class="fi fi-rr-time-past fs-5"></i></div>
+                                <div class="${ (dUSD > 0 || dKHR > 0) ? 'bg-warning bg-opacity-25 text-warning' : 'bg-secondary bg-opacity-10 text-secondary' } rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 42px; height: 42px;"><i class="fi fi-rr-time-past fs-5"></i></div>
                                 <span class="${ (dUSD > 0 || dKHR > 0) ? 'text-warning' : 'text-secondary' } small fw-bold">ជំពាក់ (Debt)</span>
                             </div>
                             <div class="text-end">
-                                <div class="fw-bold ${ (dUSD > 0 || dKHR > 0) ? 'text-warning' : 'text-secondary' }" style="font-family: 'Inter', sans-serif; font-size: 1.1rem;">$${dUSD.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
+                                <div class="fw-bold ${ (dUSD > 0 || dKHR > 0) ? 'text-warning' : 'text-secondary' }" style="font-family: 'Inter', sans-serif; font-size: 1.15rem;">$${dUSD.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
                                 <div class="small ${ (dUSD > 0 || dKHR > 0) ? 'text-warning' : 'text-secondary' }" style="font-family: 'Inter', sans-serif; font-size: 0.8rem;">${dKHR.toLocaleString()} ៛</div>
                             </div>
                         </div>
@@ -1650,61 +1675,51 @@ function viewTransaction(id, index) {
                 </div>
 
                 <!-- Right Section: Details -->
-                <div class="col-md-7 p-4 bg-white">
-                    <h6 class="fw-bold text-muted small mb-4 text-uppercase border-bottom pb-2" style="letter-spacing: 0.05em;"><i class="fi fi-rr-document text-primary me-2"></i>ព័ត៌មានលម្អិត (Details)</h6>
+                <div class="col-md-7 p-4 bg-white position-relative">
+                    <h6 class="fw-bold text-muted small mb-4 text-uppercase border-bottom pb-3" style="letter-spacing: 0.05em;"><i class="fi fi-rr-document text-primary me-2"></i>ព័ត៌មានលម្អិត (Details)</h6>
                     
                     <div class="row g-3">
                         <div class="col-12">
-                            ${(() => {
-                                const isIncome = item.type === 'income';
-                                const catBg = isIncome ? '#eff6ff' : '#fff1f2';
-                                const catBorder = isIncome ? '#bfdbfe' : '#fecdd3';
-                                const catIconColor = isIncome ? '#3b82f6' : '#e11d48';
-                                const catTextColor = isIncome ? '#1e3a8a' : '#be123c';
-                                return `
-                                <div class="p-3 rounded-4 shadow-sm transition-all" style="background: ${catBg}; border: 1px solid ${catBorder};">
-                                    <label class="small d-block mb-1 fw-bold" style="color: ${catIconColor}; letter-spacing: 0.3px;"><i class="fi fi-rr-tags me-1"></i> ចំណាត់ថ្នាក់ (Category)</label>
-                                    <div class="fw-bolder" style="font-size: 1.25rem; color: ${catTextColor};">${item.category}</div>
-                                </div>
-                                `;
-                            })()}
+                            <div class="p-3 rounded-4 transition-all" style="background: ${themeLight}; border: 1px solid ${themeBorder}; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+                                <label class="small d-block mb-1 fw-bold" style="color: ${themeBgStart}; letter-spacing: 0.3px;"><i class="fi fi-rr-tags me-1"></i> ចំណាត់ថ្នាក់ (Category)</label>
+                                <div class="fw-bolder fs-5" style="color: ${themeBgEnd};">${item.category}</div>
+                            </div>
                         </div>
 
                         <div class="col-6">
-                            <div class="p-3 border rounded-4 h-100 shadow-sm bg-white" style="border-color: #e2e8f0 !important;">
-                                <label class="small d-block mb-1 text-muted"><i class="fi fi-rr-user me-1 text-secondary"></i> ${item.type === 'income' ? 'អ្នកបង់ប្រាក់/ប្រភព' : 'អ្នកចំណាយ'}</label>
-                                <div class="fw-bold text-dark text-truncate fs-6" style="color: #334155 !important;" title="${item.payer || '-'}">${item.payer || '-'}</div>
+                            <div class="p-3 rounded-4 h-100 shadow-sm" style="background: #f8fafc; border: 1px solid #f1f5f9;">
+                                <label class="small d-block mb-1 text-muted fw-bold"><i class="fi fi-rr-user me-1 text-secondary"></i> ${isIncome ? 'អ្នកបង់ប្រាក់/ប្រភព' : 'អ្នកចំណាយ'}</label>
+                                <div class="fw-bold text-dark text-truncate fs-6" title="${item.payer || '-'}">${item.payer || '-'}</div>
                             </div>
                         </div>
                         
                         <div class="col-6">
-                            <div class="p-3 border rounded-4 h-100 shadow-sm bg-white" style="border-color: #e2e8f0 !important;">
-                                <label class="small d-block mb-1 text-muted"><i class="fi fi-rr-user-check me-1 text-secondary"></i> អ្នកទទួលប្រាក់</label>
-                                <div class="fw-bold text-dark text-truncate fs-6" style="color: #334155 !important;" title="${item.receiver || '-'}">${item.receiver || '-'}</div>
+                            <div class="p-3 rounded-4 h-100 shadow-sm" style="background: #f8fafc; border: 1px solid #f1f5f9;">
+                                <label class="small d-block mb-1 text-muted fw-bold"><i class="fi fi-rr-user-check me-1 text-secondary"></i> អ្នកទទួលប្រាក់</label>
+                                <div class="fw-bold text-dark text-truncate fs-6" title="${item.receiver || '-'}">${item.receiver || '-'}</div>
                             </div>
                         </div>
 
                         ${item.boardingPlace ? `
                         <div class="col-12 mt-3">
-                            <div class="p-3 border border-warning rounded-3 bg-warning bg-opacity-10 shadow-sm">
-                                <label class="text-warning small d-block mb-1 fw-bold"><i class="fa-solid fa-hotel me-1"></i> កន្លែងស្នាក់នៅ/ជំណាក់ (Boarding Info)</label>
+                            <div class="p-3 rounded-4 bg-warning bg-opacity-10 shadow-sm" style="border: 1px solid #fcd34d;">
+                                <label class="text-warning small d-block mb-1 fw-bold"><i class="fa-solid fa-hotel me-1"></i> កន្លែងស្នាក់នៅ/ជំណាក់</label>
                                 <div class="fw-bold text-dark fs-6">${item.boardingPlace}</div>
                             </div>
                         </div>` : ''}
 
                         <div class="col-12 mt-4">
                             <label class="text-muted small fw-bold d-block mb-2 text-uppercase" style="letter-spacing: 0.5px;"><i class="fi fi-rr-comment-alt me-1 text-secondary"></i> ការបរិយាយ (Description)</label>
-                            <div class="p-3 rounded-4 small text-dark shadow-sm" style="background: #f8fafc; min-height: 90px; line-height: 1.7; border: 1px solid #e2e8f0; color: #475569 !important;">
+                            <div class="p-3 rounded-4 small text-dark shadow-sm" style="background: #f8fafc; min-height: 90px; line-height: 1.7; border: 1px solid #f1f5f9; color: #475569 !important;">
                                 ${item.description ? item.description.replace(/\n/g, '<br>') : '<span class="text-muted italic"><i class="fi fi-rr-comment-alt-slash me-1"></i> មិនមានការបរិយាយ...</span>'}
                             </div>
                         </div>
                     </div>
 
-                    <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
-                        <div class="small bg-light px-3 py-1 rounded-pill border">
-                            <i class="fi fi-rr-info text-primary me-1"></i> កត់ត្រាដោយ: <span class="fw-bold text-dark">${item.recorder || 'System'}</span>
+                    <div class="mt-4 pt-3 d-flex justify-content-between align-items-center">
+                        <div class="small bg-light px-3 py-2 rounded-pill shadow-sm text-muted fw-bold">
+                            <i class="fi fi-rr-info text-primary me-1"></i> កត់ត្រាដោយ: <span class="text-dark">${item.recorder || 'System'}</span>
                         </div>
-                        <button class="btn btn-light border shadow-sm px-4 fw-bold text-secondary rounded-pill transition-all hover-shadow" onclick="Swal.close()"><i class="fi fi-rr-cross me-1"></i> បិទ</button>
                     </div>
                 </div>
             </div>
@@ -1712,91 +1727,99 @@ function viewTransaction(id, index) {
     `;
 
     Swal.fire({
-        title: null, // Title embedded in HTML for better design control
         html: detailsHtml,
-        showCloseButton: true,
+        showCloseButton: false, // We use custom close button inside HTML
         showConfirmButton: false,
-        width: '900px', // Horizontal width
+        width: '900px',
         padding: '0',
-        background: '#ffffff',
+        background: 'transparent',
+        backdrop: 'rgba(15, 23, 42, 0.7)',
         customClass: {
             container: 'horizontal-detail-modal',
-            popup: 'rounded-4 overflow-hidden border-0'
+            popup: 'overflow-visible border-0 bg-transparent shadow-none'
         }
     });
 }
 
 function deleteTransaction(id) {
-    if (!confirm("តើអ្នកពិតជាចង់លុបទិន្នន័យនេះមែនទេ? (Are you sure?)")) return;
+    Swal.fire({
+        title: 'តើអ្នកប្រាកដទេ?',
+        text: "តើអ្នកពិតជាចង់លុបទិន្នន័យនេះមែនទេ? (Are you sure?)",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: '<i class="fi fi-rr-trash"></i> បាទ លុបចេញ',
+        cancelButtonText: 'បោះបង់ (Cancel)',
+        customClass: { popup: 'rounded-4' }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            showLoading(true);
 
-    showLoading(true);
+            // Check if it is a system-linked ID
+            if (id.startsWith('reg_')) {
+                // Registration Payment: reg_{key}
+                const studentKey = id.replace('reg_', '');
+                studentsRef.child(studentKey).update({ initialPayment: 0 })
+                    .then(() => {
+                        fetchTransactions(); // Refresh
+                        Swal.fire({icon: 'success', title: 'ជោគជ័យ', text: 'លុបការបង់ប្រាក់ចុះឈ្មោះជោគជ័យ', timer: 1500, showConfirmButton: false});
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        showLoading(false);
+                        Swal.fire({icon: 'error', title: 'បរាជ័យ', text: 'កំហុសក្នុងការលុប (Error deleting)'});
+                    });
 
-    // Check if it is a system-linked ID
-    if (id.startsWith('reg_')) {
-        // Registration Payment: reg_{key}
-        const studentKey = id.replace('reg_', '');
-        studentsRef.child(studentKey).update({ initialPayment: 0 })
-            .then(() => {
-                fetchTransactions(); // Refresh
-                alert("លុបការបង់ប្រាក់ចុះឈ្មោះជោគជ័យ (Registration payment cleared)");
-            })
-            .catch(err => {
-                console.error(err);
+            } else if (id.startsWith('inst_')) {
+                // Installment
+                const parts = id.split('_');
+                const idx = parseInt(parts.pop());
+                parts.shift(); // remove 'inst'
+                const studentKey = parts.join('_');
+
+                studentsRef.child(studentKey).child('installments').once('value')
+                    .then(snapshot => {
+                        let installs = snapshot.val();
+                        if (!installs) {
+                            showLoading(false);
+                            return;
+                        }
+                        
+                        let instArray = Array.isArray(installs) ? installs : Object.values(installs);
+
+                        if (idx >= 0 && idx < instArray.length) {
+                            instArray.splice(idx, 1);
+                            return studentsRef.child(studentKey).update({ installments: instArray });
+                        }
+                    })
+                    .then(() => {
+                        fetchTransactions(); // Refresh
+                        Swal.fire({icon: 'success', title: 'ជោគជ័យ', text: 'លុបប្រវត្តិបង់រំលស់ជោគជ័យ', timer: 1500, showConfirmButton: false});
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        showLoading(false);
+                        Swal.fire({icon: 'error', title: 'បរាជ័យ', text: 'កំហុសក្នុងការលុប (Error deleting)'});
+                    });
+
+            } else if (id.startsWith('sale_')) {
                 showLoading(false);
-                alert("កំហុសក្នុងការលុប (Error deleting)");
-            });
-
-    } else if (id.startsWith('inst_')) {
-        // Installment
-        const parts = id.split('_');
-        const idx = parseInt(parts.pop());
-        parts.shift(); // remove 'inst'
-        const studentKey = parts.join('_');
-
-        studentsRef.child(studentKey).child('installments').once('value')
-            .then(snapshot => {
-                let installs = snapshot.val();
-                if (!installs) {
-                    showLoading(false);
-                    return;
-                }
-                // Convert object to array if needed (though usually array)
-                // If it's an object with keys 0,1,2..., Object.values might lose key association if sparse? 
-                // But for splicing by index we need array. Assuming strictly sequential or object.
-                // Re-fetching entire installments object is safer.
-                // But let's proceed with current logic for now, just adding refresh.
-
-                let instArray = isArray(installs) ? installs : Object.values(installs);
-
-                if (idx >= 0 && idx < instArray.length) {
-                    instArray.splice(idx, 1);
-                    return studentsRef.child(studentKey).update({ installments: instArray });
-                }
-            })
-            .then(() => {
-                fetchTransactions(); // Refresh
-                alert("លុបប្រវត្តិបង់រំលស់ជោគជ័យ (Installment deleted)");
-            })
-            .catch(err => {
-                console.error(err);
-                showLoading(false);
-                alert("កំហុសក្នុងការលុប (Error deleting)");
-            });
-
-    } else if (id.startsWith('sale_')) {
-        alert("មិនអាចលុបការលក់ពីទីនេះបានទេ សូមទៅកាន់ស្តុក (Cannot delete sales from here, please use Inventory)");
-        showLoading(false);
-    } else {
-        transactionsRef.child(id).remove()
-            .then(() => {
-                fetchTransactions(); // Refresh
-            })
-            .catch(err => {
-                console.error(err);
-                showLoading(false);
-                alert("កំហុសក្នុងការលុប (Error deleting)");
-            });
-    }
+                Swal.fire({icon: 'info', title: 'មិនអាចលុបបានទេ', text: 'សូមទៅកាន់ស្តុក (Cannot delete sales from here, please use Inventory)'});
+            } else {
+                transactionsRef.child(id).remove()
+                    .then(() => {
+                        fetchTransactions(); // Refresh
+                        Swal.fire({icon: 'success', title: 'ជោគជ័យ', text: 'លុបទិន្នន័យជោគជ័យ', timer: 1500, showConfirmButton: false});
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        showLoading(false);
+                        Swal.fire({icon: 'error', title: 'បរាជ័យ', text: 'កំហុសក្នុងការលុប (Error deleting)'});
+                    });
+            }
+        }
+    });
 }
 
 // ==========================================
@@ -2377,56 +2400,72 @@ function executeExportReport(type, reporterName, signDateValue) {
         if (totalRowKHR > 0) displayKHR = `${amountPrefix}${totalRowKHR.toLocaleString()} ៛`;
 
         let methods = [];
-        if (i_cashUSD > 0 || i_cashKHR > 0) methods.push(`<span style="color: #059669; font-size: 12px;">សាច់ប្រាក់</span>`);
-        if (i_abaUSD > 0 || i_abaKHR > 0) methods.push(`<span style="color: #0284c7; font-size: 12px;">ABA</span>`);
-        if (i_debtUSD > 0 || i_debtKHR > 0) methods.push(`<span style="color: #d97706; font-size: 12px;">ជំពាក់</span>`);
+        if (i_cashUSD > 0 || i_cashKHR > 0) methods.push(`<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1"><i class="fi fi-rr-money-bill-wave me-1"></i>សាច់ប្រាក់</span>`);
+        if (i_abaUSD > 0 || i_abaKHR > 0) methods.push(`<span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-2 py-1"><i class="fi fi-rr-bank me-1"></i>ABA</span>`);
+        if (i_debtUSD > 0 || i_debtKHR > 0) methods.push(`<span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-1"><i class="fi fi-rr-time-past me-1"></i>ជំពាក់</span>`);
         
-        let paymentMethodHTML = methods.join(' + ');
+        let paymentMethodHTML = methods.join(' ');
         if (methods.length === 0) {
-            paymentMethodHTML = item.paymentMethod === 'aba' ? `<span style="color: #0284c7; font-size: 12px;">ABA</span>` : `<span style="color: #059669; font-size: 12px;">សាច់ប្រាក់</span>`;
+            paymentMethodHTML = item.paymentMethod === 'aba' ? `<span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-2 py-1"><i class="fi fi-rr-bank me-1"></i>ABA</span>` : `<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1"><i class="fi fi-rr-money-bill-wave me-1"></i>សាច់ប្រាក់</span>`;
         }
         
         let payerDisplay = payerName;
         if (i_debtUSD > 0 || i_debtKHR > 0) {
-            payerDisplay += ` <br><span class="badge bg-warning text-dark border border-warning mt-1 shadow-sm" style="font-size: 14px !important;"><i class="fi fi-rr-time-past me-1"></i> ជំពាក់ Debt</span>`;
+            payerDisplay += ` <br><span class="badge bg-warning text-dark border border-warning mt-1 shadow-sm" style="font-size: 11px !important;"><i class="fi fi-rr-time-past me-1"></i> ជំពាក់ Debt</span>`;
         }
 
         let displayDebt = '-';
         if (i_debtUSD > 0 || i_debtKHR > 0) {
             let dParts = [];
-            if (i_debtUSD > 0) dParts.push(`$${i_debtUSD.toLocaleString('en-US', {minimumFractionDigits: 2})}`);
-            if (i_debtKHR > 0) dParts.push(`${i_debtKHR.toLocaleString()} ៛`);
-            displayDebt = `<span style="color:#d97706; font-size:12px;">${dParts.join('<br>')}</span>`;
+            if (i_debtUSD > 0) dParts.push(`<span class="fw-bold">$${i_debtUSD.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>`);
+            if (i_debtKHR > 0) dParts.push(`<span class="fw-bold">${i_debtKHR.toLocaleString()} ៛</span>`);
+            displayDebt = `<div class="d-flex flex-column" style="color: #d97706; font-size: 13px;">${dParts.join('')}</div>`;
         }
 
         return `
-            <tr style="font-weight: bold; font-size: 14px; color: #000;">
-                <td style="text-align: center;">${formatDate(item.date)}</td>
-                <td style="text-align: center;">
-                    <span style="
-                        display: inline-block;
-                        padding: 3px 8px;
-                        border-radius: 6px;
-                        font-size: 12px;
-                        font-weight: 800;
-                        background-color: ${item.type === 'income' ? '#ecfdf5' : '#fef2f2'};
-                        color: ${item.type === 'income' ? '#059669' : '#dc2626'};
-                        border: 1px solid ${item.type === 'income' ? '#6ee7b7' : '#fca5a5'};
-                    ">${typeLabel}</span>
+            <tr class="align-middle" style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s ease;">
+                <td class="text-center">
+                    <div class="text-muted small fw-bold" style="font-family: 'Inter', sans-serif;"><i class="fi fi-rr-calendar-lines me-1"></i>${formatDate(item.date).replace('ថ្ងៃទី ', '')}</div>
                 </td>
-                <td style="text-align: center;">${paymentMethodHTML}</td>
-                <td>${item.category}${item.boardingPlace ? ` (${item.boardingPlace})` : ''}</td>
-                <td>${payerDisplay}</td>
-                <td>${receiverName}</td>
-                <td>${item.description || '-'}</td>
-                <td class="text-end" style="font-weight: 800; background-color: #fffbeb;">
+                <td class="text-center">
+                    ${item.type === 'income' 
+                        ? `<span class="badge rounded-pill px-3 py-2 fw-bold shadow-sm" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(52, 211, 153, 0.05) 100%); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); backdrop-filter: blur(8px); letter-spacing: 0.5px;"><i class="fi fi-rr-arrow-trend-up me-1"></i>ចំណូល</span>`
+                        : `<span class="badge rounded-pill px-3 py-2 fw-bold shadow-sm" style="background: linear-gradient(135deg, rgba(225, 29, 72, 0.15) 0%, rgba(244, 63, 94, 0.05) 100%); color: #e11d48; border: 1px solid rgba(225, 29, 72, 0.2); backdrop-filter: blur(8px); letter-spacing: 0.5px;"><i class="fi fi-rr-arrow-trend-down me-1"></i>ចំណាយ</span>`
+                    }
+                </td>
+                <td class="text-center">
+                    <div class="d-flex flex-wrap justify-content-center gap-1">${paymentMethodHTML}</div>
+                </td>
+                <td>
+                    <div class="fw-bold text-dark" style="font-size: 14px;">${item.category}</div>
+                    ${item.boardingPlace ? `<div class="text-muted small mt-1"><i class="fi fi-rr-marker text-warning me-1"></i>${item.boardingPlace}</div>` : ''}
+                </td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-light rounded-circle p-2 me-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"><i class="fi fi-rr-user text-secondary"></i></div>
+                        <div>
+                            <div class="text-truncate fw-bold text-dark" style="max-width: 150px; font-size: 14px;" title="${payerName}">${payerDisplay}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="text-truncate text-muted fw-bold" style="max-width: 150px; font-size: 13px;" title="${receiverName}">${receiverName}</div>
+                </td>
+                <td>
+                    <div class="text-truncate text-muted small" style="max-width: 150px;" title="${item.description || '-'}">${item.description || '-'}</div>
+                </td>
+                <td class="text-end" style="background-color: ${i_debtUSD > 0 || i_debtKHR > 0 ? '#fffbeb' : 'transparent'};">
                     ${displayDebt}
                 </td>
-                <td class="text-end" style="font-weight: 900; color: ${item.type === 'income' ? '#059669' : '#dc2626'};">
-                    ${displayUSD}
+                <td class="text-end" style="font-family: 'Inter', sans-serif;">
+                    <div class="fw-bolder" style="color: ${item.type === 'income' ? '#059669' : '#dc2626'}; font-size: 16px;">
+                        ${displayUSD}
+                    </div>
                 </td>
-                <td class="text-end" style="font-weight: 900; color: ${item.type === 'income' ? '#059669' : '#dc2626'};">
-                    ${displayKHR}
+                <td class="text-end" style="font-family: 'Inter', sans-serif;">
+                    <div class="fw-bolder" style="color: ${item.type === 'income' ? '#059669' : '#dc2626'}; font-size: 16px;">
+                        ${displayKHR}
+                    </div>
                 </td>
             </tr>
         `;
