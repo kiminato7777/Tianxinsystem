@@ -38,6 +38,7 @@
     <!-- Firebase SDKs (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     
     <!-- Core Config & Security -->
@@ -76,71 +77,6 @@
             background-color: #f0f2f5;
         }
 
-        /* Sidebar enhancement */
-        #sidebar {
-            background: #8a0e5b;
-            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 15px;
-            background: #8a0e5b;
-            font-weight: bold;
-            font-size: 1.1rem;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-            text-align: center;
-        }
-
-        #sidebar-logo {
-            width: 70px;
-            height: 70px;
-            margin-right: 0;
-            margin-bottom: 10px;
-            object-fit: cover;
-            padding: 0;
-            border-radius: 50%;
-        }
-
-        .sidebar-title-text {
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Nav Link Styles */
-        .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
-            padding: 15px 20px;
-            transition: all 0.3s ease;
-            border-left: 5px solid transparent;
-            display: flex;
-            align-items: center;
-        }
-
-        .nav-link i {
-            margin-right: 10px;
-            width: 25px;
-            text-align: center;
-        }
-
-        .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white !important;
-            border-left-color: #ff69b4;
-            padding-left: 25px;
-        }
-
-        .nav-link.active {
-            background: linear-gradient(90deg, #ff69b4, rgba(255, 105, 180, 0.8));
-            color: white !important;
-            font-weight: bold;
-            border-left-color: white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
         /* Glassmorphism Cards */
         .card {
             border: none;
@@ -174,69 +110,97 @@
         /* Table Styling */
         .table-responsive {
             border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow-y: auto;
+            max-height: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            background: white;
+        }
+
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 0;
         }
 
         .table thead th {
-            background: #8a0e5b;
-            /* Update to theme color */
-            background: #8a0e5b;
-            color: white;
-            font-weight: 600;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #64748b;
+            font-weight: 700;
             border: none;
-            padding: 15px;
+            border-bottom: 2px solid #f1f5f9;
+            padding: 18px 15px;
             text-transform: uppercase;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             letter-spacing: 0.5px;
             white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .table tbody tr {
-            transition: background-color 0.2s;
+            transition: all 0.3s ease;
         }
 
         .table tbody tr:hover {
-            background-color: #fff0f5;
-            /* Light pink hover */
+            background-color: #f8fafc;
+            transform: scale(1.002);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            z-index: 2;
+            position: relative;
         }
 
         .table td {
             vertical-align: middle;
-            padding: 12px 15px;
-            border-bottom: 1px solid #f0f0f0;
-            color: #444;
+            padding: 16px 15px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
             font-size: 0.95rem;
+            background: transparent;
         }
 
-        /* Badges */
-        .badge-stock {
-            padding: 5px 10px;
+        /* Modern Pastel Badges */
+        .badge {
+            padding: 8px 12px;
             border-radius: 8px;
-            font-weight: 500;
-            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        
+        .bg-primary {
+            background-color: #e0e7ff !important;
+            color: #4338ca !important;
         }
 
-        .badge-in {
-            background-color: #e3f2fd;
-            color: #1976d2;
+        .bg-secondary {
+            background-color: #f1f5f9 !important;
+            color: #475569 !important;
         }
 
-        .badge-out {
-            background-color: #ffebee;
-            color: #c62828;
+        .bg-danger {
+            background-color: #ffe4e6 !important;
+            color: #e11d48 !important;
         }
 
-        .badge-remain {
-            background-color: #e8f5e9;
-            color: #2e7d32;
+        .bg-success {
+            background-color: #dcfce7 !important;
+            color: #15803d !important;
         }
 
         /* Buttons */
         .btn-primary-custom {
-            background: linear-gradient(45deg, #007bff, #0056b3);
+            background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
             border: none;
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+        }
+        
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.45);
         }
 
         .btn-action {
@@ -336,40 +300,43 @@
         <!-- STATS CARDS -->
         <div class="row g-4 mb-5">
             <div class="col-md-3">
-                <div class="card h-100 border-0 shadow-sm"
-                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                    <div class="card-body">
-                        <h6 class="text-white-50 text-uppercase small ls-1">ស្តុកនៅសល់ (Remaining)</h6>
-                        <h2 class="display-5 fw-bold mb-0" id="totalItems">0</h2>
-                        <i class="fi fi-rr-box-open stat-icon-bg"></i>
+                <div class="card h-100 border-0 shadow-lg position-relative overflow-hidden"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px;">
+                    <div class="card-body p-4 position-relative z-1">
+                        <h6 class="text-white-50 text-uppercase small ls-1 fw-bold mb-3">ស្តុកនៅសល់ (Remaining)</h6>
+                        <h2 class="display-5 fw-bolder mb-0 text-white" id="totalItems" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">0</h2>
                     </div>
+                    <i class="fi fi-rr-box-open position-absolute" style="font-size: 8rem; right: -20px; bottom: -20px; opacity: 0.15; transform: rotate(-15deg); z-index: 0;"></i>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card h-100 border-0 shadow-sm" style="background: white;">
-                    <div class="card-body">
-                        <h6 class="text-muted text-uppercase small ls-1">ស្តុកទាំងអស់ (Total Stock)</h6>
-                        <h2 class="display-5 fw-bold text-primary mb-0" id="statTotalIn">0</h2>
-                        <i class="fi fi-rr-arrow-down stat-icon-bg text-primary"></i>
+                <div class="card h-100 border-0 shadow-lg position-relative overflow-hidden" 
+                    style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-radius: 20px;">
+                    <div class="card-body p-4 position-relative z-1">
+                        <h6 class="text-white-50 text-uppercase small ls-1 fw-bold mb-3">ស្តុកទាំងអស់ (Total Stock)</h6>
+                        <h2 class="display-5 fw-bolder mb-0 text-white" id="statTotalIn" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">0</h2>
                     </div>
+                    <i class="fi fi-rr-arrow-down position-absolute" style="font-size: 8rem; right: -20px; bottom: -20px; opacity: 0.15; transform: rotate(-15deg); z-index: 0;"></i>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card h-100 border-0 shadow-sm" style="background: white;">
-                    <div class="card-body">
-                        <h6 class="text-muted text-uppercase small ls-1">ស្តុកចេញ (Stock Out)</h6>
-                        <h2 class="display-5 fw-bold text-danger mb-0" id="statTotalOut">0</h2>
-                        <i class="fi fi-rr-shopping-cart stat-icon-bg text-danger"></i>
+                <div class="card h-100 border-0 shadow-lg position-relative overflow-hidden" 
+                    style="background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%); color: white; border-radius: 20px;">
+                    <div class="card-body p-4 position-relative z-1">
+                        <h6 class="text-white-50 text-uppercase small ls-1 fw-bold mb-3">ស្តុកចេញ (Stock Out)</h6>
+                        <h2 class="display-5 fw-bolder mb-0 text-white" id="statTotalOut" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">0</h2>
                     </div>
+                    <i class="fi fi-rr-shopping-cart position-absolute" style="font-size: 8rem; right: -20px; bottom: -20px; opacity: 0.15; transform: rotate(-15deg); z-index: 0;"></i>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card h-100 border-0 shadow-sm" style="background: white;">
-                    <div class="card-body">
-                        <h6 class="text-muted text-uppercase small ls-1">តម្លៃសរុប (Total Value)</h6>
-                        <h2 class="display-5 fw-bold text-success mb-0" id="totalCost">$0.00</h2>
-                        <i class="fi fi-rr-dollar stat-icon-bg text-success"></i>
+                <div class="card h-100 border-0 shadow-lg position-relative overflow-hidden" 
+                    style="background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%); color: white; border-radius: 20px;">
+                    <div class="card-body p-4 position-relative z-1">
+                        <h6 class="text-white-50 text-uppercase small ls-1 fw-bold mb-3">តម្លៃសរុប (Total Value)</h6>
+                        <h2 class="display-5 fw-bolder mb-0 text-white" id="totalCost" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">$0.00</h2>
                     </div>
+                    <i class="fi fi-rr-dollar position-absolute" style="font-size: 8rem; right: -20px; bottom: -20px; opacity: 0.15; transform: rotate(-15deg); z-index: 0;"></i>
                 </div>
             </div>
         </div>
@@ -435,6 +402,34 @@
                         border-color: #fb7185 !important;
                         background-color: #ffffff !important;
                         box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.15) !important;
+                    }
+
+                    /* Modern Search Bar */
+                    .search-modern .input-group-text {
+                        background: #f8fafc;
+                        border: 2px solid #e2e8f0;
+                        border-right: none;
+                        border-radius: 50px 0 0 50px;
+                        transition: all 0.3s ease;
+                    }
+                    .search-modern .form-control {
+                        background: #f8fafc;
+                        border: 2px solid #e2e8f0;
+                        border-left: none;
+                        border-radius: 0 50px 50px 0;
+                        padding-left: 0;
+                        font-weight: 500;
+                        transition: all 0.3s ease;
+                    }
+                    .search-modern .form-control:focus, .search-modern .form-control:focus + .input-group-text {
+                        box-shadow: none;
+                        background: #ffffff;
+                        border-color: #3b82f6;
+                    }
+                    .search-modern:focus-within .input-group-text {
+                        background: #ffffff;
+                        border-color: #3b82f6;
+                        color: #3b82f6 !important;
                     }
                     .btn-export-pdf {
                         background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
@@ -591,11 +586,9 @@
                             data-bs-toggle="modal" data-bs-target="#addInventoryModal">
                             <i class="fi fi-rr-plus-circle me-2"></i> បញ្ចូលស្តុកថ្មី
                         </button>
-                        <div class="input-group" style="width: 300px;">
-                            <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3"><i
-                                    class="fi fi-rr-search text-muted"></i></span>
-                            <input type="text" class="form-control border-start-0 rounded-end-pill ps-0"
-                                id="inventorySearchInput" placeholder="ស្វែងរក...">
+                        <div class="input-group search-modern" style="width: 320px;">
+                            <span class="input-group-text ps-4"><i class="fi fi-rr-search text-muted"></i></span>
+                            <input type="text" class="form-control" id="inventorySearchInput" placeholder="ស្វែងរកទិន្នន័យ...">
                         </div>
                     </div>
                 </div>
@@ -605,7 +598,7 @@
                     <div class="tab-pane fade show active" id="pills-stock" role="tabpanel" tabindex="0">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0" id="inventoryTable">
-                                <thead class="table-dark">
+                                <thead>
                                     <tr>
                                         <th class="ps-4">#</th>
                                         <th>ស្តុកចាស់ (Old)</th>
@@ -645,7 +638,7 @@
                         </div>
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0" id="salesTable">
-                                <thead class="bg-light">
+                                <thead>
                                     <tr>
                                         <th class="ps-4">#</th>
                                         <th>កាលបរិច្ឆេទលក់</th>

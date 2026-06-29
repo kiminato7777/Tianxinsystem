@@ -154,7 +154,7 @@
                             <div>
                                 <h6 class="text-dark fw-bold mb-1" style="font-size: 0.95rem;">ផ្លាស់ប្តូររូបថត</h6>
                                 <div class="d-flex gap-3 mt-1">
-                                    <a href="#" class="text-decoration-none text-danger small fw-bold hover-dark d-flex align-items-center gap-1" onclick="document.getElementById('settingPhotoUpload').value=''; document.getElementById('settingPreviewImage').src='https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff';"><i class="fi fi-rr-trash"></i> លុប</a>
+                                    <a href="#" class="text-decoration-none text-danger small fw-bold hover-dark d-flex align-items-center gap-1" onclick="handleSettingPhotoDelete(event)"><i class="fi fi-rr-trash"></i> លុប</a>
                                     <a href="#" class="text-decoration-none text-primary small fw-bold hover-dark d-flex align-items-center gap-1" onclick="document.getElementById('settingPhotoUpload').click()"><i class="fi fi-rr-upload"></i> ជ្រើសរើសថ្មី</a>
                                 </div>
                             </div>
@@ -173,7 +173,7 @@
                         </div>
 
                         <div class="d-flex justify-content-end gap-3 mt-4">
-                            <button class="btn btn-settings-cancel"><i class="fi fi-rr-cross me-2"></i>បោះបង់</button>
+                            <button class="btn btn-settings-cancel" onclick="handleSettingPhotoCancel(event)"><i class="fi fi-rr-cross me-2"></i>បោះបង់</button>
                             <button class="btn btn-settings-save" onclick="savePhoto()"><i class="fi fi-rr-cloud-check me-2"></i>រក្សាទុករូបថត</button>
                         </div>
                     </div>
@@ -331,6 +331,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="/js/core/firebase-config.js"></script>
+    <script src="/js/core/storage-utils.js"></script>
     <script src="/js/core/auth-check.js"></script>
     <script src="/js/core/receiver-utils.js"></script>
     <script src="/js/core/sidebar.js"></script>
@@ -376,11 +377,104 @@
         });
 
         let newPhotoFile = null;
+        let removePhotoRequested = false;
+
+        async function handleSettingPhotoDelete(e) {
+            e.preventDefault();
+
+            // If a local file is currently selected but not saved, just cancel the selection
+            if (newPhotoFile) {
+                handleSettingPhotoCancel(e);
+                return;
+            }
+
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                Swal.fire('បរាជ័យ (Failed)', 'អ្នកមិនទាន់បានចូលគណនីទេ។ សូមចូលគណនីម្ដងទៀត!', 'error');
+                return;
+            }
+
+            const data = window.currentUserProfileData;
+            if (!data || !data.imageUrl || data.imageUrl === 'undefined' || data.imageUrl === 'null') {
+                Swal.fire('ព័ត៌មាន (Info)', 'អ្នកមិនមានរូបថតដើម្បីលុបនោះទេ! (No photo to delete!)', 'info');
+                return;
+            }
+
+            const confirmResult = await Swal.fire({
+                title: 'តើអ្នកពិតជាចង់លុបរូបថតមែនទេ?',
+                text: 'សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fi fi-rr-trash"></i> បាទ/ចាស លុប!',
+                cancelButtonText: 'បោះបង់',
+                customClass: { popup: 'rounded-4' }
+            });
+
+            if (confirmResult.isConfirmed) {
+                try {
+                    // Try to delete the actual file from Firebase Storage
+                    if (data.imageUrl && data.imageUrl.includes('firebasestorage')) {
+                        try {
+                            const storageRef = firebase.storage().refFromURL(data.imageUrl);
+                            await storageRef.delete();
+                            console.log("Deleted image from Firebase Storage.");
+                        } catch (storageErr) {
+                            console.warn("Could not delete from storage (might be already deleted or wrong permissions):", storageErr);
+                        }
+                    }
+
+                    await firebase.database().ref('users/' + user.uid).update({ imageUrl: null });
+                    await user.updateProfile({ photoURL: null });
+                    
+                    let session = JSON.parse(localStorage.getItem('userSession') || '{}');
+                    delete session.photoURL;
+                    delete session.imageUrl;
+                    localStorage.setItem('userSession', JSON.stringify(session));
+
+                    document.getElementById('settingPhotoUpload').value = '';
+                    document.getElementById('settingPreviewImage').src = 'https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff';
+                    newPhotoFile = null;
+                    removePhotoRequested = false;
+
+                    if (window.currentUserProfileData) {
+                        delete window.currentUserProfileData.imageUrl;
+                    }
+
+                    Swal.fire({
+                        title: 'បានលុប!', 
+                        text: 'រូបថតរបស់អ្នកត្រូវបានលុបចេញប្រព័ន្ធ។', 
+                        icon: 'success',
+                        customClass: { popup: 'rounded-4' }
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } catch (error) {
+                    console.error(error);
+                    Swal.fire('បរាជ័យ', 'មិនអាចលុបរូបថតបានទេ៖ ' + error.message, 'error');
+                }
+            }
+        }
+
+        function handleSettingPhotoCancel(e) {
+            e.preventDefault();
+            document.getElementById('settingPhotoUpload').value = '';
+            newPhotoFile = null;
+            removePhotoRequested = false;
+            const data = window.currentUserProfileData;
+            if (data && data.imageUrl && data.imageUrl !== 'undefined' && data.imageUrl !== 'null') {
+                document.getElementById('settingPreviewImage').src = data.imageUrl;
+            } else {
+                document.getElementById('settingPreviewImage').src = 'https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff';
+            }
+        }
 
         function handleSettingPhotoSelect(e) {
             const file = e.target.files[0];
             if (!file) return;
             newPhotoFile = file;
+            removePhotoRequested = false;
             const reader = new FileReader();
             reader.onload = function(evt) {
                 document.getElementById('settingPreviewImage').src = evt.target.result;
@@ -396,7 +490,16 @@
 
             try {
                 const user = firebase.auth().currentUser;
-                if (!user) throw new Error("No user logged in");
+                if (!user) {
+                    Swal.fire({
+                        title: 'បរាជ័យ (Failed)',
+                        text: 'អ្នកមិនទាន់បានចូលគណនីទេ។ សូមចូលគណនីម្ដងទៀត! (No user logged in)',
+                        icon: 'error'
+                    });
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    return;
+                }
 
                 const updates = {
                     name: document.getElementById('settingFullName').value,
@@ -445,7 +548,7 @@
         }
 
         async function savePhoto() {
-            if (!newPhotoFile) {
+            if (!newPhotoFile && !removePhotoRequested) {
                 Swal.fire({
                     title: 'ព័ត៌មាន! (Info)',
                     text: 'សូមជ្រើសរើសរូបថតជាមុនសិន! (Please select a photo to upload first.)',
@@ -463,14 +566,37 @@
 
             try {
                 const user = firebase.auth().currentUser;
-                if (!user) throw new Error("No user logged in");
+                if (!user) {
+                    Swal.fire({
+                        title: 'បរាជ័យ (Failed)',
+                        text: 'អ្នកមិនទាន់បានចូលគណនីទេ។ សូមចូលគណនីម្ដងទៀត! (No user logged in)',
+                        icon: 'error'
+                    });
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    return;
+                }
 
-                // Use centralized uploadImage utility → auto-compresses via HTML5 Canvas (max 800px, 75% JPEG quality)
-                const downloadURL = await window.uploadImage(newPhotoFile, user.uid, 'profile_pictures');
-                if (!downloadURL) throw new Error('Image upload failed or returned null.');
+                if (removePhotoRequested) {
+                    await firebase.database().ref('users/' + user.uid).update({ imageUrl: null });
+                    await user.updateProfile({ photoURL: null });
+                    
+                    let session = JSON.parse(localStorage.getItem('userSession') || '{}');
+                    delete session.photoURL;
+                    delete session.imageUrl;
+                    localStorage.setItem('userSession', JSON.stringify(session));
+                } else {
+                    // Use centralized uploadImage utility → auto-compresses via HTML5 Canvas (max 800px, 75% JPEG quality)
+                    const downloadURL = await window.uploadImage(newPhotoFile, user.uid, 'profile_pictures');
+                    if (!downloadURL) throw new Error('Image upload failed or returned null.');
 
-                await firebase.database().ref('users/' + user.uid).update({ imageUrl: downloadURL });
-                await user.updateProfile({ photoURL: downloadURL });
+                    await firebase.database().ref('users/' + user.uid).update({ imageUrl: downloadURL });
+                    await user.updateProfile({ photoURL: downloadURL });
+                    
+                    let session = JSON.parse(localStorage.getItem('userSession') || '{}');
+                    session.imageUrl = downloadURL;
+                    localStorage.setItem('userSession', JSON.stringify(session));
+                }
 
                 Swal.fire({
                     title: 'ជោគជ័យ! (Success)',

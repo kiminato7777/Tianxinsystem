@@ -20,6 +20,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Moul&family=Kantumruy+Pro:wght@100..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="/css/style.css">
 
     <style>
         :root {
@@ -56,58 +57,6 @@
         }
 
         .khmer-muol { font-family: 'Moul', serif; font-weight: 400; }
-
-        #sidebar {
-            width: 250px;
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            z-index: 1050;
-            background: linear-gradient(180deg, #8a0e5b 0%, #6b0a47 100%);
-            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease;
-        }
-
-        #main-content {
-            margin-left: 250px;
-            padding: 25px;
-            min-height: 100vh;
-            transition: all 0.3s ease;
-        }
-
-        /* Sidebar Logo Styling */
-        #sidebar-logo {
-            width: 70px;
-            height: 70px;
-            margin-bottom: 10px;
-            object-fit: cover;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        #sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.9);
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        #sidebar .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
-        .sidebar-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 15px;
-        }
 
         /* Header Style Like Data Tracking */
         .main-header {
@@ -395,9 +344,6 @@
         .animate-fade { animation: fadeIn 0.4s ease-in-out; }
 
         @media (max-width: 1200px) {
-            #main-content { margin-left: 0; padding: 15px; padding-bottom: 90px; }
-            #sidebar { transform: translateX(-100%); }
-            body.sidebar-open #sidebar { transform: translateX(0); }
             
             .main-header {
                 flex-direction: column;
@@ -672,6 +618,7 @@
     <!-- Firebase & Core Scripts -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     
     <script src="/js/core/firebase-config.js"></script>

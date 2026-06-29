@@ -11,7 +11,7 @@ let itemToSellId = null;
 
 let stockCurrentPage = 1;
 let salesCurrentPage = 1;
-const pageSize = 20;
+const pageSize = 50;
 
 // 1. Initialize Data Listeners IMMEDIATELY for speed
 if (typeof inventoryRef !== 'undefined') setupInventoryListener();
@@ -34,7 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
             dateFormat: "d-m-Y", // Value format DD-MM-YYYY
             defaultDate: "today",
             onReady: function(selectedDates, dateStr, instance) {
-                instance.calendarContainer.classList.add("red-theme"); 
+                if (instance && instance.calendarContainer) {
+                    instance.calendarContainer.classList.add("red-theme"); 
+                }
             }
         });
     }
@@ -123,9 +125,9 @@ function renderSalesTable() {
     const infoEl = document.getElementById('salesPaginationInfo');
     if (infoEl) {
         if (totalItems > 0) {
-            infoEl.innerText = `បង្ហាញពី ${start + 1} ដល់ ${Math.min(end, totalItems)} នៃទិន្នន័យសរុប ${totalItems}`;
+            infoEl.innerHTML = `បង្ហាញពី <span class="badge bg-primary rounded-pill px-2 py-1 mx-1">${start + 1} - ${Math.min(end, totalItems)}</span> នៃទិន្នន័យសរុប <span class="badge bg-secondary rounded-pill px-2 py-1 mx-1">${totalItems}</span>`;
         } else {
-            infoEl.innerText = "គ្មានទិន្នន័យ";
+            infoEl.innerHTML = `<span class="badge bg-danger rounded-pill px-2 py-1">គ្មានទិន្នន័យ</span>`;
         }
     }
     renderPagination('salesPagination', totalPages, salesCurrentPage, (p) => {
@@ -1069,9 +1071,9 @@ function renderInventoryTable() {
     const infoEl = document.getElementById('stockPaginationInfo');
     if (infoEl) {
         if (totalItems > 0) {
-            infoEl.innerText = `បង្ហាញពី ${start + 1} ដល់ ${Math.min(end, totalItems)} នៃទិន្នន័យសរុប ${totalItems}`;
+            infoEl.innerHTML = `បង្ហាញពី <span class="badge bg-primary rounded-pill px-2 py-1 mx-1">${start + 1} - ${Math.min(end, totalItems)}</span> នៃទិន្នន័យសរុប <span class="badge bg-secondary rounded-pill px-2 py-1 mx-1">${totalItems}</span>`;
         } else {
-            infoEl.innerText = "គ្មានទិន្នន័យ";
+            infoEl.innerHTML = `<span class="badge bg-danger rounded-pill px-2 py-1">គ្មានទិន្នន័យ</span>`;
         }
     }
     renderPagination('stockPagination', totalPages, stockCurrentPage, (p) => {
@@ -1093,11 +1095,15 @@ function renderPagination(containerId, totalPages, currentPage, onPageClick) {
     }
 
     let html = '';
+    const linkStyle = "width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50% !important; margin: 0 3px; font-weight: 600; transition: all 0.3s ease; text-decoration: none;";
+    const activeStyle = "background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); color: white; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3); transform: scale(1.1);";
+    const inactiveStyle = "background: #f8fafc; color: #475569; box-shadow: 0 2px 4px rgba(0,0,0,0.05);";
+    const hoverEffect = "onmouseover=\"this.style.transform='scale(1.1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'\" onmouseout=\"this.style.transform='scale(1)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.05)'\"";
 
     // Previous Button
     html += `
         <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-            <a class="page-link shadow-sm border-0 rounded-start" href="#" onclick="event.preventDefault(); ${currentPage > 1 ? `window.paginationCallback('${containerId}', ${currentPage - 1})` : ''}">
+            <a class="page-link border-0" style="${linkStyle} ${currentPage === 1 ? 'opacity: 0.5; cursor: not-allowed;' : inactiveStyle}" href="#" ${currentPage > 1 ? hoverEffect : ''} onclick="event.preventDefault(); ${currentPage > 1 ? `window.paginationCallback('${containerId}', ${currentPage - 1})` : ''}">
                 <i class="fi fi-rr-angle-small-left"></i>
             </a>
         </li>
@@ -1107,20 +1113,21 @@ function renderPagination(containerId, totalPages, currentPage, onPageClick) {
     const range = 2;
     for (let i = 1; i <= totalPages; i++) {
         if (i === 1 || i === totalPages || (i >= currentPage - range && i <= currentPage + range)) {
+            const isActive = i === currentPage;
             html += `
-                <li class="page-item ${i === currentPage ? 'active' : ''}">
-                    <a class="page-link shadow-sm border-0 ${i === currentPage ? 'bg-primary text-white' : 'bg-light text-dark'}" href="#" onclick="event.preventDefault(); window.paginationCallback('${containerId}', ${i})">${i}</a>
+                <li class="page-item ${isActive ? 'active' : ''}">
+                    <a class="page-link border-0" style="${linkStyle} ${isActive ? activeStyle : inactiveStyle}" href="#" ${!isActive ? hoverEffect : ''} onclick="event.preventDefault(); window.paginationCallback('${containerId}', ${i})">${i}</a>
                 </li>
             `;
         } else if (i === currentPage - range - 1 || i === currentPage + range + 1) {
-            html += `<li class="page-item disabled"><span class="page-link border-0 bg-transparent text-muted">...</span></li>`;
+            html += `<li class="page-item disabled"><span class="page-link border-0 bg-transparent text-muted" style="${linkStyle}">...</span></li>`;
         }
     }
 
     // Next Button
     html += `
         <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-            <a class="page-link shadow-sm border-0 rounded-end" href="#" onclick="event.preventDefault(); ${currentPage < totalPages ? `window.paginationCallback('${containerId}', ${currentPage + 1})` : ''}">
+            <a class="page-link border-0" style="${linkStyle} ${currentPage === totalPages ? 'opacity: 0.5; cursor: not-allowed;' : inactiveStyle}" href="#" ${currentPage < totalPages ? hoverEffect : ''} onclick="event.preventDefault(); ${currentPage < totalPages ? `window.paginationCallback('${containerId}', ${currentPage + 1})` : ''}">
                 <i class="fi fi-rr-angle-small-right"></i>
             </a>
         </li>
@@ -1153,15 +1160,19 @@ function updateSummaryCards() {
         // Use the same robust parsing as renderInventoryTable
         const warehouseIn = parseInt(item.warehouseIn) || parseInt(item.totalIn) || parseInt(item.quantity) || 0;
         const oldStock = parseInt(item.oldStock) || 0;
+        const officeIn = parseInt(item.officeIn) || 0;
         const stockOut = parseInt(item.stockOut) || 0;
 
         const totalReceived = warehouseIn + oldStock;
-        const remaining = totalReceived - stockOut;
+        const currentWarehouse = Math.max(0, totalReceived - officeIn);
+        const currentOffice = Math.max(0, officeIn - stockOut);
+        
+        const totalRemaining = currentWarehouse + currentOffice;
 
         statTotalIn += totalReceived;
         statTotalOut += stockOut;
-        totalItems += remaining;
-        totalVal += (remaining * (parseFloat(item.unitCost) || 0));
+        totalItems += totalRemaining;
+        totalVal += (totalRemaining * (parseFloat(item.sellingPrice) || 0));
     });
 
     if (document.getElementById('totalItems')) document.getElementById('totalItems').innerText = totalItems;

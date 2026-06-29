@@ -703,7 +703,7 @@ window.exportPaidOffReport = (type) => {
 
     const activeStudents = (window.rawStudentsArray || []).filter(s => {
         const status = (s.enrollmentStatus || '').toLowerCase().trim();
-        return status !== 'graduated' && status !== 'dropout';
+        return status !== 'graduated' && status !== 'dropout' && status !== 'suspended';
     });
 
     const paidStudents = activeStudents.filter(s => {
@@ -1699,8 +1699,9 @@ function setIndexedDBCache(key, data) {
 }
 
 // Premium URL Parameter Integration (Auto-Open Profile/Tab/Payment Modal)
-window.checkUrlDeepLinkParams = function() {
+;window.checkUrlDeepLinkParams = function() {
     if (window.isInitialParamCheckDone) return;
+    
     const urlParams = new URLSearchParams(window.location.search);
     const studentKeyParam = urlParams.get('studentKey');
     const tabParam = urlParams.get('tab');
@@ -4430,11 +4431,6 @@ window.uploadStudentAttachment = async function (key, input) {
     const file = input.files[0];
 
     // 2MB Limit check
-    if (file.size > 2097152) {
-        showAlert('ទំហំរូបភាពធំពេក! សូមជ្រើសរើសរូបភាពមិនឲ្យលើសពី 2MB។', 'danger');
-        input.value = '';
-        return;
-    }
 
     const originalBtn = document.querySelector(`button[onclick*="attachUpload_${key}"]`);
     const originalText = originalBtn ? originalBtn.innerHTML : '';
@@ -4445,7 +4441,7 @@ window.uploadStudentAttachment = async function (key, input) {
             originalBtn.disabled = true;
         }
 
-        const url = await uploadImageToR2(file);
+        const url = await uploadImageToFirebase(file);
         if (!url) throw new Error("Upload failed");
 
         // Update Firebase
@@ -4533,11 +4529,6 @@ window.updateStudentProfileImage = async function (key, input) {
     const file = input.files[0];
 
     // 2MB Limit
-    if (file.size > 2097152) {
-        showAlert('រូបភាពធំពេក! សូមជ្រើសរើសរូបភាពមិនលើសពី 2MB។', 'danger');
-        input.value = '';
-        return;
-    }
 
     try {
         const localUrl = URL.createObjectURL(file);
@@ -4566,7 +4557,7 @@ window.updateStudentProfileImage = async function (key, input) {
 
         const student = allStudentsData[key] || {};
         const studentName = `${student.lastName || ''}_${student.firstName || ''}_${student.displayId || ''}`;
-        const url = await uploadImageToR2(file, studentName);
+        const url = await uploadImageToFirebase(file, studentName);
 
         // Remove Mini Status
         const miniStatus = document.getElementById(`miniStatus_${key}`);
@@ -4631,20 +4622,62 @@ window.updateStudentProfileImage = async function (key, input) {
     }
 };
 
+function customConfirmDelete(message) {
+    return new Promise((resolve) => {
+        const modalHtml = `
+            <div class="modal fade" id="customConfirmModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-body text-center p-4">
+                            <div class="text-danger mb-3">
+                                <i class="fi fi-rr-trash fa-3x"></i>
+                            </div>
+                            <h5 class="mb-3 text-dark">${message}</h5>
+                            <div class="d-flex justify-content-center gap-2 mt-4">
+                                <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">ទេ</button>
+                                <button type="button" class="btn btn-danger px-4" id="confirmDeleteBtn">បាទ/ចាស</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        const modalEl = document.getElementById('customConfirmModal');
+        const modal = new bootstrap.Modal(modalEl);
+        
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+        let confirmed = false;
+        
+        confirmBtn.addEventListener('click', () => {
+            confirmed = true;
+            modal.hide();
+        });
+        
+        modalEl.addEventListener('hidden.bs.modal', () => {
+            modalEl.remove();
+            resolve(confirmed);
+        });
+        
+        modal.show();
+    });
+}
+
 /**
  * Global function to remove student profile image with confirmation
  */
 window.removeStudentProfileImage = async function (studentKey, event) {
     if (event) event.stopPropagation();
 
-    if (!confirm("តើអ្នកពិតជាចង់លុបរូបថតនេះមែនទេ?")) return;
+    const isConfirmed = await customConfirmDelete("តើអ្នកពិតជាចង់លុបរូបថតនេះមែនទេ?");
+    if (!isConfirmed) return;
 
     try {
-        // 1. Delete from Cloudflare R2 if it's an R2 URL
+        // 1. Delete from Firebase Storage if it's an R2 URL
         const student = allStudentsData[studentKey] || {};
         const oldUrl = student.imageUrl;
-        if (oldUrl && typeof deleteImageFromR2 === 'function') {
-            await deleteImageFromR2(oldUrl);
+        if (oldUrl && typeof deleteImageFromFirebase === 'function') {
+            await deleteImageFromFirebase(oldUrl);
         }
 
         // 2. Update Firebase
@@ -6252,13 +6285,6 @@ window.handleCardPhotoUpload = async function (input, key) {
         const file = input.files[0];
 
         // 2MB Limit for student cards (Updated 2026)
-        if (file.size > 2097152) {
-            const msg = 'ទំហំរូបភាពធំពេក! សូមជ្រើសរើសរូបភាពមិនឲ្យលើសពី 2MB។';
-            if (typeof showAlert === 'function') showAlert(msg, 'danger');
-            else alert(msg);
-            input.value = '';
-            return;
-        }
 
         try {
             // Show loading state in preview if possible
@@ -6276,8 +6302,8 @@ window.handleCardPhotoUpload = async function (input, key) {
                     </div>`;
             }
 
-            // Upload directly to Cloudflare R2
-            const url = await uploadImageToR2(file);
+            // Upload directly to Firebase Storage
+            const url = await uploadImageToFirebase(file);
 
             if (url) {
                 allStudentsData[key].imageUrl = url;
@@ -8848,7 +8874,7 @@ async function saveStudentChanges(key) {
     const imageInput = document.getElementById('editImageInput');
     if (imageInput && imageInput.files && imageInput.files[0]) {
         try {
-            console.log("📤 Uploading student edit image to Cloudflare R2...");
+            console.log("📤 Uploading student edit image to Firebase Storage...");
             const preview = document.getElementById('editImagePreview');
             if (preview && preview.parentElement) {
                 const miniStatus = document.createElement('div');
@@ -8858,7 +8884,7 @@ async function saveStudentChanges(key) {
                 preview.parentElement.classList.add('position-relative');
                 preview.parentElement.appendChild(miniStatus);
             }
-            const url = await uploadImageToR2(imageInput.files[0]);
+            const url = await uploadImageToFirebase(imageInput.files[0]);
             const miniStatus = document.getElementById('editMiniStatus');
             if (miniStatus) miniStatus.remove();
             if (url) {
@@ -9915,7 +9941,7 @@ function getFilteredStudents() {
  */
 window.exportSpecificCategoryPDF = function (category) {
     // We only want active students (not dropouts)
-    const activeStudents = Object.values(allStudentsData).filter(s => s.enrollmentStatus !== 'dropout' && s.enrollmentStatus !== 'graduated');
+    const activeStudents = Object.values(allStudentsData).filter(s => s.enrollmentStatus !== 'dropout' && s.enrollmentStatus !== 'graduated' && s.enrollmentStatus !== 'suspended');
     let filtered = [];
     let title = "";
 
@@ -13987,7 +14013,7 @@ window.showQuickFinancialSummary = () => {
     const filteredStudents = typeof getFilteredStudents === 'function' ? getFilteredStudents() : (window.rawStudentsArray || []);
 
     // Filter out dropouts as they usually don't belong in active financial summary
-    const activeStudents = filteredStudents.filter(s => { const st = (s.enrollmentStatus || '').toLowerCase().trim(); return st !== 'dropout' && st !== 'graduated'; });
+    const activeStudents = filteredStudents.filter(s => { const st = (s.enrollmentStatus || '').toLowerCase().trim(); return st !== 'dropout' && st !== 'graduated' && st !== 'suspended'; });
 
     if (activeStudents.length === 0) {
         Swal.fire({
@@ -14256,7 +14282,7 @@ function renderDebtSummary() {
     const activeStudents = (window.rawStudentsArray || []).filter(s => {
         const st = (s.enrollmentStatus || '').toLowerCase().trim();
         const ps = (s.paymentStatus || '').toLowerCase().trim();
-        return st !== 'dropout' && st !== 'graduated' && ps !== 'paid full';
+        return st !== 'dropout' && st !== 'graduated' && st !== 'suspended' && ps !== 'paid full';
     });
 
     const sections = {
@@ -14378,7 +14404,7 @@ function renderDebtSummary() {
 function updateDebtBadge(students) {
     const activeStudents = students.filter(s => {
         const st = (s.enrollmentStatus || '').toLowerCase().trim();
-        return st !== 'dropout' && st !== 'graduated' && st !== 'paidoff';
+        return st !== 'dropout' && st !== 'graduated' && st !== 'suspended' && st !== 'paidoff';
     });
     let count = 0;
     activeStudents.forEach(s => {
@@ -14743,7 +14769,7 @@ window.filterUnifiedList = (status, sectionId = 'all') => {
 
     const activeOnly = (window.rawStudentsArray || []).filter(s => {
         const st = (s.enrollmentStatus || '').toLowerCase().trim();
-        return st !== 'dropout' && st !== 'graduated' && st !== 'paidoff';
+        return st !== 'dropout' && st !== 'graduated' && st !== 'suspended' && st !== 'paidoff';
     });
     renderUnifiedDebtList(activeOnly);
 };
@@ -14905,7 +14931,7 @@ window.renderAdminDebtList = function() {
     
     const activeForAdmin = (window.rawStudentsArray || []).filter(s => {
         const st = (s.enrollmentStatus || '').toLowerCase().trim();
-        return st !== 'dropout' && st !== 'graduated';
+        return st !== 'dropout' && st !== 'graduated' && st !== 'suspended';
     });
     
     // Calculate global stats for admin services
@@ -15085,7 +15111,7 @@ window.exportAdminDebtListPDF = () => {
 
     const activeForAdmin = (window.rawStudentsArray || []).filter(s => {
         const st = (s.enrollmentStatus || '').toLowerCase().trim();
-        return st !== 'dropout' && st !== 'graduated';
+        return st !== 'dropout' && st !== 'graduated' && st !== 'suspended';
     });
 
     const filtered = activeForAdmin.filter(s => {
@@ -15162,7 +15188,7 @@ window.exportCurrentDetailedListPDF = () => {
         'paid_full': 'សិស្សបង់ផ្តាច់ (Paid Full)'
     };
 
-    const activeStudents = (window.rawStudentsArray || []).filter(s => (s.enrollmentStatus || '').toLowerCase().trim() !== 'dropout');
+    const activeStudents = (window.rawStudentsArray || []).filter(s => (s.enrollmentStatus || '').toLowerCase().trim() !== 'dropout' && (s.enrollmentStatus || '').toLowerCase().trim() !== 'suspended');
     const filtered = activeStudents.filter(s => {
         const debt = calculateRemainingAmount(s);
         const statusObj = getPaymentStatus(s);
@@ -15261,7 +15287,7 @@ window.exportDebtReportPDF = () => {
 
     const activeStudents = (window.rawStudentsArray || []).filter(s => {
         const st = (s.enrollmentStatus || '').toLowerCase().trim();
-        return st !== 'dropout' && st !== 'graduated' && st !== 'paidoff';
+        return st !== 'dropout' && st !== 'graduated' && st !== 'suspended' && st !== 'paidoff';
     });
     const students = activeStudents.filter(s => calculateRemainingAmount(s) > 0);
 
@@ -15376,7 +15402,7 @@ window.exportCategorizedDebtReportPDF = () => {
     const doc = new jsPDF('p', 'mm', 'a4');
     const activeStudents = (window.rawStudentsArray || []).filter(s => {
         const st = (s.enrollmentStatus || '').toLowerCase().trim();
-        return st !== 'dropout' && st !== 'graduated' && st !== 'paidoff';
+        return st !== 'dropout' && st !== 'graduated' && st !== 'suspended' && st !== 'paidoff';
     });
 
     const categories = [

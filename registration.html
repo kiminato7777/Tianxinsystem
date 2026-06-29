@@ -33,7 +33,7 @@
     </div>
 
     <div id="main-content">
-        <div id="alertContainer" class="position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 1050;">
+        <div id="alertContainer" class="position-fixed top-0 end-0 p-3 mt-2" style="z-index: 1050; min-width: 300px; max-width: 400px;">
         </div>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <a href="/index.html" class="btn-back-home">
@@ -127,15 +127,38 @@
 
                     <div class="step-content" id="step-1-content">
                         <!-- ផ្នែកទី១: ព័ត៌មានអំពីសិស្ស -->
-                        <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4 class="section-title mb-0 border-0"
                                 style="padding-bottom: 0px; margin-bottom: 0px; border-bottom: 2px solid #ff69b4;"><i
                                     class="fi fi-rr-user"></i> ព័ត៌មានអំពីសិស្ស</h4>
                         </div>
+                        
+                        <!-- ផ្នែកបញ្ចូលរូបថតនៅខាងលើកណ្តាល (Centered Avatar Upload) -->
+                        <div class="d-flex justify-content-center mb-5">
+                            <div class="text-center position-relative">
+                                <div class="photo-upload-wrapper mx-auto mb-2" onclick="document.getElementById('reg_studentImage').click()" 
+                                     style="cursor: pointer; position: relative; width: 140px; height: 140px; border: 3px dashed #cbd5e1; border-radius: 50%; background: #f8fafc; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center;">
+                                    
+                                    <div id="imagePreview" class="w-100 h-100 position-relative" style="border-radius: 50%; overflow: hidden;">
+                                        <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center p-2">
+                                            <i class="fi fi-rr-camera text-primary" style="font-size: 2rem; margin-bottom: 5px;"></i>
+                                            <span class="text-muted fw-bold" style="font-size: 0.75rem;">ចុចយករូបថត</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="file" class="d-none" id="reg_studentImage" accept="image/*">
+                                <small class="text-muted" style="font-size: 0.75rem;">(ទំហំអតិបរមា 5MB)</small>
+                            </div>
+                        </div>
+                        
+                        <style>
+                            .photo-upload-wrapper:hover { border-color: #3b82f6 !important; background: #eff6ff !important; transform: translateY(-2px); }
+                            .photo-upload-wrapper:active { transform: scale(0.95); }
+                        </style>
 
                     <div class="row g-4 mb-4">
-                        <!-- ផ្នែកខាងឆ្វេង: ព័ត៌មានលម្អិតសិស្ស -->
-                        <div class="col-md-9">
+                        <!-- ផ្នែកព័ត៌មានលម្អិតសិស្ស -->
+                        <div class="col-md-12">
                             <div class="row g-3">
                                 <!-- Khmer Name -->
                                 <div class="col-md-12">
@@ -182,28 +205,28 @@
                                     <input type="text" class="form-control" id="reg_nationality" value="ខ្មែរ">
                                 </div>
 
-                                <!-- Phone -->
-                                <div class="col-md-12">
+                                <!-- Phone & Emergency -->
+                                <div class="col-md-6">
                                     <label for="reg_personalPhone" class="form-label"><i
                                             class="fi fi-rr-phone-call me-1"></i>លេខទូរស័ព្ទផ្ទាល់ខ្លួន</label>
-                                    <input type="text" class="form-control" id="reg_personalPhone" placeholder="012 345 678">
+                                    <input type="text" class="form-control" id="reg_personalPhone" placeholder="012 345 678" required>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- ផ្នែកខាងស្តាំ: រូបថតសិស្ស (Preview និង បញ្ចូលរូបថត) -->
-                        <div class="col-md-3 d-flex flex-column align-items-center justify-content-start border-start ps-4">
-                            <label class="form-label mb-2"><i class="fi fi-rr-camera me-1"></i>រូបភាព Preview</label>
-                            <div id="imagePreview" class="border p-1 rounded mb-3" style="width: 150px; height: 180px; background: #f8f9fa; border-radius: 12px !important; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
-                                <div class="d-flex flex-column align-items-center justify-content-center h-100">
-                                    <i class="fi fi-rr-camera fa-2x text-secondary"></i>
-                                    <small class="mt-2 text-muted">រូបភាពសិស្ស</small>
+                                <div class="col-md-6">
+                                    <label for="reg_emergencyPhone" class="form-label"><i
+                                            class="fi fi-rr-siren-on me-1"></i>លេខទូរស័ព្ទបន្ទាន់</label>
+                                    <input type="text" class="form-control" id="reg_emergencyPhone" placeholder="012 345 678" required>
                                 </div>
-                            </div>
-                            <div class="w-100">
-                                <label for="reg_studentImage" class="form-label"><i class="fi fi-rr-picture me-1"></i>រូបភាពសិស្ស</label>
-                                <input type="file" class="form-control form-control-sm" id="reg_studentImage" accept="image/*">
-                                <small class="form-text text-muted" style="font-size: 0.75rem;">ទំហំមិនត្រូវលើសពី 5MB</small>
+                                <div class="col-md-12">
+                                    <label for="reg_healthInfo" class="form-label"><i class="fi fi-rr-heart-pulse me-1"></i>ព័ត៌មានសុខភាព (អាឡែស៊ី/ជំងឺប្រចាំកាយ)</label>
+                                    <textarea class="form-control" id="reg_healthInfo" rows="2" placeholder="បញ្ជាក់ពីបញ្ហាសុខភាព បើគ្មានសូមទុកទទេ..."></textarea>
+                                </div>
+                                
+                                <!-- Document Upload -->
+                                <div class="col-md-12 mt-4 pt-3 border-top">
+                                    <label for="reg_documents" class="form-label fw-bold"><i class="fi fi-rr-document me-1 text-warning"></i>ឯកសារយោងសិស្ស</label>
+                                    <input type="file" class="form-control shadow-sm" id="reg_documents" multiple accept=".pdf,.jpg,.jpeg,.png">
+                                    <small class="form-text text-muted" style="font-size: 0.8rem;">សំបុត្រកំណើត / សៀវភៅគ្រួសារ (អាចជ្រើសរើសបានច្រើនរូបភាព/ឯកសារ)</small>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -255,6 +278,7 @@
                                 <option value="កែប">កែប</option>
                                 <option value="ប៉ៃលិន">ប៉ៃលិន</option>
                                 <option value="កោះកុង">កោះកុង</option>
+                            </select>
                         </div>
                     </div>
 
@@ -465,6 +489,11 @@
                             <label for="reg_subject" class="form-label"><i
                                     class="fi fi-rr-book-alt me-1"></i>មុខវិជ្ជា</label>
                             <input type="text" class="form-control" id="reg_subject" placeholder="បញ្ចូលមុខវិជ្ជា">
+                        </div>
+                        <div class="col-md-12">
+                            <label for="reg_previousSchool" class="form-label"><i
+                                    class="fi fi-rr-graduation-cap me-1"></i>ប្រវត្តិការសិក្សាពីមុន</label>
+                            <input type="text" class="form-control" id="reg_previousSchool" placeholder="ឈ្មោះសាលាចាស់ និងថ្នាក់ដែលធ្លាប់រៀន">
                         </div>
 
                         <!-- ផ្នែកទី៦: ព័ត៌មានគ្រូ និងថ្នាក់រៀន -->

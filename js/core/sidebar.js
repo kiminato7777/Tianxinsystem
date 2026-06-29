@@ -26,32 +26,38 @@
             border-radius: 4px;
         }
         .sidebar-footer {
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.15);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
             position: relative;
             flex-shrink: 0;
             margin-top: auto;
+            backdrop-filter: blur(5px);
         }
         .sidebar-user-trigger {
             outline: none !important;
             cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+        .sidebar-user-trigger:hover {
+            opacity: 0.85;
         }
         .sidebar-user-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             min-width: 0;
             flex-grow: 1;
         }
         .sidebar-user-avatar {
-            width: 38px;
-            height: 38px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.25);
+            border: 2px solid rgba(255, 255, 255, 0.4);
             overflow: hidden;
             flex-shrink: 0;
             background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
         .sidebar-user-avatar img {
             width: 100%;
@@ -63,40 +69,50 @@
             flex-direction: column;
             align-items: flex-start;
             min-width: 0;
-            gap: 2px;
+            gap: 4px;
         }
         .sidebar-user-name {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: #ffffff;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            letter-spacing: 0.3px;
         }
         .sidebar-user-role {
             font-size: 0.65rem;
-            font-weight: 700;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
         .profile-caret {
-            font-size: 1.1rem;
-            transition: transform 0.3s ease;
+            font-size: 1.2rem;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .sidebar-footer.show .profile-caret {
             transform: rotate(180deg);
         }
         .custom-sidebar-profile-menu {
             position: absolute !important;
-            bottom: calc(100% + 5px) !important;
+            bottom: calc(100% + 10px) !important;
             left: 10px !important;
             width: calc(100% - 20px) !important;
             min-width: 200px !important;
-            background: #500a38 !important; /* Rich deep magenta to match sidebar color */
+            background: rgba(60, 5, 40, 0.95) !important; 
+            backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.15) !important;
             border-radius: 16px !important;
-            padding: 8px 4px !important;
+            padding: 8px !important;
             margin: 0 !important;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3) !important;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.05) inset !important;
             z-index: 1050 !important;
+            transform-origin: bottom center;
+            animation: profileMenuPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes profileMenuPop {
+            0% { opacity: 0; transform: translateY(10px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
         .custom-sidebar-profile-menu .dropdown-item {
             color: rgba(255, 255, 255, 0.85) !important;
@@ -161,15 +177,17 @@ function injectSidebar() {
     if (!sidebarContainer) return;
 
     const items = window.SYSTEM_MODULES || [];
-    const path = window.location.pathname === '/' ? '/index.html' : window.location.pathname;
+    const currentFileName = window.location.pathname.split('/').pop() || 'index.html';
     const logo = window.SYSTEM_LOGO || "/img/1.jpg";
 
-    const navItems = items.map(item => `
+    const navItems = items.map(item => {
+        const isActive = currentFileName === item.href;
+        return `
         ${item.sectionBefore ? `<div class="sidebar-section-title px-4 mt-3 mb-2 text-white-50 text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 1px;">${item.sectionBefore}</div>` : ''}
-        <a class="nav-link ${path === item.href ? 'active' : ''}" href="${item.href}" id="nav-${item.key}">
+        <a class="nav-link ${isActive ? 'active' : ''}" href="/${item.href}" id="nav-${item.key}">
             <i class="fi ${item.icon}"></i> <span>${item.label}</span>
         </a>
-    `).join('');
+    `}).join('');
 
     sidebarContainer.innerHTML = `
         <div class="sidebar-header" id="sidebar-logo-container">

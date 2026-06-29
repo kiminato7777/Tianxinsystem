@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success Popup - Pure Code</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Khmer OS Battambang', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #e5e7eb;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 9999;
+        }
+
+        .popup-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* The Card */
+        .popup-card {
+            background-color: #ffffff;
+            width: 380px;
+            border-radius: 12px; /* Modern rounded corners */
+            overflow: hidden;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* Softer modern shadow */
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bounce effect */
+        }
+
+        .popup-overlay.active .popup-card {
+            transform: scale(1);
+        }
+
+        /* Top Blue Section */
+        .popup-header {
+            background-color: #213c58; /* Match image blue */
+            height: 160px;
+            width: 100%;
+        }
+
+        /* Circle overlapping */
+        .icon-container {
+            width: 200px;
+            height: 200px;
+            background-color: #213c58;
+            border: 14px solid #eef2f6; /* Thick light border */
+            border-radius: 50%;
+            margin: -100px auto 0; /* Pull up by half its height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Text area */
+        .popup-message {
+            color: #1a365d;
+            font-size: 38px;
+            font-weight: bold;
+            padding: 30px 20px 50px;
+        }
+
+        /* Hands Animation (Sompeah swaying left to right) */
+        .sompeah-hands {
+            animation: sompeahSway 1.5s ease-in-out infinite;
+            transform-origin: bottom center;
+        }
+
+        @keyframes sompeahSway {
+            0% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+            100% { transform: rotate(-10deg); }
+        }
+
+        /* Button to trigger popup for testing */
+        .trigger-btn {
+            padding: 12px 24px;
+            font-size: 18px;
+            background-color: #213c58;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: background 0.2s, transform 0.1s;
+            font-family: inherit;
+        }
+        
+        .trigger-btn:hover {
+            background-color: #1a365d;
+        }
+        
+        .trigger-btn:active {
+            transform: scale(0.98);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Dynamic Trigger Button for Testing -->
+    <button class="trigger-btn" onclick="showPopup('ជោគជ័យ')">បង្ហាញ Popup</button>
+
+    <div class="popup-overlay" id="myPopup">
+        <div class="popup-card">
+            <div class="popup-header"></div>
+            <div class="icon-container">
+                <!-- Highly accurate SVG drawing of the hands -->
+                <svg class="sompeah-hands" width="100" height="110" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Left Hand Gold -->
+                    <path d="M 49 10 
+                             C 47 15, 40 45, 30 65 
+                             C 25 75, 20 80, 15 85 
+                             L 25 95 
+                             C 35 85, 42 75, 45 60 
+                             L 49 30 Z" 
+                          fill="#D1A741" stroke="#D1A741" stroke-width="2" stroke-linejoin="round"/>
+                    
+                    <!-- Right Hand Gold -->
+                    <path d="M 51 10 
+                             C 53 15, 60 45, 70 65 
+                             C 75 75, 80 80, 85 85 
+                             L 75 95 
+                             C 65 85, 58 75, 55 60 
+                             L 51 30 Z" 
+                          fill="#C49B38" stroke="#C49B38" stroke-width="2" stroke-linejoin="round"/>
+                          
+                    <!-- Left White Cuff -->
+                    <path d="M 15 85 L 25 95 L 18 102 C 12 98, 8 92, 8 87 Z" fill="#FFFFFF"/>
+                    
+                    <!-- Right White Cuff -->
+                    <path d="M 85 85 L 75 95 L 82 102 C 88 98, 92 92, 92 87 Z" fill="#FFFFFF"/>
+                    
+                    <!-- Hand separation line (Subtle shadow line) -->
+                    <line x1="50" y1="12" x2="50" y2="60" stroke="#9A7822" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </div>
+            
+            <div class="popup-message" id="popupMessageText">ជោគជ័យ</div>
+        </div>
+    </div>
+
+    <script>
+        function showPopup(message) {
+            const popup = document.getElementById('myPopup');
+            const messageEl = document.getElementById('popupMessageText');
+            
+            // Set dynamic message
+            if (message) {
+                messageEl.textContent = message;
+            }
+            
+            // Show popup with animation
+            popup.classList.add('active');
+            
+            // Auto hide after 3 seconds for modern dynamic feel
+            setTimeout(() => {
+                popup.classList.remove('active');
+            }, 3000);
+        }
+        
+        // Allow clicking outside the card to close it
+        document.getElementById('myPopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

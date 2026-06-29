@@ -17,364 +17,25 @@
 
     <!-- JS Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/js/core/loader-init.js"></script>
-    <script src="/js/core/system-core-standard.js"></script>
+    <script src="/js/core/loader-init.js" defer></script>
+    <script src="/js/core/system-core-standard.js" defer></script>
 
-    <style>
-        /* Extra custom overrides specific to this page if needed */
-        .card-stat-icon {
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-size: 1.5rem;
-        }
-
-        .filter-btn {
-            min-width: 100px;
-        }
-
-        /* Pagination beautification - Premium & Dynamic */
-        .page-link {
-            border: 1px solid #edf2f7;
-            margin: 0 3px;
-            border-radius: 12px !important;
-            width: auto;
-            min-width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: #4a5568;
-            background: #ffffff;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-            font-family: 'Kantumruy Pro', sans-serif;
-            padding: 0 12px;
-            text-decoration: none;
-        }
-
-        .page-link:hover:not(.active) {
-            background-color: rgba(138, 14, 91, 0.05);
-            color: #8a0e5b;
-            border-color: rgba(138, 14, 91, 0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(138, 14, 91, 0.1);
-        }
-
-        .page-item.active .page-link {
-            background: linear-gradient(135deg, #8a0e5b 0%, #c12d7d 100%) !important;
-            color: white !important;
-            border: none;
-            box-shadow: 0 8px 16px rgba(138, 14, 91, 0.3);
-            transform: scale(1.05);
-            z-index: 2;
-        }
-
-        .page-item.disabled .page-link {
-            background-color: #f8fafc;
-            color: #cbd5e1;
-            border-color: #f1f5f9;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none;
-        }
-
-        .page-item:first-child .page-link, 
-        .page-item:last-child .page-link {
-            border-radius: 12px !important;
-            font-size: 1rem;
-        }
-
-        /* Ellipsis styling */
-        .page-item.disabled span.page-link {
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-        }
-
-        .description-text {
-            font-size: 0.9rem;
-            color: #555;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* LAYOUT FIX For Fixed Sidebar */
-        #main-content {
-            flex-grow: 1;
-            margin-left: 250px;
-            /* Matches Sidebar Width */
-            width: calc(100% - 250px);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.3s;
-        }
-
-
-
-        /* Sidebar Collapse Logic */
-        .sidebar-collapsed #sidebar {
-            width: 70px !important;
-            transition: all 0.3s;
-        }
-
-        .sidebar-collapsed #main-content {
-            margin-left: 70px !important;
-            width: calc(100% - 70px) !important;
-        }
-
-        /* ============================================
-           CUSTOM DATE PICKER — DD / MM / YYYY
-        ============================================ */
-        .custom-date-picker {
-            display: inline-flex;
-            align-items: center;
-            background: #fff;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 4px 10px;
-            gap: 2px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-            transition: border-color 0.2s, box-shadow 0.2s;
-            cursor: text;
-        }
-
-        .custom-date-picker:focus-within {
-            border-color: #8a0e5b;
-            box-shadow: 0 0 0 3px rgba(138, 14, 91, 0.12);
-        }
-
-        .custom-date-picker .dp-icon {
-            color: #8a0e5b;
-            font-size: 0.85rem;
-            margin-right: 4px;
-            opacity: 0.7;
-        }
-
-        .custom-date-picker input.dp-part {
-            border: none;
-            outline: none;
-            background: transparent;
-            font-weight: 700;
-            font-size: 0.82rem;
-            color: #1e293b;
-            text-align: center;
-            padding: 0;
-            font-family: 'Kantumruy Pro', sans-serif;
-            -moz-appearance: textfield;
-            appearance: textfield;
-        }
-
-        .custom-date-picker input.dp-part::-webkit-outer-spin-button,
-        .custom-date-picker input.dp-part::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        .custom-date-picker input.dp-part:focus {
-            background: rgba(138, 14, 91, 0.07);
-            border-radius: 4px;
-            color: #8a0e5b;
-        }
-
-        .custom-date-picker input.dp-day {
-            width: 26px;
-        }
-
-        .custom-date-picker input.dp-mon {
-            width: 26px;
-        }
-
-        .custom-date-picker input.dp-year {
-            width: 40px;
-        }
-
-        .custom-date-picker .dp-sep {
-            color: #94a3b8;
-            font-weight: 700;
-            font-size: 0.8rem;
-            user-select: none;
-            padding: 0 1px;
-        }
-
-        #transDate {
-            position: relative;
-        }
-
-        .input-group:focus-within {
-            box-shadow: 0 0 0 0.25rem rgba(138, 14, 91, 0.1) !important;
-            border-radius: 0.375rem;
-        }
-
-        .input-group:focus-within .input-group-text {
-            border-color: var(--bs-pink-primary);
-            color: var(--bs-pink-primary) !important;
-        }
-
-        .input-group-text {
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-collapsed #sidebar .nav-link span,
-        .sidebar-collapsed #sidebar .sidebar-user-profile div:not(.bg-white),
-        .sidebar-collapsed #sidebar .badge,
-        .sidebar-collapsed #sidebar hr,
-        .sidebar-collapsed #sidebar .sidebar-divider,
-        .sidebar-collapsed #sidebar .text-muted {
-            display: none !important;
-        }
-
-        .sidebar-collapsed #sidebar .nav-link {
-            justify-content: center;
-            padding: 15px;
-        }
-
-        .sidebar-collapsed #sidebar .nav-link i {
-            margin-right: 0;
-            font-size: 1.3rem;
-        }
-
-        .sidebar-collapsed #sidebar-logo {
-            width: 40px;
-            height: 40px;
-        }
-
-        @media (max-width: 991.98px) {
-            #main-content {
-                margin-left: 0;
-                width: 100%;
-            }
-        }
-
-        /* Dynamic Enhancements */
-        .quick-filter-pill {
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 11px;
-            border: 1px solid #dee2e6;
-            background: #fff;
-            padding: 4px 12px;
-            border-radius: 50px;
-            color: #6c757d;
-            font-weight: bold;
-        }
-
-        .quick-filter-pill:hover,
-        .quick-filter-pill.active {
-            background: #0d6efd;
-            color: #fff !important;
-            border-color: #0d6efd;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
-        }
-
-        .stat-card-pulse {
-            animation: soft-pulse 0.5s ease;
-        }
-
-        @keyframes soft-pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.02);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .balance-progress {
-            height: 6px;
-            border-radius: 10px;
-            background: #e9ecef;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        .balance-bar-income {
-            height: 100%;
-            background: linear-gradient(90deg, #10b981, #34d399);
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .tab-count-badge {
-            font-size: 0.65rem;
-            padding: 3px 6px;
-            vertical-align: middle;
-            margin-left: 5px;
-        }
-
-        /* Glassmorphism Classes */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.7) !important;
-            backdrop-filter: blur(10px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.3) !important;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07) !important;
-        }
-
-        /* Chart Container */
-        .chart-container {
-            position: relative;
-            height: 200px;
-            width: 100%;
-        }
-
-        /* Shortcut Badge */
-        .kbs-hint {
-            border: 1px solid #dee2e6;
-            background: #fff;
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: #6c757d;
-            font-size: 0.6rem;
-            font-weight: bold;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-            margin-left: 5px;
-        }
-
-        /* Custom Modal Theme */
-        .modal-income .modal-header {
-            background: linear-gradient(135deg, #10b981, #059669) !important;
-        }
-
-        .modal-expense .modal-header {
-            background: linear-gradient(135deg, #ef4444, #dc2626) !important;
-        }
-
-        /* Row Hover Highlight */
-        #transactionsTableBody tr {
-            transition: all 0.2s;
-        }
-
-        #transactionsTableBody tr:hover {
-            background-color: rgba(138, 14, 91, 0.05) !important;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/income-expense.css">
+    <link rel="stylesheet" href="/css/income-expense-modern.css">
 </head>
 
-<body class="bg-light">
+<body class="modern-ui-body">
     <!-- Sidebar -->
     <div id="sidebar"></div>
 
     <!-- Page Content -->
-    <div id="main-content">
+    <main id="main-content">
 
         <!-- Header -->
-        <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
+        <nav class="navbar navbar-expand-lg navbar-light navbar-glass py-4 px-4">
             <div class="d-flex align-items-center justify-content-between w-100">
                 <div class="d-flex align-items-center">
-                    <button class="btn btn-light bg-white shadow-sm rounded-circle me-3 border" id="sidebarToggle"
+                    <button class="btn btn-light bg-white shadow-sm rounded-circle me-3 border" id="sidebarToggle" aria-label="Toggle Sidebar"
                         onclick="toggleDesktopSidebar()" style="width: 45px; height: 45px;">
                         <i class="fi fi-rr-menu-burger text-pink-dark"></i>
                     </button>
@@ -405,93 +66,82 @@
 
         <div class="container-fluid px-4 animate__animated animate__fadeIn mb-4">
 
-            <!-- 1. DATE FILTER & GLOBAL TOOLS -->
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
-                <div class="card-body p-3">
-                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                        <!-- 1. DATE FILTER & GLOBAL TOOLS -->
+            <div class="modern-toolbar-container mb-4">
+                <div class="modern-toolbar">
+                    <!-- Left Side -->
+                    <div class="modern-toolbar-left">
+                        <span class="text-muted small fw-bold"><i class="fi fi-rr-calendar-clock me-1"></i> កាលបរិច្ឆេទ:</span>
 
-                        <!-- Date Filters -->
-                        <div class="d-flex align-items-center gap-2 bg-light p-2 rounded-3 border flex-wrap">
-                            <span class="text-muted small fw-bold text-uppercase ms-2"><i
-                                    class="fi fi-rr-calendar-clock me-1"></i>កាលបរិច្ឆេទ:</span>
+                        <!-- START DATE Custom Picker -->
+                        <div class="date-picker-modern" title="ថ្ងៃចាប់ផ្ដើម">
+                            <i class="fi fi-rr-calendar text-pink-primary" style="font-size: 14px;"></i>
+                            <input type="number" id="startDay" min="1" max="31" placeholder="DD" autocomplete="off">
+                            <span class="text-muted">/</span>
+                            <input type="number" id="startMon" min="1" max="12" placeholder="MM" autocomplete="off">
+                            <span class="text-muted">/</span>
+                            <input type="number" class="year" id="startYear" min="2026" max="2099" placeholder="YYYY" autocomplete="off">
+                        </div>
+                        <input type="hidden" id="reportStartDate">
 
-                            <!-- START DATE Custom Picker -->
-                            <div class="custom-date-picker" title="ថ្ងៃចាប់ផ្ដើម">
-                                <i class="fi fi-rr-calendar dp-icon"></i>
-                                <input type="number" class="dp-part dp-day" id="startDay" min="1" max="31"
-                                    placeholder="DD" autocomplete="off">
-                                <span class="dp-sep">/</span>
-                                <input type="number" class="dp-part dp-mon" id="startMon" min="1" max="12"
-                                    placeholder="MM" autocomplete="off">
-                                <span class="dp-sep">/</span>
-                                <input type="number" class="dp-part dp-year" id="startYear" min="2026" max="2099"
-                                    placeholder="YYYY" autocomplete="off">
-                            </div>
-                            <!-- Hidden input for JS compatibility -->
-                            <input type="hidden" id="reportStartDate">
+                        <span class="text-muted">→</span>
 
-                            <span class="text-muted fw-bold">→</span>
+                        <!-- END DATE Custom Picker -->
+                        <div class="date-picker-modern" title="ថ្ងៃបញ្ចប់">
+                            <i class="fi fi-rr-calendar text-pink-primary" style="font-size: 14px;"></i>
+                            <input type="number" id="endDay" min="1" max="31" placeholder="DD" autocomplete="off">
+                            <span class="text-muted">/</span>
+                            <input type="number" id="endMon" min="1" max="12" placeholder="MM" autocomplete="off">
+                            <span class="text-muted">/</span>
+                            <input type="number" class="year" id="endYear" min="2026" max="2099" placeholder="YYYY" autocomplete="off">
+                        </div>
+                        <input type="hidden" id="reportEndDate">
 
-                            <!-- END DATE Custom Picker -->
-                            <div class="custom-date-picker" title="ថ្ងៃបញ្ចប់">
-                                <i class="fi fi-rr-calendar dp-icon"></i>
-                                <input type="number" class="dp-part dp-day" id="endDay" min="1" max="31"
-                                    placeholder="DD" autocomplete="off">
-                                <span class="dp-sep">/</span>
-                                <input type="number" class="dp-part dp-mon" id="endMon" min="1" max="12"
-                                    placeholder="MM" autocomplete="off">
-                                <span class="dp-sep">/</span>
-                                <input type="number" class="dp-part dp-year" id="endYear" min="2026" max="2099"
-                                    placeholder="YYYY" autocomplete="off">
-                            </div>
-                            <!-- Hidden input for JS compatibility -->
-                            <input type="hidden" id="reportEndDate">
+                        <div class="vr bg-secondary opacity-25" style="height: 20px;"></div>
 
-                            <!-- Quick Filter Pills -->
-                            <div class="vr mx-1"></div>
-                            <div class="d-flex gap-1" id="quickDateFilters">
-                                <div class="quick-filter-pill" onclick="setQuickDate('today')">ថ្ងៃនេះ</div>
-                                <div class="quick-filter-pill" onclick="setQuickDate('week')">សប្តាហ៍នេះ</div>
-                                <div class="quick-filter-pill active" onclick="setQuickDate('month')">ខែនេះ</div>
-                                <div class="quick-filter-pill" onclick="setQuickDate('all')">ទាំងអស់</div>
-                            </div>
-
-                            <button class="btn btn-sm btn-primary shadow-sm ms-2" id="btnApplyDateFilter">
-                                <i class="fi fi-rr-refresh"></i>
-                            </button>
+                        <!-- Quick Filter Pills -->
+                        <div class="quick-filters-modern" id="quickDateFilters">
+                            <button class="quick-filter-pill" onclick="setQuickDate('today')">ថ្ងៃនេះ</button>
+                            <button class="quick-filter-pill" onclick="setQuickDate('week')">សប្តាហ៍នេះ</button>
+                            <button class="quick-filter-pill active" onclick="setQuickDate('month')">ខែនេះ</button>
+                            <button class="quick-filter-pill" onclick="setQuickDate('all')">ទាំងអស់</button>
                         </div>
 
+                        <button class="btn-refresh-modern shadow-sm ms-1" id="btnApplyDateFilter" title="ដំណើរការ">
+                            <i class="fi fi-rr-refresh"></i>
+                        </button>
+                    </div>
 
-                        <!-- Global Actions -->
-                        <div class="d-flex gap-2 align-items-center bg-light p-2 rounded-3 border flex-wrap">
-                            <!-- Exchange Rate Setting -->
-                            <div class="input-group input-group-sm shadow-sm bg-white" style="max-width: 220px; border-radius: 50rem; overflow: hidden; border: 1px solid #dee2e6;" title="កំណត់អត្រាប្តូរប្រាក់ (៛/$)">
-                                <span class="input-group-text bg-transparent border-0 text-primary fw-bold ps-3 pe-1">អត្រា:</span>
-                                <input type="number" class="form-control border-0 fw-bold text-center text-primary shadow-none px-1 bg-transparent" id="globalExchangeRate" value="4000" min="1">
-                                <button class="btn btn-info border-0 px-2 text-white" id="btnAutoExchangeRate" onclick="autoFetchExchangeRate()" title="ទាញយកអត្រាទីផ្សារស្វ័យប្រវត្តិ"><i class="fi fi-rr-refresh"></i></button>
-                                <button class="btn btn-primary border-0 px-3 d-flex align-items-center" onclick="saveExchangeRate()" title="រក្សាទុកអត្រាប្តូរប្រាក់"><i class="fi fi-rr-disk"></i></button>
-                            </div>
-                            <!-- Reports Dropdown -->
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-sm dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fi fi-rr-download me-2"></i>ទាញរបាយការណ៍
-                                </button>
-                                <ul class="dropdown-menu shadow-sm border-0 rounded-4 p-2 mt-1">
-                                    <li><a class="dropdown-item rounded-3 py-2 fw-bold text-secondary" href="#" onclick="exportReport('monthly'); return false;"><i class="fi fi-rr-calendar text-info me-2"></i>របាយការណ៍ប្រចាំខែ</a></li>
-                                    <li><a class="dropdown-item rounded-3 py-2 fw-bold text-secondary" href="#" onclick="exportReport('range'); return false;"><i class="fi fi-rr-calendar-lines text-secondary me-2"></i>របាយការណ៍ចន្លោះថ្ងៃ</a></li>
-                                </ul>
-                            </div>
-                            
-                            <!-- Add Transaction Dropdown -->
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-primary rounded-pill px-4 shadow-sm dropdown-toggle fw-bold d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fi fi-rr-plus-circle me-2"></i>បន្ថែមថ្មី
-                                </button>
-                                <ul class="dropdown-menu shadow-sm border-0 rounded-4 p-2 mt-1">
-                                    <li><a class="dropdown-item rounded-3 py-2 fw-bold text-success" href="#" data-bs-toggle="modal" data-bs-target="#incomeModal"><i class="fi fi-rr-arrow-trend-up me-2"></i>ចំណូល (Income)</a></li>
-                                    <li><a class="dropdown-item rounded-3 py-2 fw-bold text-danger" href="#" data-bs-toggle="modal" data-bs-target="#expenseModal"><i class="fi fi-rr-arrow-trend-down me-2"></i>ចំណាយ (Expense)</a></li>
-                                </ul>
-                            </div>
+                    <!-- Right Side -->
+                    <div class="modern-toolbar-right">
+                        <!-- Exchange Rate Setting -->
+                        <div class="exchange-rate-modern shadow-sm" title="កំណត់អត្រាប្តូរប្រាក់ (៛/$)">
+                            <span>អត្រា:</span>
+                            <input type="number" id="globalExchangeRate" value="4150" min="1">
+                            <button class="btn-ex-action refresh" id="btnAutoExchangeRate" onclick="autoFetchExchangeRate()" title="ទាញយកអត្រាទីផ្សារស្វ័យប្រវត្តិ"><i class="fi fi-rr-refresh" style="font-size: 10px;"></i></button>
+                            <button class="btn-ex-action" onclick="saveExchangeRate()" title="រក្សាទុកអត្រាប្តូរប្រាក់"><i class="fi fi-rr-disk" style="font-size: 10px;"></i></button>
+                        </div>
+                        
+                        <!-- Reports Dropdown -->
+                        <div class="dropdown">
+                            <button class="btn btn-modern-grey shadow-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fi fi-rr-download text-white"></i> ទាញរបាយការណ៍
+                            </button>
+                            <ul class="dropdown-menu shadow border-0 rounded-4 p-2 mt-1">
+                                <li><a class="dropdown-item rounded-3 py-2 fw-bold text-secondary" href="#" onclick="exportReport('monthly'); return false;"><i class="fi fi-rr-calendar text-info me-2"></i>របាយការណ៍ប្រចាំខែ</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2 fw-bold text-secondary" href="#" onclick="exportReport('range'); return false;"><i class="fi fi-rr-calendar-lines text-secondary me-2"></i>របាយការណ៍ចន្លោះថ្ងៃ</a></li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Add Transaction Dropdown -->
+                        <div class="dropdown">
+                            <button class="btn btn-modern-blue shadow-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fi fi-rr-plus-circle text-white"></i> បន្ថែមថ្មី
+                            </button>
+                            <ul class="dropdown-menu shadow border-0 rounded-4 p-2 mt-1">
+                                <li><a class="dropdown-item rounded-3 py-2 fw-bold text-success" href="#" data-bs-toggle="modal" data-bs-target="#incomeModal"><i class="fi fi-rr-arrow-trend-up me-2"></i>ចំណូល (Income)</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2 fw-bold text-danger" href="#" data-bs-toggle="modal" data-bs-target="#expenseModal"><i class="fi fi-rr-arrow-trend-down me-2"></i>ចំណាយ (Expense)</a></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -501,7 +151,7 @@
             <div class="row g-4 mb-4">
                 <!-- Income -->
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden position-relative">
+                    <div class="card border-0 rounded-4 h-100 overflow-hidden position-relative glass-container hover-lift">
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-start z-1 position-relative mb-3">
                                 <div>
@@ -535,7 +185,7 @@
 
                 <!-- Expense -->
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden position-relative">
+                    <div class="card border-0 rounded-4 h-100 overflow-hidden position-relative glass-container hover-lift">
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-start z-1 position-relative mb-3">
                                 <div>
@@ -569,7 +219,7 @@
 
                 <!-- Balance -->
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden position-relative">
+                    <div class="card border-0 rounded-4 h-100 overflow-hidden position-relative glass-container hover-lift">
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-start z-1 position-relative mb-3">
                                 <div>
@@ -602,7 +252,7 @@
             <div class="row g-4 mb-4">
                 <!-- ABA Total Breakdown -->
                 <div class="col-md-6">
-                    <div class="card border-0 shadow-sm rounded-4 h-100"
+                    <div class="card border-0 rounded-4 h-100 glass-container hover-lift"
                         style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
                         <div class="card-body p-4">
                             <h6
@@ -628,7 +278,7 @@
 
                 <!-- Cash & Net ABA -->
                 <div class="col-md-6">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                    <div class="card border-0 rounded-4 h-100 glass-container hover-lift">
                         <div class="card-body p-4">
                             <h6 class="text-uppercase fw-bold text-muted small mb-3 border-bottom pb-2">
                                 <i class="fi fi-rr-wallet me-2 text-warning"></i>សមតុល្យសុទ្ធ (Net Method Balance)
@@ -651,7 +301,7 @@
             </div>
 
             <!-- 3. DATA LIST & FILTERS -->
-            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-5">
+            <div class="card border-0 rounded-4 overflow-hidden mb-5 glass-container">
                 <div class="card-header bg-white border-0 py-3 px-4">
                     <div class="row g-3 align-items-center">
                         <!-- Title & Tabs -->
@@ -691,7 +341,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0" id="transactionsTable">
-                            <thead class="bg-light text-secondary">
+                            <thead class="text-secondary" style="background: rgba(248, 249, 250, 0.5);">
                                 <tr style="font-size: 0.9rem;">
                                     <th class="py-3 ps-4 text-center">#</th>
                                     <th class="py-3 text-center">កាលបរិច្ឆេទ</th>
@@ -742,7 +392,7 @@
         </div>
 
         <!-- Main Footer -->
-        <footer class="app-footer mt-auto py-4 border-top bg-white text-center text-muted position-relative">
+        <footer class="app-footer mt-auto py-4 border-top text-center text-muted position-relative" style="background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(10px);">
             <div class="container">
                 <div class="mb-3">
                     <div class="mb-2">
@@ -765,490 +415,11 @@
                 </div>
             </div>
         </footer>
-    </div>
+    </main>
 
 
     <!-- 100% Modern Premium Transaction Modal Styling -->
-    <style>
-        :root {
-            --income-color: #059669;
-            --income-bg: rgba(5, 150, 105, 0.05);
-            --expense-color: #e11d48;
-            --expense-bg: rgba(225, 29, 72, 0.05);
-            --modal-grad-income: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            --modal-grad-expense: linear-gradient(135deg, #fb7185 0%, #e11d48 100%);
-            --ui-border: rgba(226, 232, 240, 0.8);
-            --ui-text-main: #0f172a;
-            --ui-text-muted: #64748b;
-            --card-radius: 1.5rem;
-            --input-radius: 1rem;
-        }
-
-        #incomeModal .modal-content, #expenseModal .modal-content {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            border-radius: 2rem;
-            overflow: hidden;
-        }
-
-        /* Thematic Headers - Soft & Floating */
-        #incomeModal .modal-header {
-            background: var(--modal-grad-income) !important;
-            border-bottom: none;
-            padding: 1.5rem 2rem;
-        }
-
-        #expenseModal .modal-header {
-            background: var(--modal-grad-expense) !important;
-            border-bottom: none;
-            padding: 1.5rem 2rem;
-        }
-
-        #incomeModal .btn-primary.bg-pink-primary {
-            background: var(--modal-grad-income) !important;
-            border: none !important;
-            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4) !important;
-            transition: all 0.3s;
-        }
-
-        #expenseModal .btn-primary.bg-pink-primary {
-            background: var(--modal-grad-expense) !important;
-            border: none !important;
-            box-shadow: 0 8px 20px rgba(225, 29, 72, 0.4) !important;
-            transition: all 0.3s;
-        }
-
-        #incomeModal .btn-primary.bg-pink-primary:hover,
-        #expenseModal .btn-primary.bg-pink-primary:hover {
-            transform: translateY(-2px) scale(1.02);
-        }
-
-        #incomeModal .card, #expenseModal .card {
-            border: 1px solid var(--ui-border) !important;
-            background: #ffffff;
-            border-radius: var(--card-radius) !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-            transition: all 0.3s ease;
-        }
-        
-        #incomeModal .card:hover, #expenseModal .card:hover {
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            transform: translateY(-2px);
-        }
-
-        #incomeModal .card-header, #expenseModal .card-header {
-            background: transparent !important;
-            padding: 1.5rem 1.5rem 0.5rem 1.5rem;
-            border-bottom: none !important;
-        }
-
-        #incomeModal .form-label, #expenseModal .form-label {
-            color: var(--ui-text-muted);
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
-        }
-
-        #incomeModal .form-control, #incomeModal .form-select,
-        #expenseModal .form-control, #expenseModal .form-select {
-            background-color: #f8fafc;
-            border: 2px solid transparent !important;
-            color: var(--ui-text-main);
-            font-weight: 600;
-            border-radius: var(--input-radius) !important;
-            padding: 0.75rem 1.25rem;
-            transition: all 0.3s ease;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-        }
-
-        #incomeModal .form-control:focus, #incomeModal .form-select:focus,
-        #expenseModal .form-control:focus, #expenseModal .form-select:focus {
-            background-color: #ffffff;
-            border-color: #3b82f6 !important;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), inset 0 1px 2px rgba(0,0,0,0.01) !important;
-        }
-
-        /* Money Block Styling - Modern Floating look */
-        .money-block {
-            border-radius: 1.2rem;
-            padding: 1.2rem;
-            margin-bottom: 1rem;
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            transition: all 0.3s ease;
-        }
-        
-        .money-block:hover {
-            transform: scale(1.01);
-        }
-
-        #incomeModal .money-block-cash {
-            background-color: var(--income-bg);
-            border-left: 4px solid var(--income-color);
-        }
-
-        #expenseModal .money-block-cash {
-            background-color: var(--expense-bg);
-            border-left: 4px solid var(--expense-color);
-        }
-
-        .money-block .input-group-text {
-            background: transparent !important;
-        }
-        
-        .money-block .form-control {
-            background: transparent;
-            box-shadow: none;
-            padding: 0.5rem;
-            font-size: 1.1rem;
-        }
-
-        /* Summary Card - 3D Glass Effect */
-        .summary-card-premium {
-            border-radius: 1.5rem !important;
-            overflow: hidden;
-            border: none !important;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-        
-        .summary-card-premium::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-            pointer-events: none;
-        }
-
-        #incomeModal .summary-card-premium {
-            background: linear-gradient(135deg, #047857 0%, #064e3b 100%) !important;
-            box-shadow: 0 15px 35px rgba(6, 78, 59, 0.4), inset 0 2px 0 rgba(255,255,255,0.2) !important;
-        }
-
-        #expenseModal .summary-card-premium {
-            background: linear-gradient(135deg, #be123b 0%, #881337 100%) !important;
-            box-shadow: 0 15px 35px rgba(136, 19, 55, 0.4), inset 0 2px 0 rgba(255,255,255,0.2) !important;
-        }
-
-        /* High Legibility on Summary Card */
-        .summary-card-premium .text-white-50 {
-            color: rgba(255, 255, 255, 0.8) !important;
-            font-size: 0.8rem;
-            letter-spacing: 0.1em;
-        }
-
-        #incomeModal #incomeTotalKHR {
-            color: #6ee7b7 !important;
-        }
-
-        #expenseModal #expenseTotalKHR {
-            color: #fda4af !important;
-        }
-
-        /* Custom Toggle Buttons - Pill shape with fluid animation */
-        .p-1.bg-light.rounded-3.d-flex.gap-1 {
-            background-color: #f1f5f9 !important;
-            border-radius: 1.25rem !important;
-            padding: 0.35rem !important;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        
-        .type-toggle-btn {
-            border: none !important;
-            background: transparent;
-            color: var(--ui-text-muted);
-            font-weight: 700;
-            border-radius: 0.9rem !important;
-            padding: 0.5rem 1rem !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-size: 0.85rem;
-        }
-
-        #incomeModal .btn-check:checked+.type-toggle-btn {
-            background: var(--income-color) !important;
-            color: white !important;
-            box-shadow: 0 8px 16px rgba(5, 150, 105, 0.3);
-            transform: scale(1.03);
-        }
-
-        #expenseModal .btn-check:checked+.type-toggle-btn {
-            background: var(--expense-color) !important;
-            color: white !important;
-            box-shadow: 0 8px 16px rgba(225, 29, 72, 0.3);
-            transform: scale(1.03);
-        }
-        
-        .btn-check:checked+.type-toggle-btn {
-            background: #3b82f6 !important;
-            color: white !important;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-            transform: scale(1.03);
-        }
-
-        @keyframes fadeInScale {
-            0% {
-                opacity: 0;
-                transform: scale(0.95) translateY(30px);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        .modal.show .modal-dialog {
-            animation: fadeInScale 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-        
-        .input-group-text.bg-white {
-            border-radius: var(--input-radius) 0 0 var(--input-radius) !important;
-            border: 2px solid transparent !important;
-            background-color: #f8fafc !important;
-        }
-        
-        .input-group:focus-within .input-group-text.bg-white {
-            background-color: #ffffff !important;
-            border-color: #3b82f6 !important;
-            border-right: none !important;
-        }
-
-        /* Premium Micro-animations & active glows */
-        @keyframes totalPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); filter: brightness(1.1); }
-            100% { transform: scale(1); }
-        }
-        
-        .total-updating {
-            animation: totalPulse 0.35s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        /* Specific glows for focus within */
-        #incomeModal .money-block, #expenseModal .money-block {
-            border: 2px solid transparent !important;
-            border-radius: 1.2rem;
-            padding: 1.2rem;
-            margin-bottom: 1.2rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Default backgrounds for specific money blocks */
-        #incomeCashBlock {
-            background: rgba(5, 150, 105, 0.03) !important;
-        }
-        #expenseCashBlock {
-            background: rgba(225, 29, 72, 0.03) !important;
-        }
-        #incomeAbaBlock, #expenseAbaBlock {
-            background: rgba(2, 132, 199, 0.03) !important;
-        }
-        #incomeDebtBlock, #expenseDebtBlock {
-            background: rgba(217, 119, 6, 0.03) !important;
-        }
-
-        /* Cash blocks glow */
-        #incomeCashBlock:focus-within,
-        #incomeCashBlock.active-stream {
-            background-color: #ffffff !important;
-            border-color: var(--income-color) !important;
-            box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.15) !important;
-            transform: translateY(-2px);
-        }
-        #expenseCashBlock:focus-within,
-        #expenseCashBlock.active-stream {
-            background-color: #ffffff !important;
-            border-color: var(--expense-color) !important;
-            box-shadow: 0 10px 25px -5px rgba(225, 29, 72, 0.15) !important;
-            transform: translateY(-2px);
-        }
-
-        /* ABA blocks glow - Sky Blue */
-        #incomeAbaBlock:focus-within,
-        #incomeAbaBlock.active-stream,
-        #expenseAbaBlock:focus-within,
-        #expenseAbaBlock.active-stream {
-            background-color: #ffffff !important;
-            border-color: #0284c7 !important;
-            box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.15) !important;
-            transform: translateY(-2px);
-        }
-
-        /* Debt blocks glow - Amber */
-        #incomeDebtBlock:focus-within,
-        #incomeDebtBlock.active-stream,
-        #expenseDebtBlock:focus-within,
-        #expenseDebtBlock.active-stream {
-            background-color: #ffffff !important;
-            border-color: #d97706 !important;
-            box-shadow: 0 10px 25px -5px rgba(217, 119, 6, 0.15) !important;
-            transform: translateY(-2px);
-        }
-
-        .money-block .small {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            transition: all 0.3s;
-        }
-
-        .money-block:focus-within .small {
-            font-weight: 800;
-        }
-
-        #incomeCashBlock:focus-within .small {
-            color: var(--income-color) !important;
-        }
-        #expenseCashBlock:focus-within .small {
-            color: var(--expense-color) !important;
-        }
-        #incomeAbaBlock:focus-within .small, #expenseAbaBlock:focus-within .small {
-            color: #0284c7 !important;
-        }
-        #incomeDebtBlock:focus-within .small, #expenseDebtBlock:focus-within .small {
-            color: #d97706 !important;
-        }
-
-        /* Modern Quick select Category Pills */
-        .btn-xs {
-            font-size: 0.7rem;
-            padding: 0.35rem 0.8rem;
-            border-radius: 50px;
-            font-weight: 700;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            background: #ffffff;
-            border: 1.5px solid #e2e8f0 !important;
-            color: #64748b !important;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.01);
-        }
-        
-        #incomeModal .btn-xs:hover {
-            background-color: var(--income-bg);
-            border-color: var(--income-color) !important;
-            color: var(--income-color) !important;
-            transform: translateY(-1.5px);
-            box-shadow: 0 4px 10px rgba(5, 150, 105, 0.15);
-        }
-
-        #expenseModal .btn-xs:hover {
-            background-color: var(--expense-bg);
-            border-color: var(--expense-color) !important;
-            color: var(--expense-color) !important;
-            transform: translateY(-1.5px);
-            box-shadow: 0 4px 10px rgba(225, 29, 72, 0.15);
-        }
-
-        /* Modern interactive date hint bubbles */
-        #incomeDateHint, #expenseDateHint {
-            display: inline-block;
-            background: rgba(16, 185, 129, 0.08);
-            color: #059669 !important;
-            padding: 0.25rem 0.65rem;
-            border-radius: 8px;
-            font-size: 0.7rem !important;
-            margin-top: 0.45rem;
-            font-weight: 700;
-            border: 1.5px solid rgba(16, 185, 129, 0.15);
-            transition: all 0.3s;
-        }
-        #expenseDateHint {
-            background: rgba(225, 29, 72, 0.08);
-            color: #e11d48 !important;
-            border: 1.5px solid rgba(225, 29, 72, 0.15);
-        }
-
-        /* Scrollbars */
-        .modal-body::-webkit-scrollbar {
-            width: 6px;
-        }
-        .modal-body::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .modal-body::-webkit-scrollbar-thumb {
-            background: #e2e8f0;
-            border-radius: 10px;
-        }
-        .modal-body::-webkit-scrollbar-thumb:hover {
-            background: #cbd5e1;
-        }
-
-        /* New premium style overrides for Expense Modal */
-        #expenseModal .btn-quick-cat {
-            background-color: #f8fafc;
-            border: 1px solid rgba(226, 232, 240, 0.8) !important;
-            color: #64748b;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.35rem 0.85rem;
-            border-radius: 50px !important;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        #expenseModal .btn-quick-cat:hover {
-            background-color: var(--expense-bg);
-            color: var(--expense-color);
-            border-color: var(--expense-color) !important;
-            transform: translateY(-1px);
-        }
-        #expenseModal .form-control, #expenseModal .form-select {
-            background-color: #f8fafc;
-            border: 1.5px solid #e2e8f0 !important;
-            color: var(--ui-text-main);
-            font-weight: 600;
-            border-radius: 0.75rem !important;
-            padding: 0.65rem 1rem;
-            transition: all 0.2s ease;
-            box-shadow: none;
-        }
-        #expenseModal .form-control:focus, #expenseModal .form-select:focus {
-            background-color: #ffffff;
-            border-color: var(--expense-color) !important;
-            box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.1) !important;
-        }
-        #expenseModal .input-group {
-            transition: all 0.2s ease;
-        }
-        #expenseModal .input-group-text {
-            background-color: #f8fafc;
-            border: 1.5px solid #e2e8f0 !important;
-            border-right: none !important;
-            color: #94a3b8;
-            transition: all 0.2s ease;
-        }
-        #expenseModal .input-group:focus-within .input-group-text {
-            border-color: var(--expense-color) !important;
-            color: var(--expense-color);
-        }
-        #expenseModal .input-group:focus-within .form-control {
-            border-color: var(--expense-color) !important;
-        }
-        #expenseModal .type-toggle-btn {
-            border: none !important;
-            background: transparent;
-            color: var(--ui-text-muted);
-            font-weight: 700;
-            border-radius: 0.65rem !important;
-            padding: 0.5rem 1rem !important;
-            transition: all 0.2s ease;
-            font-size: 0.85rem;
-        }
-        #expenseModal .btn-check:checked+.type-toggle-btn {
-            background: var(--expense-color) !important;
-            color: white !important;
-            box-shadow: 0 4px 10px rgba(225, 29, 72, 0.25);
-        }
-        @keyframes pulse-total {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
-        }
-        .total-updating {
-            animation: pulse-total 0.3s ease-in-out;
-        }
-    </style>
+    
     <!-- 1. Income Modal -->
     <div class="modal fade income-theme" id="incomeModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -1512,96 +683,7 @@
                 </div>
 
                 <div class="modal-body p-4" style="background: #f8fafc;">
-                    <style>
-                        #expenseForm .form-label {
-                            font-size: 13px !important;
-                            color: #475569 !important; /* Slate 600 */
-                            letter-spacing: 0.3px;
-                            font-weight: 600;
-                        }
-                        #expenseForm .form-control {
-                            font-size: 14px !important;
-                            color: #0f172a !important; /* Slate 900 */
-                            font-weight: 500;
-                            transition: all 0.3s ease;
-                        }
-                        #expenseForm .form-control:focus {
-                            border-color: #f43f5e;
-                            box-shadow: 0 0 0 0.25rem rgba(244, 63, 94, 0.15);
-                            transform: translateY(-2px);
-                        }
-                        #expenseForm .input-group-text {
-                            color: #64748b !important;
-                            transition: all 0.3s ease;
-                        }
-                        #expenseForm .input-group:focus-within .input-group-text {
-                            color: #e11d48 !important;
-                            background-color: rgba(225, 29, 72, 0.05) !important;
-                        }
-                        #expenseForm button, #expenseForm .btn {
-                            font-size: 14px !important;
-                        }
-
-                        /* =========================================
-                           PREMIUM DYNAMIC EFFECTS & ANIMATIONS 
-                           ========================================= */
-                        @keyframes slideUpFade {
-                            from { opacity: 0; transform: translateY(20px); }
-                            to { opacity: 1; transform: translateY(0); }
-                        }
-                        
-                        /* Staggered entrance animations */
-                        #expenseForm .card, #expenseForm .money-block, #expenseForm .summary-card-premium {
-                            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-                            opacity: 0;
-                        }
-                        #expenseForm .col-lg-6:nth-child(1) .card:nth-child(1) { animation-delay: 0.05s; }
-                        #expenseForm .col-lg-6:nth-child(1) .card:nth-child(2) { animation-delay: 0.15s; }
-                        #expenseForm .col-lg-6:nth-child(1) .card:nth-child(3) { animation-delay: 0.25s; }
-                        
-                        #expenseForm .col-lg-6:nth-child(2) .money-block:nth-child(1) { animation-delay: 0.1s; }
-                        #expenseForm .col-lg-6:nth-child(2) .money-block:nth-child(2) { animation-delay: 0.2s; }
-                        #expenseForm .col-lg-6:nth-child(2) .money-block:nth-child(3) { animation-delay: 0.3s; }
-                        #expenseForm .summary-card-premium { animation-delay: 0.4s; }
-
-                        /* Hover Effects */
-                        #expenseForm .card {
-                            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                        }
-                        #expenseForm .card:hover {
-                            box-shadow: 0 10px 30px rgba(0,0,0,0.06) !important;
-                            transform: translateY(-2px);
-                        }
-                        
-                        #expenseForm .money-block {
-                            transition: all 0.3s ease;
-                        }
-                        #expenseForm .money-block:hover {
-                            transform: translateX(6px) scale(1.01);
-                            background: rgba(255, 255, 255, 1) !important;
-                            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05) !important;
-                            border-color: rgba(225, 29, 72, 0.3) !important;
-                        }
-                        
-                        #expenseForm .summary-card-premium {
-                            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                            cursor: pointer;
-                        }
-                        #expenseForm .summary-card-premium:hover {
-                            transform: translateY(-5px) scale(1.02);
-                            box-shadow: 0 20px 40px -5px rgba(225, 29, 72, 0.6) !important;
-                        }
-                        
-                        /* Icon pulse on hover */
-                        #expenseForm .card:hover .card-header i, 
-                        #expenseForm .money-block:hover i {
-                            animation: pulse-icon 1s infinite alternate;
-                        }
-                        @keyframes pulse-icon {
-                            from { transform: scale(1); }
-                            to { transform: scale(1.2); }
-                        }
-                    </style>
+                    
                     <form id="expenseForm">
                         <input type="hidden" id="editExpenseId">
                         <input type="hidden" id="expenseType" value="expense">
@@ -1857,6 +939,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
 
     <script src="/js/core/firebase-config.js"></script>
     <script src="/js/core/auth-check.js"></script>
@@ -2147,31 +1230,7 @@
     "></iframe>
 </div>
 
-<style>
-    @media print {
-        body>*:not(#printPreviewOverlay) {
-            display: none !important;
-        }
 
-        #printPreviewOverlay {
-            display: flex !important;
-            position: static !important;
-            height: 100vh;
-            flex-direction: column;
-        }
-
-        #ppTopBar {
-            display: none !important;
-        }
-
-        #printPreviewFrame {
-            flex: 1;
-            width: 100%;
-            height: 100vh;
-            border: none;
-        }
-    }
-</style>
 
 <script>
     function openPrintPreview(html, title, periodText) {

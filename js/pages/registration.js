@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    const phoneFields = ['reg_personalPhone', 'reg_fatherPhone', 'reg_motherPhone', 'reg_guardianPhone', 'reg_pickerPhone', 'reg_teacherPhone'];
+    const phoneFields = ['reg_personalPhone', 'reg_emergencyPhone', 'reg_fatherPhone', 'reg_motherPhone', 'reg_guardianPhone', 'reg_pickerPhone', 'reg_teacherPhone'];
     phoneFields.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
@@ -1576,13 +1576,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const file = e.target.files[0];
         if (!file) return;
 
-        // 1. Validation (2MB Max)
-        if (file.size > 2097152) { 
-            showAlert('រូបភាពធំពេក! សូមជ្រើសរើសរូបភាពមិនឲ្យលើសពី 2MB។', 'danger');
-            if (studentImage) studentImage.value = '';
-            return;
-        }
-
         try {
             // 2. Show Small Status Near Profile
             if (imagePreview) {
@@ -1596,11 +1589,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>`;
             }
 
-            // 3. Perform Upload to Cloudflare R2
+            // 3. Perform Upload to Firebase Storage
             const familyName = document.getElementById('lastName')?.value || '';
             const firstName = document.getElementById('firstName')?.value || '';
             const studentId = document.getElementById('reg_displayId')?.innerText || document.getElementById('reg_displayId')?.value || '';
-            const url = await uploadImageToR2(file, `${familyName}_${firstName}_${studentId}`);
+            const url = await uploadImageToFirebase(file, `${familyName}_${firstName}_${studentId}`);
             
             if (!url) throw new Error("Upload failed to return URL");
 
@@ -1619,7 +1612,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 `;
             }
 
-            showAlert('រូបភាពត្រូវបានបង្ហោះចូលទៅក្នុង Cloudflare R2 ជោគជ័យ!', 'success');
+            showAlert('រូបភាពត្រូវបានបង្ហោះចូលទៅក្នុង Firebase Storage ជោគជ័យ!', 'success');
 
         } catch (error) {
             hideR2UploadStatus();
@@ -2507,21 +2500,21 @@ document.addEventListener('DOMContentLoaded', function () {
         return true;
     }
 
-    // 13. IMAGE UPLOAD (Cloudflare R2 Integration)
+    // 13. IMAGE UPLOAD (Firebase Storage Integration)
     // ============================================
     async function uploadImage(file) {
         if (!file) return null;
         
         try {
-            // Use the centralized Cloudflare R2 upload function
+            // Use the centralized Firebase Storage upload function
             // This replaces the old Firebase Storage logic
-            if (typeof uploadImageToR2 === 'function') {
-                console.log("📤 Uploading to Cloudflare R2...");
-                const url = await uploadImageToR2(file);
+            if (typeof uploadImageToFirebase === 'function') {
+                console.log("📤 Uploading to Firebase Storage...");
+                const url = await uploadImageToFirebase(file);
                 console.log("✅ R2 URL:", url);
                 return url;
             } else {
-                console.error("❌ uploadImageToR2 utility not available!");
+                console.error("❌ uploadImageToFirebase utility not available!");
                 return null;
             }
         } catch (error) {
@@ -2728,6 +2721,7 @@ document.addEventListener('DOMContentLoaded', function () {
             dob: document.getElementById('reg_dob') ? document.getElementById('reg_dob').value.trim() || '' : '',
             nationality: document.getElementById('reg_nationality') ? document.getElementById('reg_nationality').value.trim() || 'ខ្មែរ' : 'ខ្មែរ',
             personalPhone: document.getElementById('reg_personalPhone') ? document.getElementById('reg_personalPhone').value.trim() || '' : '',
+            emergencyPhone: document.getElementById('reg_emergencyPhone') ? document.getElementById('reg_emergencyPhone').value.trim() || '' : '',
             imageUrl: studentImageUrl || originalImageUrl || '',
 
             // Address and Student Info
@@ -2905,7 +2899,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // studentImageUrl is now set immediately during handleImageUpload
             // No need for secondary upload call here unless studentImageUrl is missing and we have a file
             if (!imageUrl && studentImageFile) {
-                imageUrl = await uploadImageToR2(studentImageFile);
+                imageUrl = await uploadImageToFirebase(studentImageFile);
             }
 
             const studentData = collectFormData();
@@ -3022,7 +3016,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // 1. Upload រូបភាពប្រសិនបើមានការប្តូរថ្មី
             if (studentImageFile && !studentImageUrl) {
                 console.log('កំពុង Upload រូបភាពថ្មី...');
-                studentImageUrl = await uploadImageToR2(studentImageFile);
+                studentImageUrl = await uploadImageToFirebase(studentImageFile);
             }
 
             // 2. ប្រមូលទិន្នន័យពី Form
@@ -3338,6 +3332,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (document.getElementById('reg_dob')) document.getElementById('reg_dob').value = data.dob || '';
         if (document.getElementById('reg_nationality')) document.getElementById('reg_nationality').value = data.nationality || 'ខ្មែរ';
         if (document.getElementById('reg_personalPhone')) document.getElementById('reg_personalPhone').value = data.personalPhone || '';
+        if (document.getElementById('reg_emergencyPhone')) document.getElementById('reg_emergencyPhone').value = data.emergencyPhone || '';
 
         // Image
         originalImageUrl = data.imageUrl || '';

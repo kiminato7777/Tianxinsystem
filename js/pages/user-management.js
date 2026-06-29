@@ -666,7 +666,7 @@ function handleUpdateUser(e) {
         try {
             // Upload image if selected
             if (editUserImageFile) {
-                const url = await uploadImageToR2(editUserImageFile, `user_${name}`, "Teacher");
+                const url = await uploadImageToFirebase(editUserImageFile, `user_${name}`, "Teacher");
                 if (url) updateData.imageUrl = url;
             }
 
@@ -729,7 +729,7 @@ function handleCreateUser(e) {
             
             let imageUrl = '';
             if (newUserImageFile) {
-                imageUrl = await uploadImageToR2(newUserImageFile, `user_${name}`, "Teacher");
+                imageUrl = await uploadImageToFirebase(newUserImageFile, `user_${name}`, "Teacher");
             }
 
             return usersRef.child(uid).set({

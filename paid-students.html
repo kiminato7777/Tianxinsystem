@@ -24,6 +24,7 @@
 
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="/css/style.css">
 
     <style>
         * {
@@ -44,79 +45,6 @@
             min-height: 100vh;
             margin: 0;
             overflow-x: hidden;
-        }
-
-        #sidebar {
-            width: 250px;
-            min-width: 250px;
-            background-color: var(--bs-pink-dark);
-            color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            z-index: 1030;
-        }
-
-        .sidebar-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 15px;
-            background: #8a0e5b;
-            font-weight: bold;
-            font-size: 1.1rem;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-            text-align: center;
-        }
-
-        #sidebar-logo {
-            width: 70px;
-            height: 70px;
-            margin-right: 0;
-            margin-bottom: 10px;
-            object-fit: cover;
-            background: white;
-            padding: 0;
-            border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        #sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.95);
-            padding: 12px 20px;
-            transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-            display: flex;
-            align-items: center;
-            font-weight: 700;
-            letter-spacing: 0.2px;
-            text-decoration: none;
-        }
-
-        #sidebar .nav-link i {
-            margin-right: 10px;
-            width: 25px;
-            text-align: center;
-        }
-
-        #sidebar .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-left-color: #ff69b4;
-            padding-left: 25px;
-        }
-
-        #sidebar .nav-link.active {
-            background: linear-gradient(90deg, #ff69b4, rgba(255, 105, 180, 0.8));
-            border-left-color: white;
-        }
-
-        #main-content {
-            flex-grow: 1;
-            padding: 20px;
-            margin-left: 250px;
-            width: calc(100% - 250px);
         }
 
         .main-header {

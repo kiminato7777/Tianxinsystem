@@ -1042,7 +1042,7 @@ async function saveStaff() {
         try {
             // Show loading status for R2
             const staffName = dataToSave.nameKhmer || "staff";
-            const uploadedUrl = await uploadImageToR2(imageInput.files[0], staffName, "Teacher");
+            const uploadedUrl = await uploadImageToFirebase(imageInput.files[0], staffName, "Teacher");
             if (uploadedUrl) {
                 dataToSave.imageUrl = uploadedUrl;
             }

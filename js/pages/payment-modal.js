@@ -1389,12 +1389,6 @@ window.handleReceiptUpload = async function (input) {
     const file = input.files[0];
 
     // 2MB Limit
-    if (file.size > 2097152) {
-        if (typeof showAlert === 'function') showAlert('ទំហំរូបភាពលើសពី 2MB! សូមជ្រើសរើសរូបភាពតូចជាងនេះ។', 'danger');
-        else alert('ទំហំរូបភាពលើសពី 2MB!');
-        input.value = '';
-        return;
-    }
 
     const container = document.getElementById('receiptPreviewContainer');
     if (!container) return;
@@ -1411,7 +1405,7 @@ window.handleReceiptUpload = async function (input) {
             </div>`;
 
         // Upload to R2
-        const url = await uploadImageToR2(file);
+        const url = await uploadImageToFirebase(file);
         if (!url) throw new Error("Upload failed");
 
         // Update hidden field

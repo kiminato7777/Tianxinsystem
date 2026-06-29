@@ -26,6 +26,7 @@
 
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="/css/style.css">
 
     <!-- Load Khmer OS Battambang font -->
     <style>
@@ -53,84 +54,6 @@
             min-height: 100vh;
             margin: 0;
             overflow-x: hidden;
-        }
-
-        #sidebar {
-            width: 250px;
-            min-width: 250px;
-            background-color: var(--bs-pink-dark);
-            color: white;
-            padding: 0;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-            flex-shrink: 0;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            z-index: 1030;
-        }
-
-        .sidebar-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 15px;
-            background-color: #8a0e5b;
-            font-weight: bold;
-            font-size: 1.1rem;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-            text-align: center;
-        }
-
-        #sidebar-logo {
-            width: 70px;
-            height: 70px;
-            margin-right: 0;
-            margin-bottom: 10px;
-            object-fit: cover;
-            padding: 0;
-            border-radius: 50%;
-        }
-
-        #sidebar .nav {
-            padding-top: 10px;
-        }
-
-        #sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.95);
-            padding: 15px 20px;
-            transition: background-color 0.3s, color 0.3s;
-            border-left: 5px solid transparent;
-            font-weight: 700;
-            letter-spacing: 0.2px;
-        }
-
-        #sidebar .nav-link i {
-            margin-right: 10px;
-            width: 25px;
-            text-align: center;
-        }
-
-        #sidebar .nav-link:hover {
-            background-color: var(--bs-pink-hover);
-            color: white;
-            border-left-color: var(--bs-pink-primary);
-        }
-
-        #sidebar .nav-link.active {
-            background-color: var(--bs-pink-primary);
-            color: white;
-            font-weight: bold;
-            border-left-color: white;
-        }
-
-        #main-content {
-            flex-grow: 1;
-            padding: 20px;
-            background-color: var(--bs-body-bg);
-            margin-left: 250px;
-            width: calc(100% - 250px);
         }
 
         /* Header with notifications and download buttons */

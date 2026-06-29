@@ -145,20 +145,22 @@ body::after {
     2. SIDEBAR STYLES
     ------------------------------------------- */
 #sidebar {
-    width: 250px;
-    min-width: 250px;
-    background: linear-gradient(180deg, #8a0e5b 0%, #6b0a47 100%);
+    width: 260px;
+    min-width: 260px;
+    background: linear-gradient(135deg, rgba(138, 14, 91, 0.95) 0%, rgba(80, 10, 56, 0.98) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
     padding: 0;
-    box-shadow: 3px 0 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15);
     flex-shrink: 0;
     position: fixed;
-    /* Changed to fixed to match staff-management preference */
     top: 0;
     left: 0;
     height: 100vh;
     z-index: 1030;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     overflow-x: hidden;
 }
 
@@ -209,24 +211,41 @@ body.sidebar-collapsed #sidebar .sidebar-user-profile .bg-white {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px 15px;
-    background: #8a0e5b;
+    padding: 24px 15px;
+    background: transparent;
     font-weight: bold;
-    font-size: 1.1rem;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    font-size: 1.15rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     text-align: center;
+    position: relative;
+}
+
+.sidebar-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 15%;
+    right: 15%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
 }
 
 #sidebar-logo {
-    width: 70px;
-    height: 70px;
+    width: 75px;
+    height: 75px;
     margin-right: 0;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     object-fit: cover;
     background: white;
-    padding: 0;
+    padding: 2px;
     border-radius: 50%;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sidebar-header:hover #sidebar-logo {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
 .sidebar-header a:hover {
@@ -234,39 +253,59 @@ body.sidebar-collapsed #sidebar .sidebar-user-profile .bg-white {
 }
 
 #sidebar .nav {
-    padding-top: 10px;
+    padding: 15px 12px;
+    gap: 4px;
 }
 
 #sidebar .nav-link {
-    color: rgba(255, 255, 255, 0.95);
-    padding: 12px 20px;
-    transition: all 0.3s ease;
-    border-left: 4px solid transparent;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 12px 16px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     display: flex;
     align-items: center;
-    font-weight: 700;
-    letter-spacing: 0.2px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    border-radius: 12px;
+    margin-bottom: 4px;
+    position: relative;
+    overflow: hidden;
 }
 
 #sidebar .nav-link i {
-    margin-right: 10px;
-    width: 25px;
+    margin-right: 12px;
+    width: 24px;
+    font-size: 1.15rem;
     text-align: center;
+    transition: transform 0.3s ease;
 }
 
 #sidebar .nav-link:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border-left-color: #ff69b4;
-    padding-left: 25px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    transform: translateX(4px);
+}
+
+#sidebar .nav-link:hover i {
+    transform: scale(1.1);
 }
 
 #sidebar .nav-link.active {
-    background: linear-gradient(90deg, #ff69b4, rgba(255, 105, 180, 0.8));
+    background: linear-gradient(135deg, #E82600 0%, #ff4b2b 100%);
     color: white;
-    font-weight: bold;
-    border-left-color: white;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(232, 38, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+#sidebar .nav-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 60%;
+    width: 4px;
+    background: #ffffff;
+    border-radius: 0 4px 4px 0;
 }
 
 /* User Profile Section in Sidebar */
@@ -286,9 +325,9 @@ body.sidebar-collapsed #sidebar .sidebar-user-profile .bg-white {
     flex-grow: 1;
     padding: 20px 30px;
     background-color: transparent;
-    margin-left: 250px;
+    margin-left: 260px;
     /* Offset for fixed sidebar */
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     min-height: 100vh;
 }
 

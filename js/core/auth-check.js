@@ -147,6 +147,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     emailEl.title = data.email;
                 }
                 
+                // Update welcome message if it exists on the page
+                const welcomeNameElem = document.getElementById('welcome-user-name');
+                if (welcomeNameElem) welcomeNameElem.textContent = data.displayName;
+                
                 if (imgEl) {
                     imgEl.src = (data.imageUrl && data.imageUrl !== 'undefined' && data.imageUrl !== 'null') ? data.imageUrl : 'https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff';
                 } else if (imgContainer) {
@@ -243,8 +247,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Error fetching user data:", err);
                 // Fallback for permission denied
                 if (isSuperAdmin) {
-                    setProfileUI('Admin (អ្នកគ្រប់គ្រង)', user.email, null);
+                    window.currentUserProfileData = { displayName: 'Admin (អ្នកគ្រប់គ្រង)', email: user.email, isAdmin: true, role: 'admin' };
                     applyPermissions({}, 'admin');
+                } else {
+                    const fallbackName = user.email ? user.email.split('@')[0] : 'Staff';
+                    window.currentUserProfileData = { displayName: fallbackName, email: user.email, isAdmin: false, role: 'staff' };
+                    applyPermissions({}, 'staff');
+                }
+                if (typeof window.refreshSidebarProfile === 'function') {
+                    window.refreshSidebarProfile();
                 }
             });
         } else {

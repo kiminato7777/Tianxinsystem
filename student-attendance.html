@@ -645,46 +645,56 @@
     </style>
 </head>
 
-<body>
+<body class="modern-ui-body">
     <div id="sidebar"></div>
     <script src="/js/core/sidebar.js"></script>
 
-    <div id="main-content">
-        <div class="main-header animate__animated animate__fadeInDown">
-            <div class="header-title">
-                <button
-                    class="btn btn-light rounded-circle me-1 d-none d-lg-flex align-items-center justify-content-center"
-                    onclick="toggleDesktopSidebar()" title="បង្រួម/ពង្រីក Sidebar (Toggle Sidebar)"
-                    style="width: 40px; height: 40px; border: 1px solid rgba(0,0,0,0.08);">
-                    <i class="fi fi-rr-menu-burger" style="font-size: 0.9rem; color: var(--bs-pink-primary);"></i>
-                </button>
-                <button
-                    class="btn btn-light rounded-circle me-2 d-none d-lg-flex align-items-center justify-content-center"
-                    onclick="toggleFullScreen()" title="ពេញអេក្រង់ (Full Screen)"
-                    style="width: 40px; height: 40px; border: 1px solid rgba(0,0,0,0.08);">
-                    <i class="fi fi-rr-expand" style="font-size: 0.9rem; color: var(--bs-pink-primary);"></i>
-                </button>
-                <button
-                    class="btn btn-light rounded-circle me-2 d-none d-lg-flex align-items-center justify-content-center theme-toggle-btn"
-                    onclick="toggleTheme()" title="ប្តូររចនាប័ទ្ម (Change Theme)"
-                    style="width: 40px; height: 40px; border: 1px solid rgba(0,0,0,0.08);">
-                    <i class="fi fi-rr-moon" style="font-size: 0.9rem; color: var(--bs-pink-primary);"></i>
-                </button>
-                <a href="/index.html" class="btn-back-home d-none d-sm-flex">
-                    <i class="fi fi-rr-arrow-left"></i> <span>ត្រឡប់ទៅផ្ទាំងដើម</span>
-                </a>
-                <i class="fi fi-rr-calendar-check ms-2"></i> <span>បញ្ជីសម្រង់អវត្តមាន (Student Attendance)</span>
-            </div>
-            
-            <div class="d-flex align-items-center gap-2">
-                <!-- Clock/Date Display -->
-                <div class="text-end d-none d-md-block me-3">
-                    <div id="current-date-display" class="fw-bold text-pink-dark small"></div>
-                    <div id="current-time-display" class="text-muted small" style="font-size: 0.8rem;"></div>
+    <main id="main-content">
+        <!-- Header -->
+        <nav class="navbar navbar-expand-lg navbar-light navbar-glass py-4 px-4 mb-4">
+            <div class="d-flex align-items-center justify-content-between w-100">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-light bg-white shadow-sm rounded-circle me-3 border" id="sidebarToggle" aria-label="Toggle Sidebar"
+                        onclick="toggleDesktopSidebar()" style="width: 45px; height: 45px;">
+                        <i class="fi fi-rr-menu-burger text-pink-dark"></i>
+                    </button>
+
+                    <div class="ms-4">
+                        <h2 class="fs-2 m-0 fw-bold text-pink-primary d-flex align-items-center">
+                            <i class="fi fi-rr-calendar-check me-2"></i>បញ្ជីសម្រង់អវត្តមាន
+                        </h2>
+                        <p class="text-muted small mb-0 mt-1">គ្រប់គ្រងនិងតាមដានអវត្តមានសិស្ស (Student Attendance)</p>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-light rounded-circle me-2 d-none d-lg-flex align-items-center justify-content-center theme-toggle-btn shadow-sm border" onclick="toggleTheme()" title="ប្តូររចនាប័ទ្ម (Change Theme)" style="width: 45px; height: 45px;">
+                        <i class="fi fi-rr-moon" style="font-size: 1rem; color: var(--bs-pink-primary);"></i>
+                    </button>
+                    <button class="btn btn-light rounded-circle me-2 d-none d-lg-flex align-items-center justify-content-center shadow-sm border" onclick="toggleFullScreen()" title="ពេញអេក្រង់ (Full Screen)" style="width: 45px; height: 45px;">
+                        <i class="fi fi-rr-expand" style="font-size: 1rem; color: var(--bs-pink-primary);"></i>
+                    </button>
+                    <a href="/index.html" class="btn btn-light rounded-circle d-none d-sm-flex align-items-center justify-content-center shadow-sm border" title="ត្រឡប់ទៅផ្ទាំងដើម" style="width: 45px; height: 45px;">
+                        <i class="fi fi-rr-home" style="font-size: 1rem; color: var(--bs-pink-primary);"></i>
+                    </a>
+                    
+                    <!-- Date/Time Display -->
+                    <div class="d-flex gap-3 align-items-center border-start ps-4 ms-2 d-none d-md-flex">
+                        <div class="text-end">
+                            <div class="text-muted small text-uppercase fw-bold" style="font-size: 0.7rem;">កាលបរិច្ឆេទ</div>
+                            <div class="fw-bold text-dark" id="current-date-display">...</div>
+                        </div>
+                        <div class="vr"></div>
+                        <div class="text-end">
+                            <div class="text-muted small text-uppercase fw-bold" style="font-size: 0.7rem;">ម៉ោង</div>
+                            <div class="fw-bold text-primary" id="current-time-display">...</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </nav>
 
+        <div class="container-fluid px-4">
         <!-- Dashboard Cards -->
         <div class="row g-4 mb-5 animate__animated animate__fadeInUp">
             <div class="col-md-4">
@@ -799,6 +809,8 @@
                 </div>
             </div>
         </div>
+        </div> <!-- End container-fluid -->
+    </main>
 
     <!-- Attendance Modal -->
     <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">
@@ -899,7 +911,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
